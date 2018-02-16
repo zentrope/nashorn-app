@@ -15,7 +15,7 @@
 
 (def legal-pkgs
   ;; Packages available to scripts.
-  #{"nashorn.Functions"})
+  #{"com.bobo.nashorn.Functions"})
 
 (defn- js-engine
   []

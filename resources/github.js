@@ -3,7 +3,7 @@
 // to. These supply convenience functions not available in
 // JavaScript.
 //
-var FNS = Java.type('nashorn.Functions');
+var FNS = Java.type('com.bobo.nashorn.Functions');
 
 // ECMAScript 5.1 -- for JDK 8
 

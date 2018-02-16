@@ -1,4 +1,4 @@
-package nashorn;
+package com.bobo.nashorn;
 
 import java.io.DataOutputStream;
 import java.io.InputStream;
