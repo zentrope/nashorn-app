@@ -15,13 +15,11 @@
           (webhacks/resource request))
         (assoc-in [:headers "Cache-Control"] "no-cache"))))
 
-(defn start! [{:keys [port] :as config}]
-  (let [app (routes)
-        params {:port port :worker-name-prefix "http-"}
-        server (httpd/run-server app params)]
-    {:server server}))
+(defn start!
+  [config]
+  {:server (httpd/run-server (routes) {:port (:port config) :worker-name-prefix "http-"})})
 
 (defn stop!
-  [{:keys [server] :as state}]
-  (when server
-    (server)))
+  [this]
+  (when-let [s (:server this)]
+    (s)))
