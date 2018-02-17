@@ -34,7 +34,8 @@
 
 (defn -main
   [& args]
-  (log/info "Starting applicaiton.")
+  (log/info "Starting application.")
+  (log/infof "→ Open web-app at http://localhost:%s." (:port (:svc/web config)))
   (hook-uncaught-exceptions! #'catch-uncaughts)
   (let [system (ig/init config)
         lock (promise)]
