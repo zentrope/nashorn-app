@@ -3,9 +3,10 @@
 // to. These supply convenience functions not available in
 // JavaScript.
 //
-var FNS = Java.type('com.bobo.nashorn.Functions');
 
-// ECMAScript 5.1 -- for JDK 8
+const FNS = Java.type('com.bobo.nashorn.Functions');
+
+// ECMAScript 5.1 -- for JDK 8 with a few extras (let, const)
 
 function pprint(obj) {
   var data = obj;
@@ -21,12 +22,12 @@ function findIssues(owner, name, last) {
       "   owner { login url } name primaryLanguage { name } "+
       "   issues(first: %s, orderBy:{field: CREATED_AT, direction: DESC} , states: [OPEN]) " +
       "     { edges { node { author { login } title url }}}}}";
-  return FNS.sprintf(q, owner, name, last);
+  return FNS.format(q, owner, name, last);
 }
 
 function pollIssues(owner, name, last) {
-  var token = FNS.lookup("github_token");
-  var github = 'https://api.github.com/graphql';
+  const token = FNS.lookup("github_token");
+  let github = 'https://api.github.com/graphql';
 
   var query = JSON.stringify(
     {"query" : findIssues(owner, name, last)}
@@ -40,8 +41,11 @@ function pollIssues(owner, name, last) {
     return;
   }
 
-  print("QUERY RESULT");
   pprint(result.body);
+
+  // The prints can be captured by the evaluator. The result of the
+  // last expression is returned as the result of the eval.
+  return "done";
 }
 
-pollIssues("clojure-emacs", "cider", 13);
+pollIssues("clojure-emacs", "cider", 3);

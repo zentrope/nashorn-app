@@ -13,21 +13,6 @@ import jdk.nashorn.api.scripting.ScriptObjectMirror;
 
 public final class Functions {
 
-  private static String getString(InputStream is) {
-    try {
-      Scanner scanner = new Scanner(is).useDelimiter("\\A");
-      return scanner.hasNext() ? scanner.next() : "";
-    }
-
-    finally {
-      try {
-        is.close();
-      }
-      catch (Throwable t) {
-      }
-    }
-  }
-
   public static String lookup(String name) {
     if (name == "github_token") {
       // My personal system, so...
@@ -36,7 +21,7 @@ public final class Functions {
     return System.getenv(name);
   }
 
-  public static String sprintf(String fmt, Object ...args) {
+  public static String format(String fmt, Object ...args) {
     return String.format(fmt, args);
   }
 
@@ -45,8 +30,8 @@ public final class Functions {
       URL url = new URL(urlString);
       HttpURLConnection conn = (HttpURLConnection)url.openConnection();
       conn.setRequestMethod("GET");
-      conn.setRequestProperty("User-Agent", "kfi/nashorn");
-      return getString(conn.getInputStream());
+      conn.setRequestProperty("User-Agent", "bobo/nashorn");
+      return readString(conn.getInputStream());
     }
     catch (Throwable t) {
       System.out.printf("ERROR: %s\n", t);
@@ -59,7 +44,7 @@ public final class Functions {
       URL url = new URL(urlString);
       HttpsURLConnection conn = (HttpsURLConnection)url.openConnection();
       conn.setRequestMethod("POST");
-      conn.setRequestProperty("User-Agent", "kfi/nashorn");
+      conn.setRequestProperty("User-Agent", "bobo/nashorn");
 
       for (String header : headers.keySet()) {
         String value = (String)headers.get(header);
@@ -76,12 +61,27 @@ public final class Functions {
 
       Map<String, String> response = new HashMap<String, String>();
       response.put("status", conn.getResponseCode()+"");
-      response.put("body", getString(conn.getInputStream()));
+      response.put("body", readString(conn.getInputStream()));
       return response;
     }
     catch (Throwable t) {
       System.out.printf("ERROR: %s\n", t);
       return null;
+    }
+  }
+
+  private static String readString(InputStream is) {
+    try {
+      Scanner scanner = new Scanner(is).useDelimiter("\\A");
+      return scanner.hasNext() ? scanner.next() : "";
+    }
+
+    finally {
+      try {
+        is.close();
+      }
+      catch (Throwable t) {
+      }
     }
   }
 
