@@ -1,9 +1,20 @@
 #
 #
 #
-.PHONY: clean run deps updates help prodeps
+.PHONY: clean run deps updates help prodeps watch build clean-client
+.PHONY: build-client-prod
 
 .DEFAULT_GOAL := help
+
+rlwrap = $(shell which rlwrap)
+
+clean-client:
+	rm -rf resources/public/out
+	rm -f resource/public/main.js
+	rm -f figwheel_server.log
+
+watch: clean-client ## Watch the js/app build for changes and re-compile
+	lein cljsbuild auto dev || true
 
 deps: ## List dependencies and transitive dependencies
 	lein deps :tree || true
@@ -19,6 +30,18 @@ run: ## Run the application
 
 clean: ## Clean build artifacts
 	lein clean
+
+build-client-prod: clean-client ## Build the production client
+	lein cljsbuild once client
+
+build: clean build-client-prod ## Build a runnable app (uberjar)
+	lein uberjar
+	rm -rf target/classes target/cljsbuild* target/stale
+	find target -type d -delete
+	rm target/*classes.jar
+
+figwheel: clean-client ## Start figwheel plugin for working with CLJS
+	$(rlwrap) lein figwheel || true
 
 help: ## Show makefile based help
 	@grep -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
