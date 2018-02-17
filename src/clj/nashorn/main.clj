@@ -1,57 +1,46 @@
 (ns nashorn.main
   (:require
-   [clojure.pprint :refer [pprint]]
-   [clojure.java.io :as io])
-  (:import
-   [java.io StringWriter]
-   [jdk.nashorn.api.scripting ClassFilter NashornScriptEngineFactory]
-   [javax.script ScriptEngineManager]))
+   [clojure.stacktrace :refer [print-stack-trace]]
+   [integrant.core :as ig]
+   [nashorn.logging :as log]
+   [nashorn.web :as web]))
 
-(defn sandbox
-  "Produces a class-loading filter that prevents JS from loading
-  classes other than what we allow."
-  [whitelist]
-  (reify ClassFilter
-    (exposeToScripts [this string]
-      (contains? whitelist string))))
+(def config
+  {:svc/web {:port 2018}})
 
-(def legal-pkgs
-  ;; Packages available to scripts.
-  #{"com.bobo.nashorn.Functions"})
+(defn hook-shutdown! [f]
+  (doto (Runtime/getRuntime)
+    (.addShutdownHook (Thread. f))))
 
-(defn- js-engine
-  []
-  (.getScriptEngine (NashornScriptEngineFactory.)
-                    (into-array ["--language=es6"])
-                    (ClassLoader/getSystemClassLoader)
-                    (sandbox legal-pkgs)))
+(defn hook-uncaught-exceptions! [f]
+  (Thread/setDefaultUncaughtExceptionHandler
+   (reify Thread$UncaughtExceptionHandler
+     (uncaughtException [_ thread ex]
+       (f thread ex)))))
 
-(defn- js-eval
-  [engine script]
-  (.eval engine script))
+(defn catch-uncaughts [thread ex]
+  (log/errorf "Caught: [%s] on thread [%s]." ex (.getName thread))
+  (log/error (with-out-str (print-stack-trace ex))))
 
-;; This kind of thing lets users use "print" for output or logging
-;; that can be captured for a given run of a script.
-(defn- do-eval
-  "Runs the evalation, capturing script 'prints' output in a
-  string (rather than printing it to stdout)."
-  [script]
-  (let [writer (StringWriter.)
-        engine (js-engine)]
-    (.setWriter (.getContext engine) writer)
-    (try
-      (let [result (js-eval engine script)]
-        {:error? false :result result :output (str writer)})
-      (catch Throwable t
-        {:error? true :result nil :output (str writer) :exception t :error (.getMessage t)}))))
+(defmethod ig/init-key :svc/web
+  [_ {:keys [port] :as config}]
+  (log/info "Starting web service.")
+  (web/start! {:port port}))
 
-(def bScript
-  (slurp (io/resource "github.js")))
+(defmethod ig/halt-key! :svc/web
+  [_ svc]
+  (log/info "Stopping web service.")
+  (web/stop! svc))
 
 (defn -main
   [& args]
-  (let [{:keys [error? result output exception error] :as rc} (do-eval bScript)]
-    (if error?
-      (println "ERROR:" (pr-str error))
-      (do (println "result:" result)
-          (println (format "output:\n%s" output))))))
+  (log/info "Starting applicaiton.")
+  (hook-uncaught-exceptions! #'catch-uncaughts)
+  (let [system (ig/init config)
+        lock (promise)]
+    (hook-shutdown! #(do (log/info "Stopping application.")
+                         (ig/halt! system)
+                         (deliver lock :release)))
+    (deref lock)
+    (log/info "Halt.")
+    (System/exit 0)))
