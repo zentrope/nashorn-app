@@ -13,10 +13,10 @@
   :figwheel {:css-dirs ["resources/public"]}
   :cljsbuild {:builds [{:id "dev"
                         :source-paths ["src/cljs"]
-                        :figwheel {:on-jsload "nashorn.app.main/reload"}
+                        :figwheel {:on-jsload "nashorn.client.main/reload"}
                         :compiler {:output-to "resources/public/main.js"
                                    :output-dir "resources/public/out"
-                                   :main "nashorn.app.main"
+                                   :main "nashorn.client.main"
                                    :optimizations :none
                                    :asset-path "out"
                                    :source-map true
@@ -26,7 +26,7 @@
                         :compiler {:output-to "resources/public/main.js"
                                    :language-in :ecmascript5
                                    :optimizations :whitespace
-                                   :main "nashorn.app.main"}}]}
+                                   :main "nashorn.client.main"}}]}
   :profiles {:resource-paths ^:replace ["dev" "resources"]
              :uberjar {:aot [nashorn.stub]}
              :dev {:plugins [[lein-ancient "0.6.15"]
