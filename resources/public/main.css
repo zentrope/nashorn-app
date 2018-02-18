@@ -2,4 +2,127 @@ html, body {
   padding: 0;
   margin: 0;
   font-family: helvetica, "helvetica neue", optima, sans-serif;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+
+.App {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+}
+
+/* SideBar */
+
+.SideBar {
+  width: 200px;
+  background-color: #f9fafa;
+  border-right: 1px solid #f1f1f1;
+  box-sizing: border-box;
+}
+
+/* SideBar Header */
+
+.SideBar .Header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 200px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.SideBar .Header .Title {
+  color: #666;
+  font-size: 14pt;
+  font-weight: 100;
+}
+
+/* SideBar Footer */
+
+.SideBar .Footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 200px;
+  height: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.SideBar .Footer .Copyright {
+  color: #666;
+  font-size: 10pt;
+}
+
+.SideBar .Panels {
+  position: fixed;
+  top: 40px;
+  left: 0;
+  width: 200px;
+  bottom: 25px;
+  padding-top: 20px;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.SideBar .Panels .Panel {
+  margin-top: 10pt;
+  margin-right: 8pt;
+  margin-left: 15pt;
+  margin-bottom: 12pt;
+}
+
+.SideBar .Panels .Panel .Title {
+  color: #222;
+  font-size: 11pt;
+  font-weight: bold;
+  padding-bottom: 4px;
+}
+
+.SideBar .Panels .Panel .Body {
+}
+
+.SideBar .Panels .Panel .Body .Item {
+  font-size: 11pt;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-left: 8px;
+  cursor: pointer;
+  border-radius: 2px;
+
+  margin: 2px 0 4px 0;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+
+.SideBar .Panels .Panel .Body .Item .Fn {
+  color: mediumseagreen;
+}
+
+.SideBar .Panels .Panel .Body .Item .Script {
+  color: IndianRed;
+  font-weight: bold;
+}
+
+.SideBar .Panels .Panel .Body .Item:active {
+  color: #1b60c2;
+  background-color: #e4e6e9;
+}
+
+
+.WorkArea {
+  flex: 1;
+  padding: 30px;
 }

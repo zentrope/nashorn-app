@@ -10,8 +10,17 @@
 
 ;; app state
 
+
+(def ^:private function-docs
+  {"format"   {:name "format"
+               :desc "Format string templates in an sprintf way."}
+   "httpGet"  {:name "httpGet"}
+   "httpPost" {:name "httpPost"}
+   "lookup"   {:name "lookup"}})
+
 (defonce app-state
-  (atom {:title "Extension Manager"}))
+  (atom {:title     "Extension Editor"
+         :functions function-docs}))
 
 (defn reload
   []

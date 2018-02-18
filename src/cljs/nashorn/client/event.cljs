@@ -11,7 +11,7 @@
 
 (defmethod mutate! :default
   [state msg]
-  (println "Unable to process message:" (pr-str msg))
+  (println "Unhandled:" (pr-str msg))
   state)
 
 (defmethod mutate! :whimsy/do
