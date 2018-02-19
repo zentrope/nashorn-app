@@ -19,8 +19,10 @@
    "lookup"   {:name "lookup"}})
 
 (defonce app-state
-  (atom {:title     "Extension Editor"
-         :functions function-docs}))
+  (atom {:functions function-docs
+         :scripts   []
+         :view      :view/all-scripts
+         }))
 
 (defn reload
   []

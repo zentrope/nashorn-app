@@ -14,13 +14,13 @@
   (println "Unhandled:" (pr-str msg))
   state)
 
-(defmethod mutate! :whimsy/do
+(defmethod mutate! :script/new
   [state msg]
-  (assoc state :title (str (:title state) "!")))
+  (assoc state :view :view/new-script))
 
-(defmethod mutate! :whimsy/undo
+(defmethod mutate! :script/done
   [state msg]
-  (assoc state :title (string/replace (:title state) "!" "")))
+  (assoc state :view :view/all-scripts))
 
 (defn loop!
   [ch f]
