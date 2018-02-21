@@ -48,7 +48,6 @@ public final class Functions {
 
       for (String header : headers.keySet()) {
         String value = (String)headers.get(header);
-        System.out.printf("header: %s → %s\n", header, value);
         conn.setRequestProperty(header, value);
       }
 

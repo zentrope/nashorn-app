@@ -30,7 +30,7 @@
 (defc SideBarFunctionsPanel < PureMixin
   [functions ch]
   [:section.Panel
-     [:div.Title "Functions"]
+     [:div.Title "Documentation"]
    [:div.Body
     (for [f (sort-by :name (vals functions))]
       (fn-item f ch))]])
@@ -43,5 +43,6 @@
     (SideBarScriptsPanel ["github.js"] ch)
     (SideBarFunctionsPanel (:functions state) ch)]
    [:div.Buttons
-    (Button {:onClick (send! ch :script/new) :label "New Script"})]
+    (when-not (= (:view state) :view/new-script)
+      (Button {:onClick (send! ch :script/new) :label "New Script"}))]
    sb-footer])

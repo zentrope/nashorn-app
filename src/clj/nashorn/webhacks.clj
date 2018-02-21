@@ -1,19 +1,19 @@
 (ns nashorn.webhacks
   ;;
-  ;; Functions in support of simple web-serving in lieue
-  ;; of yet another dependency.
+  ;; Functions in support of simple web-serving in lieue of yet
+  ;; another dependency.
   ;;
   (:require
-   [clojure.edn :as edn]
+   [clojure.data.json :as json]
    [clojure.java.io :as io]
    [clojure.string :as string]))
 
 (def mime-types
-  {".js" "application/javascript"
+  {".js"   "application/javascript"
    ".html" "text/html"
-   ".css" "text/css"
-   ".svg" "image/svg+xml"
-   ".png" "image/png"})
+   ".css"  "text/css"
+   ".svg"  "image/svg+xml"
+   ".png"  "image/png"})
 
 (defn mime
   [path]
@@ -42,17 +42,10 @@
     (raw-file request (str "public" uri))
     (not-found request)))
 
-(def ^:const byte-array-type
-  (type (byte-array 0)))
-
-(defn byte-array?
-  [o]
-  (= (type o) byte-array-type))
-
 (defn decode
   [data]
-  (edn/read-string data))
+  (json/read-str data :key-fn keyword))
 
 (defn encode
   [data]
-  (pr-str data))
+  (json/write-str data))

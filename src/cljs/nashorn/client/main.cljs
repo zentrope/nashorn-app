@@ -19,9 +19,10 @@
    "lookup"   {:name "lookup"}})
 
 (defonce app-state
-  (atom {:functions function-docs
-         :scripts   []
-         :view      :view/all-scripts
+  (atom {:functions          function-docs     ; help for script extension functions
+         :scripts            []                ; list of saved scripts
+         :script/test-result nil               ; result form testing a script
+         :view               :view/all-scripts ; current UI view
          }))
 
 (defn reload
@@ -34,6 +35,6 @@
   (let [ch (chan)]
     (add-watch app-state :state (fn [k r o n] (app/render! n ch)))
     (app/render! @app-state ch)
-    (event/loop! ch #(reset! app-state (event/mutate! @app-state %)))))
+    (event/loop! ch #(reset! app-state (event/mutate! @app-state ch %)))))
 
 (main)

@@ -15,7 +15,7 @@
 (defc UIFrame < PureMixin
   [state ch]
   (case (:view state)
-    :view/new-script (NewScriptForm ch)
+    :view/new-script (NewScriptForm state ch)
     (AllScripts ch)))
 
 (defc RootUI < PureMixin

@@ -8,18 +8,16 @@ html, body {
 
 
 .App {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
 }
 
 /* SideBar */
 
 .SideBar {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 200px;
+  bottom: 0;
   background-color: #f9fafa;
   border-right: 1px solid #f1f1f1;
   box-sizing: border-box;
@@ -141,6 +139,126 @@ html, body {
   background-color: #e4e6e9;
 }
 
+/* Editor Area */
+
+.EditorArea {
+
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.EditorArea .EditorPanel {
+  flex: 2;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.EditorArea .EditorPanel .EditorContainer {
+  flex: 1;
+
+  border: 1px solid #d8d8d8;
+
+  display: flex;
+}
+
+.EditorArea .EditorPanel .EditorContainer textarea {
+  flex: 1;
+}
+
+.EditorArea .EditorPanel .Buttons {
+  height: 30px;
+  padding-top: 10px;
+  padding-left: 10px;
+}
+
+.EditorArea .EditorPanel .Buttons button {
+  padding-right: 10px;
+}
+
+.EditorArea .ResultPanel {
+  flex: 1;
+  margin-top: 10px;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.EditorArea .ResultPanel .Header {
+  height: 30px;
+  background-color: green;
+  display: flex;
+  align-items: center;
+  padding: 0 10px 0 10px;
+
+}
+
+  .EditorArea .ResultPanel .Header.Error {
+    background-color: IndianRed;
+  }
+
+  .EditorArea .ResultPanel .Header .Title {
+    flex: 1;
+    color: white;
+    font-weight: bold;
+    font-size: 11pt;
+  }
+
+  .EditorArea .ResultPanel .Header .Controls {
+    flex: 1;
+
+    display: flex;
+    justify-content: flex-end;
+  }
+
+.EditorArea .ResultPanel .ResultBlocks {
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.ResultPanel .ResultBlocks .ResultBlock {
+  flex: 1;
+
+  border-left: 1px solid #e6e6e6;
+  border-right: 1px solid #e6e6e6;
+  border-bottom: 1px solid #e6e6e6;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.ResultPanel .ResultBlocks .ResultBlock .Title {
+  padding: 5px;
+  padding-top: 10px;
+  padding-bottom: 1px;
+  display: flex;
+  font-size: 11pt;
+  background-color: #f9fafa;
+  border-bottom: 1px solid #e6e6e6;
+}
+
+.ResultPanel .ResultBlocks .ResultBlock .Result {
+
+  flex: 1;
+  overflow-y: auto;
+
+  padding-right: 15px;
+  padding-left: 15px;
+  size: 11pt;
+  padding-bottom: 10px;
+  display: flex;
+}
+
+.ResultPanel .ResultBlocks .ResultBlock .Result pre {
+  flex: 1;
+  color: #369;
+  overflow: auto;
+}
+
 /* Components */
 
 .Button {
@@ -169,9 +287,13 @@ html, body {
 /* Work Area */
 
 .WorkArea {
-  flex: 1;
+  position: fixed;
+  top: 0;
+  left: 200px;
+  right: 0;
+  bottom: 0;
+
+  box-sizing: border-box;
   padding: 30px;
+
 }
-+
-PLUS SIGN
-Unicode: U+002B, UTF-8: 2B

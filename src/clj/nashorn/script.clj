@@ -1,4 +1,6 @@
 (ns nashorn.script
+  (:require
+   [nashorn.logging :as log])
   (:import
    [java.io StringWriter]
    [jdk.nashorn.api.scripting ClassFilter NashornScriptEngineFactory]
@@ -30,15 +32,15 @@
 (defn eval-script
   "Runs the evalation, capturing script 'prints' output in a
   string (rather than printing it to stdout)."
-  [script]
+  [^String script]
   (let [writer (StringWriter.)
         engine (js-engine)]
     (.setWriter (.getContext engine) writer)
     (try
       (let [result (js-eval engine script)]
-        {:error? false :result result :output (str writer)})
+        {:isError false :result result :output (str writer)})
       (catch Throwable t
-        {:error? true :result nil :output (str writer) :exception t :error (.getMessage t)}))))
+        {:isError true :result nil :output (str writer) :error (.getMessage t)}))))
 
 (comment
   (require '[clojure.java.io :as io])

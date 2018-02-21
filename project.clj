@@ -3,6 +3,7 @@
   :uberjar-name "nashorn-1.jar"
   :dependencies [[org.clojure/clojure "1.10.0-alpha4"]
                  [org.clojure/core.async "0.4.474"]
+                 [org.clojure/data.json "0.2.6"]
                  [integrant "0.7.0-alpha1"]
                  [http-kit "2.3.0-alpha5"]]
   :main ^:skip-aot nashorn.stub
@@ -27,13 +28,15 @@
                                    :language-in :ecmascript5
                                    :optimizations :whitespace
                                    :main "nashorn.client.main"}}]}
-  :profiles {:resource-paths ^:replace ["dev" "resources"]
-             :uberjar {:aot [nashorn.stub]}
-             :dev {:plugins [[lein-ancient "0.6.15"]
+  ;;
+  :profiles {:uberjar {:aot [nashorn.stub]}
+             :dev {:resource-paths ^:replace ["dev" "resources"]
+                   :plugins [[lein-ancient "0.6.15"]
                              [lein-cljsbuild "1.1.7" :exclusions [org.clojure/clojure]]
                              [lein-figwheel "0.5.14"  :exclusions [org.clojure/clojure]]]
                    :dependencies [[org.clojure/clojurescript "1.9.946"]
-                                  [rum "0.11.1" :exclusions [com.cognitect/transit-clj
+                                  [cljsjs/codemirror "5.31.0-0"]
+                                  [rum "0.11.2" :exclusions [com.cognitect/transit-clj
                                                              com.cognitect/transit-cljs]]
                                   [integrant/repl "0.3.0"]]}}
   :auto-clean false

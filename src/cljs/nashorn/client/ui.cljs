@@ -6,11 +6,15 @@
    [clojure.walk :refer [postwalk]]
    [rum.core :as rum :refer [defc]]))
 
+(defn do-send!
+  [ch event & [msg]]
+  (let [msg (if (nil? msg) {} msg)]
+    (put! ch (merge {:event event} msg))))
+
 (defn send!
   [ch event & [msg]]
   (fn [e]
-    (let [msg (if (nil? msg) {} msg)]
-      (put! ch (merge {:event event} msg)))))
+    (do-send! ch event msg)))
 
 (defn clean
   [data]
