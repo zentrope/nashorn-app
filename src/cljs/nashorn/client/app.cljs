@@ -21,7 +21,7 @@
 (defc RootUI < PureMixin
   [state ch]
   [:section.App
-   (SideBar state ch)
+   (SideBar state (= (:view state) :view/new-script) ch)
    (UIFrame state ch)])
 
 (defn render!

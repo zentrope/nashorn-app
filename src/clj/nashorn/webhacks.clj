@@ -42,6 +42,12 @@
     (raw-file request (str "public" uri))
     (not-found request)))
 
+(defn request-str
+  [request]
+  (format "%s %s"
+          (string/upper-case (name (:request-method request)))
+          (:uri request)))
+
 (defn decode
   [data]
   (json/read-str data :key-fn keyword))

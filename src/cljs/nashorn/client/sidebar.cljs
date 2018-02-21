@@ -36,12 +36,13 @@
       (fn-item f ch))]])
 
 (defc SideBar < PureMixin
-  [state ch]
+  [state editing? ch]
   [:section.SideBar
    sb-header
    [:div.Panels
     (SideBarScriptsPanel ["github.js"] ch)
-    (SideBarFunctionsPanel (:functions state) ch)]
+    (when editing?
+      (SideBarFunctionsPanel (:functions state) ch))]
    [:div.Buttons
     (when-not (= (:view state) :view/new-script)
       (Button {:onClick (send! ch :script/new) :label "New Script"}))]

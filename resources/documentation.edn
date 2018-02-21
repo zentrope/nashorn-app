@@ -1,0 +1,16 @@
+{"format"   {:name "format"
+             :desc "Format string templates in an sprintf way."
+             :example "
+var fns = Java.type('com.bobo.nashorn.Functions');
+
+var value = fns.format('hello %s', 21);
+
+(value === 'hello 21') ? "match!" : "no match!";
+"}
+
+ "httpGet"  {:name "httpGet"
+             :desc "Get the contents of a URL."}
+ "httpPost" {:name "httpPost"
+             :desc "Post to a URL, returning contents if any."}
+ "lookup"   {:name "lookup"
+             :desc "Lookup up a value in the script's local storage area."}}

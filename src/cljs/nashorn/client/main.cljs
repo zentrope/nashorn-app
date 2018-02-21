@@ -19,7 +19,7 @@
    "lookup"   {:name "lookup"}})
 
 (defonce app-state
-  (atom {:functions          function-docs     ; help for script extension functions
+  (atom {:functions          {}                ; help for script extension functions
          :scripts            []                ; list of saved scripts
          :script/test-result nil               ; result form testing a script
          :view               :view/all-scripts ; current UI view
