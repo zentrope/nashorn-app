@@ -157,6 +157,25 @@ html, body {
   padding: 20px;
 }
 
+/* Name Panel */
+.EditorArea .NamePanel {
+  height: 30px;
+  margin-bottom: 10px;
+  display: flex;
+
+  border: 1px solid silver;
+}
+
+.EditorArea .NamePanel input {
+  flex: 1;
+  border: 0;
+  font-size: 11pt;
+  color: #369;
+  padding-left: 5px;
+}
+
+/* Editor Panel */
+
 .EditorArea .EditorPanel {
   flex: 2;
 

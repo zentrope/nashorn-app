@@ -7,7 +7,7 @@
    [nashorn.client.ui :refer [do-send! send! PureMixin WorkArea]]
    [rum.core :as rum :refer [defc defcs]]))
 
-(def default-code
+(def ^:private default-code
   (->> ["//"
         "var FNS = Java.type('com.bobo.nashorn.Functions');"
         ""
@@ -15,22 +15,29 @@
         "'hello, world';"]
        (string/join "\n")))
 
-(def editor-config
+(def ^:private editor-config
   (clj->js {"value"           default-code
             "mode"            "javascript"
             "viewportMargin"  js/Infinity
             "lineWrapping"    false
             "lineNumbers"     true}))
 
-(defn- ->editor
+(defn- mk-editor
   []
-  (println "Creating editor: if you see this a lot, things are broken.")
   (let [place (.getElementById js/document "CodeMirrorEditor")]
     (.fromTextArea js/CodeMirror place editor-config)))
 
 (defn- code
   [cm]
   (.getValue cm))
+
+(defc NamePanel < PureMixin
+  [name onChange]
+  [:div.NamePanel
+   [:input {:type "text"
+            :placeholder "Script name"
+            :max-length "30"
+            :on-change #(onChange (.-value (.-target %)))}]])
 
 (defc EditorPanel < PureMixin
   [editor-obj ch]
@@ -67,7 +74,6 @@
 
 (defc ControlBar < PureMixin
   [cm ch]
-  (println "ControlBar")
   [:div.ControlBar
    [:button {:disabled true} "Save"]
    (when-not (nil? cm)
@@ -76,12 +82,14 @@
 
 (defcs Editor < PureMixin
   (rum/local {} :this/ed)
+  (rum/local "" :this/name)
   {:did-mount (fn [state]
-                (let [cm (->editor)]
+                (let [cm (mk-editor)]
                   (reset! (:this/ed state) cm)
                   state))}
   [locals state ch]
   [:section.EditorArea
+   (NamePanel @(:this/name locals) #(reset! (:this/name locals) %))
    (EditorPanel @(:this/ed locals) ch)
    (when-let [result (:script/test-result state)]
      (ResultPanel result ch))
