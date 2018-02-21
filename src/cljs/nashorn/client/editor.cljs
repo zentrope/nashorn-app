@@ -1,4 +1,4 @@
-(ns nashorn.client.script-form
+(ns nashorn.client.editor
   (:require
    [clojure.pprint :refer [pprint]]
    [clojure.string :as string :refer [blank?]]
@@ -74,7 +74,7 @@
      [:button {:onClick #(do-send! ch :script/test {:script (code cm)})} "Test"])
    [:button {:onClick (send! ch :script/done)} "Done"]])
 
-(defcs NewScriptForm < PureMixin
+(defcs Editor < PureMixin
   (rum/local {} :this/ed)
   {:did-mount (fn [state]
                 (let [cm (->editor)]

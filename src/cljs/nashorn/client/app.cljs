@@ -1,6 +1,6 @@
 (ns nashorn.client.app
   (:require
-   [nashorn.client.script-form :refer [NewScriptForm]]
+   [nashorn.client.editor :refer [Editor]]
    [nashorn.client.sidebar :refer [SideBar]]
    [nashorn.client.ui :refer [send! PureMixin WorkArea]]
    [rum.core :as rum :refer [defc]]))
@@ -15,7 +15,7 @@
 (defc UIFrame < PureMixin
   [state ch]
   (case (:view state)
-    :view/new-script (NewScriptForm state ch)
+    :view/new-script (Editor state ch)
     (AllScripts ch)))
 
 (defc RootUI < PureMixin

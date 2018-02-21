@@ -10,19 +10,11 @@
 
 ;; app state
 
-
-(def ^:private function-docs
-  {"format"   {:name "format"
-               :desc "Format string templates in an sprintf way."}
-   "httpGet"  {:name "httpGet"}
-   "httpPost" {:name "httpPost"}
-   "lookup"   {:name "lookup"}})
-
 (defonce app-state
-  (atom {:functions          {}                ; help for script extension functions
-         :scripts            []                ; list of saved scripts
-         :script/test-result nil               ; result form testing a script
-         :view               :view/all-scripts ; current UI view
+  (atom {:functions          {}         ; help for script extension functions
+         :scripts            []         ; list of saved scripts
+         :script/test-result nil        ; result form testing a script
+         :view               :view/home ; current UI view
          }))
 
 (defn reload
