@@ -143,10 +143,18 @@ html, body {
 
 .EditorArea {
 
-  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 200px;
+  right: 0;
+  bottom: 0;
+
+  box-sizing: border-box;
 
   display: flex;
   flex-direction: column;
+
+  padding: 20px;
 }
 
 .EditorArea .EditorPanel {
@@ -168,15 +176,26 @@ html, body {
   flex: 1;
 }
 
-.EditorArea .EditorPanel .Buttons {
+/* Control Bar */
+
+.EditorArea .ControlBar {
+  margin-top: 20px;
   height: 30px;
-  padding-top: 10px;
-  padding-left: 10px;
+  padding-top: 5px;
+  padding-left: 5px;
+  box-sizing: border-box;
+
+  border: 1px solid #d8d8d8;
+  border-radius: 2px;
+  background-color: #f7f7f7;
 }
 
-.EditorArea .EditorPanel .Buttons button {
-  padding-right: 10px;
+.EditorArea .ControlBar button {
+  margin-right: 10px;
 }
+
+
+/* ResultPanel */
 
 .EditorArea .ResultPanel {
   flex: 1;
@@ -188,7 +207,7 @@ html, body {
 
 .EditorArea .ResultPanel .Header {
   height: 30px;
-  background-color: green;
+  background-color: #7ebb96;
   display: flex;
   align-items: center;
   padding: 0 10px 0 10px;
@@ -199,9 +218,13 @@ html, body {
     background-color: IndianRed;
   }
 
+  .EditorArea .ResultPanel .Header.Error .Title {
+    color: white;
+  }
+
   .EditorArea .ResultPanel .Header .Title {
     flex: 1;
-    color: white;
+    color: black;
     font-weight: bold;
     font-size: 11pt;
   }
@@ -294,6 +317,5 @@ html, body {
   bottom: 0;
 
   box-sizing: border-box;
-  padding: 30px;
-
+  padding: 20px;
 }

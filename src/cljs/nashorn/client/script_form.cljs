@@ -22,36 +22,28 @@
             "lineWrapping"    false
             "lineNumbers"     true}))
 
-(defn- create-editor
+(defn- ->editor
   []
+  (println "Creating editor: if you see this a lot, things are broken.")
   (let [place (.getElementById js/document "CodeMirrorEditor")]
     (.fromTextArea js/CodeMirror place editor-config)))
 
 (defn- code
-  [locals]
-  (.getValue @(:this/ed locals)))
+  [cm]
+  (.getValue cm))
 
-(defcs EditorPanel < PureMixin
-  (rum/local [] :this/ed)
-  {:did-mount (fn [state]
-                (let [cm (create-editor)]
-                  (reset! (:this/ed state) cm)
-                  state))}
-  [locals ch]
+(defc EditorPanel < PureMixin
+  [editor-obj ch]
   [:section.EditorPanel
    [:div.EditorContainer
     [:textarea#CodeMirrorEditor
      {:autoFocus true
-      :value default-code}]]
-   [:div.Buttons
-    [:button {:disabled true} "Save"]
-    [:button {:onClick #(do-send! ch :script/test {:script (code locals)})} "Test"]
-    [:button {:onClick (send! ch :script/done)} "Done"]]])
+      :value default-code}]]])
 
 (defn- result-header
   [result ch]
   [:div {:class (if (:isError result) ["Header" "Error"] ["Header"])}
-    [:div.Title "Test results"]
+    [:div.Title "Script run results"]
     [:div.Controls
      [:button {:onClick (send! ch :script/done-results)} "Close"]]])
 
@@ -73,10 +65,24 @@
     (when-not (blank? (:output result))
       (result-block "Script's captured stdout" (:output result)))]])
 
-(defc NewScriptForm < PureMixin
-  [state ch]
-  (WorkArea
-   [:section.EditorArea
-    (EditorPanel ch)
-    (when-let [result (:script/test-result state)]
-      (ResultPanel result ch))]))
+(defc ControlBar < PureMixin
+  [cm ch]
+  (println "ControlBar")
+  [:div.ControlBar
+   [:button {:disabled true} "Save"]
+   (when-not (nil? cm)
+     [:button {:onClick #(do-send! ch :script/test {:script (code cm)})} "Test"])
+   [:button {:onClick (send! ch :script/done)} "Done"]])
+
+(defcs NewScriptForm < PureMixin
+  (rum/local {} :this/ed)
+  {:did-mount (fn [state]
+                (let [cm (->editor)]
+                  (reset! (:this/ed state) cm)
+                  state))}
+  [locals state ch]
+  [:section.EditorArea
+   (EditorPanel @(:this/ed locals) ch)
+   (when-let [result (:script/test-result state)]
+     (ResultPanel result ch))
+   (ControlBar @(:this/ed locals) ch)])
