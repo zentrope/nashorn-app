@@ -29,7 +29,7 @@
 
 (defmethod mutate! :script/test
   [state ch msg]
-  (http/post ch "test" (:script msg))
+  (http/post ch "test" (:text msg))
   state)
 
 (defmethod mutate! "server/docs"

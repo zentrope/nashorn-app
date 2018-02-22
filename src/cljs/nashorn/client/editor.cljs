@@ -4,6 +4,7 @@
    [clojure.string :as string :refer [blank?]]
    [cljsjs.codemirror]
    [cljsjs.codemirror.mode.javascript]
+   [nashorn.client.cron :as cron]
    [nashorn.client.ui :refer [do-send! send! PureMixin WorkArea]]
    [rum.core :as rum :refer [defc defcs]]))
 
@@ -29,7 +30,8 @@
 
 (defn- code
   [cm]
-  (.getValue cm))
+  (when-not (nil? cm)
+    (.getValue cm)))
 
 (defc NamePanel < PureMixin
   [name onChange]
@@ -38,6 +40,21 @@
             :placeholder "Script name"
             :max-length "30"
             :on-change #(onChange (.-value (.-target %)))}]])
+
+(defc CronPanel < PureMixin
+  [cron onChange]
+  (let [{:keys [error? text] :as desc} (cron/describe cron)]
+    (println desc)
+    [:div.CronPanel
+     [:div.Widget
+      [:input {:type "text"
+               :placeholder "* * * * *"
+               :value cron
+               :max-length "100"
+               :on-change #(onChange (.-value (.-target %)))}]
+      [:span.Help "Cron: minute, hour, day-of-month, month, day-of-week"]]
+     [:div {:class (if error? ["Description" "Error"] "Description")}
+      text]]))
 
 (defc EditorPanel < PureMixin
   [editor-obj ch]
@@ -73,16 +90,16 @@
       (result-block "Script's captured stdout" (:output result)))]])
 
 (defc ControlBar < PureMixin
-  [cm ch]
+  [{:keys [text name cron] :as script} ch]
   [:div.ControlBar
    [:button {:disabled true} "Save"]
-   (when-not (nil? cm)
-     [:button {:onClick #(do-send! ch :script/test {:script (code cm)})} "Test"])
+   [:button {:onClick #(do-send! ch :script/test {:text text})} "Test"]
    [:button {:onClick (send! ch :script/done)} "Done"]])
 
 (defcs Editor < PureMixin
-  (rum/local {} :this/ed)
+  (rum/local nil :this/ed)
   (rum/local "" :this/name)
+  (rum/local "* * * * *" :this/cron)
   {:did-mount (fn [state]
                 (let [cm (mk-editor)]
                   (reset! (:this/ed state) cm)
@@ -90,7 +107,11 @@
   [locals state ch]
   [:section.EditorArea
    (NamePanel @(:this/name locals) #(reset! (:this/name locals) %))
+   (CronPanel @(:this/cron locals) #(reset! (:this/cron locals) %))
    (EditorPanel @(:this/ed locals) ch)
    (when-let [result (:script/test-result state)]
      (ResultPanel result ch))
-   (ControlBar @(:this/ed locals) ch)])
+   (ControlBar {:name @(:this/name locals)
+                :text (code @(:this/ed locals))
+                :cron @(:this/cron locals)}
+               ch)])
