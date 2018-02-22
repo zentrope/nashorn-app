@@ -43,6 +43,9 @@ build: clean build-client-prod ## Build a runnable app (uberjar)
 figwheel: clean-client ## Start figwheel plugin for working with CLJS
 	$(rlwrap) lein figwheel || true
 
+db-console: ## Start a db-console web app (for h2).
+	java -jar $(shell find ~/.m2 -iname "h2*jar" | sort | tail -1) || true
+
 help: ## Show makefile based help
 	@grep -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
 		| awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-25s\033[0m %s\n", $$1, $$2}' \

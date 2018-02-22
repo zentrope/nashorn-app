@@ -2,11 +2,16 @@
   (:require
    [clojure.stacktrace :refer [print-stack-trace]]
    [integrant.core :as ig]
+   [nashorn.db :as db]
    [nashorn.logging :as log]
    [nashorn.web :as web]))
 
 (def config
-  {:svc/web {:port 2018}})
+  {:svc/web {:port 2018}
+   :svc/db  {:spec {:subprotocol "h2"
+                    :subname "file://%s/storage"
+                    :user "sa"
+                    :password ""}}})
 
 (defn hook-shutdown! [f]
   (doto (Runtime/getRuntime)
@@ -22,6 +27,20 @@
   (log/errorf "Caught: [%s] on thread [%s]." ex (.getName thread))
   (log/error (with-out-str (print-stack-trace ex))))
 
+;; DB component
+
+(defmethod ig/init-key :svc/db
+  [_ config]
+  (log/info "Starting db service.")
+  (db/start! config))
+
+(defmethod ig/halt-key! :svc/db
+  [_ svc]
+  (log/info "Stopping db service.")
+  (db/stop! svc))
+
+;; Web component
+
 (defmethod ig/init-key :svc/web
   [_ {:keys [port] :as config}]
   (log/info "Starting web service.")
@@ -31,6 +50,8 @@
   [_ svc]
   (log/info "Stopping web service.")
   (web/stop! svc))
+
+;; Bootstrap
 
 (defn -main
   [& args]

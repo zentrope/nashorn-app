@@ -1,11 +1,20 @@
 (defproject nashorn "1"
-  :jar-name "nashorn-classes.jar"
-  :uberjar-name "nashorn-1.jar"
-  :dependencies [[org.clojure/clojure "1.10.0-alpha4"]
-                 [org.clojure/core.async "0.4.474"]
-                 [org.clojure/data.json "0.2.6"]
-                 [integrant "0.7.0-alpha1"]
-                 [http-kit "2.3.0-alpha5"]]
+
+  :jar-name
+  "nashorn-classes.jar"
+
+  :uberjar-name
+  "nashorn-1.jar"
+
+  :dependencies
+  [[org.clojure/clojure "1.10.0-alpha4"]
+   [org.clojure/core.async "0.4.474"]
+   [org.clojure/data.json "0.2.6"]
+   [integrant "0.7.0-alpha1"]
+   [http-kit "2.3.0-alpha5"]
+   [org.clojure/java.jdbc "0.7.5"]
+   [com.h2database/h2 "1.4.196"]]
+
   :main ^:skip-aot nashorn.stub
   :min-lein-eversion "2.8.1"
   :source-paths ["src/clj"]
