@@ -7,11 +7,11 @@
    [nashorn.web :as web]))
 
 (def config
-  {:svc/web {:port 2018}
+  {:svc/web {:port 2018 :db (ig/ref :svc/db)}
    :svc/db  {:spec {:subprotocol "h2"
-                    :subname "file://%s/storage"
-                    :user "sa"
-                    :password ""}}})
+                    :subname     "file://%s/storage"
+                    :user        "sa"
+                    :password    ""}}})
 
 (defn hook-shutdown! [f]
   (doto (Runtime/getRuntime)
@@ -42,9 +42,9 @@
 ;; Web component
 
 (defmethod ig/init-key :svc/web
-  [_ {:keys [port] :as config}]
+  [_ config]
   (log/info "Starting web service.")
-  (web/start! {:port port}))
+  (web/start! {:port (:port config) :db (:db config)}))
 
 (defmethod ig/halt-key! :svc/web
   [_ svc]

@@ -1,8 +1,8 @@
 (ns nashorn.db
   (:require
-   [clojure.string :as string]
-   [clojure.java.jdbc :as jdbc]
    [clojure.java.io :as io]
+   [clojure.java.jdbc :as jdbc]
+   [clojure.string :as string]
    [nashorn.logging :as log]))
 
 (def ^:private sep
@@ -26,8 +26,6 @@
     [:created_at :timestamp "not null" "default current_timestamp"]]))
 
 (defn- sql-now
-  "Return the current time, (or milliseconds) as an SQL Timestamp
-  type."
   ([]
    (java.sql.Timestamp. (System/currentTimeMillis)))
   ([ms]
@@ -43,7 +41,7 @@
 (defn- run-and-record!
   [conn migration]
   (let [m-name (-> migration meta :name str)]
-    (log/info "Running db migration:" m-name)
+    (log/info "→ running db migration:" m-name)
     (migration conn)
     (jdbc/insert! conn :migration {:name m-name :created_at (sql-now)})))
 
@@ -60,41 +58,17 @@
                    ;; broken if embedded comments
                    (filterv #(not (.startsWith % "--")))
                    (string/join #" "))]
-
     (mapv smooth-fn (string/split lines #";"))))
 
-(defn load-and-invoke!
-  "Given a file containing SQL statements and comments, return a
-  vector of SQL commands."
+(defn- load-and-invoke!
   [conn schema-file]
   (let [schema (load-sql! schema-file)]
     (jdbc/db-do-commands conn schema)))
 
-(defn migrate!
-  "Takes a Hikari pool (or spec) and migrations, which are #'functions
-  which take a connection and do something interesting with the
-  schema. The name of the function is used to detect if the migration
-  has already been applied, so just add more migrations as the
-  application grows.
-
-  Example\":
-
-  (migration/migrate! #'db-initial-schema
-                      #'db-top-stream-schema
-                      #'db-alter-stats-table)
-
-  You can 'select * from migrations' to see which ones have been
-  applied."
+(defn- migrate!
   [pool & migrations]
   (jdbc/with-db-connection [conn pool]
-    ;;
-    ;; Always try to create the migration table.
-    ;;
     (jdbc/db-do-commands conn migration-table)
-    ;;
-    ;; Pull out the applied migrations and run the ones
-    ;; not yet applied.
-    ;;
     (let [accomplished? (already-run? conn)]
       (doseq [m migrations]
         (when-not (accomplished? (-> m meta :name str))
@@ -106,15 +80,22 @@
   [conn]
   (load-and-invoke! conn "sql/mig-001.sql"))
 
-;; java -jar ~/.m2/repository/com/h2database/h2/1.4.196/h2-1.4.196.jar
+;; Queries
+
+(defn extensions
+  [this]
+  (doall (jdbc/query (:spec this) ["select * from extension"])))
+
+;; Bootstrap
 
 (defn start!
   [config]
   (let [spec (:spec config)
         subname (:subname spec)
-        dir (init-dir! (str home sep ".nashorn_app"))
+        place (str home sep ".nashorn_app")
+        dir (init-dir! place)
         spec (assoc spec :subname (format subname dir))]
-    (log/info "db spec: " (pr-str spec))
+    (log/infof "→ data stored in %s." place)
     (migrate! spec #'mig-001)
     {:spec spec}))
 
