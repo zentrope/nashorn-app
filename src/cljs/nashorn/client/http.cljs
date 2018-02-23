@@ -18,25 +18,12 @@
             :headers headers
             :body    (pr-str body)}))
 
-(defn- check-status
-  [response url config]
-  (if (not= 200 (.-status response))
-    (throw {:status (.-status response)
-            :code (.-statusText response)
-            :url url
-            :method config.method
-            :body (or (.text response) "")})
-    response))
-
 (defn- run-fetch
   [ch url config]
   (-> (js/fetch url config)
-      ;;
-      (.then #(check-status % url config))
-      (.then #(.text %))
-      (.then #(read-string %))
-      (.then #(put! ch %))
-      ;;
+      (.then  #(.text %))
+      (.then  #(read-string %))
+      (.then  #(put! ch %))
       (.catch #(put! ch {:event :server/error :error %}))))
 
 (defn- post

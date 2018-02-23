@@ -20,6 +20,18 @@
    :headers {"content-type" "application/edn"}
    :body (webhacks/encode (merge {:event event} msg))})
 
+(def ^:private reasons
+  {:no-handler "Unable to process message."})
+
+(defn- error
+  ([code msg]
+   (error code (or (get reasons code) (name code)) msg))
+  ([code reason msg]
+   (log/error (pr-str {:code code :reason reason :msg msg}))
+   (response 500 :server/error {:code code :reason reason :msg msg})))
+
+;;
+
 (defn- home
   [request]
   (rlog request)
@@ -33,9 +45,7 @@
 
 (defmethod query! :default
   [_ msg]
-  (response 500 :server/error {:code :no-handler
-                               :reason "Unable to process msg."
-                               :msg msg}))
+  (error :no-handler msg))
 
 (defmethod query! :script/docs
   [db _]
@@ -64,15 +74,21 @@
 
 (defmethod mutate! :default
   [_ msg]
-  (response 500 :server/error {:code :no-handler
-                               :reason "Unable to process msg."
-                               :msg msg}))
+  (error :no-handler msg))
+
+(defmethod mutate! :script/save
+  [db msg]
+  (db/save-extension db (:script msg))
+  (response 200 :server/extension-save {}))
 
 (defn- mutate
   [request db]
   (let [msg (-> request :body slurp webhacks/decode)]
     (rlog request msg)
-    (response 200 :server/extension-save {})))
+    (try
+      (mutate! db msg)
+      (catch Throwable t
+        (error :exception (str t) msg)))))
 
 ;;
 

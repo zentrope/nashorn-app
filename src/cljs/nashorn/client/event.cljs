@@ -41,6 +41,11 @@
   [state _ data]
   (assoc state :functions (:docs data)))
 
+(defmethod mutate! :server/error
+  [state _ data]
+  (println "ERROR:" (:reason data))
+  state)
+
 (defmethod mutate! :server/test-result
   [state _ data]
   (assoc state :script/test-result (dissoc data :event)))

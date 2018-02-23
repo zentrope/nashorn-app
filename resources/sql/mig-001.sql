@@ -9,7 +9,7 @@ create table if not exists extension (
   crontab varchar not null default '* * * * *',
   script varchar not null,
   language varchar not null default 'javascript',
-  status enum ('active', 'inactive')
+  status enum ('active', 'inactive') default 'inactive'
 );
 
 create index if not exists ext_status on extension(status);
