@@ -6,7 +6,6 @@ html, body {
   box-sizing: border-box;
 }
 
-
 .App {
 }
 
@@ -155,6 +154,7 @@ html, body {
   flex-direction: column;
 
   padding: 20px;
+  padding-bottom: 10px;
 }
 
 /* Name Panel */
@@ -248,7 +248,7 @@ html, body {
 /* Control Bar */
 
 .EditorArea .ControlBar {
-  margin-top: 20px;
+  margin-top: 10px;
   height: 30px;
   padding-top: 5px;
   padding-left: 5px;
@@ -321,27 +321,26 @@ html, body {
 
   display: flex;
   flex-direction: column;
+
+  position: relative;
 }
 
 .ResultPanel .ResultBlocks .ResultBlock .Title {
-  padding: 5px;
-  padding-top: 10px;
-  padding-bottom: 1px;
+  position: absolute;
+  top: 5px;
+  right: 5px;
   display: flex;
-  font-size: 11pt;
-  background-color: #f9fafa;
-  border-bottom: 1px solid #e6e6e6;
+  font-size: 9pt;
+  color: #aaa;
 }
 
 .ResultPanel .ResultBlocks .ResultBlock .Result {
-
   flex: 1;
   overflow-y: auto;
 
-  padding-right: 15px;
-  padding-left: 15px;
+  padding: 5px;
+
   size: 11pt;
-  padding-bottom: 10px;
   display: flex;
 }
 
@@ -349,6 +348,8 @@ html, body {
   flex: 1;
   color: #369;
   overflow: auto;
+
+  margin: 0;
 }
 
 /* Components */

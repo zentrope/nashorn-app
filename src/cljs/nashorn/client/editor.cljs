@@ -9,10 +9,9 @@
    [rum.core :as rum :refer [defc defcs]]))
 
 (def ^:private default-code
-  (->> ["//"
-        "var FNS = Java.type('com.bobo.nashorn.Functions');"
-        ""
-        "print(FNS.format('Hello %s!', 'World'));"
+  (->> ["// Replace this code with your own.\n//\n"
+        "var FNS = Java.type('com.bobo.nashorn.Functions');\n"
+        "print(FNS.format('Hello %s!', 'World'));\n"
         "'hello, world';"]
        (string/join "\n")))
 
@@ -23,15 +22,15 @@
             "lineWrapping"    false
             "lineNumbers"     true}))
 
-(defn- mk-editor
-  []
-  (let [place (.getElementById js/document "CodeMirrorEditor")]
-    (.fromTextArea js/CodeMirror place editor-config)))
+(defn- target-val
+  [e]
+  (.-value (.-target e)))
 
-(defn- code
-  [cm]
-  (when-not (nil? cm)
-    (.getValue cm)))
+(defn- mk-editor
+  [onChange]
+  (let [place (.getElementById js/document "CodeMirrorEditor")]
+    (doto (.fromTextArea js/CodeMirror place editor-config)
+      (.on "change" #(onChange (.getValue %1))))))
 
 (defc NamePanel < PureMixin
   [name onChange]
@@ -39,19 +38,19 @@
    [:input {:type "text"
             :placeholder "Script name"
             :max-length "30"
-            :on-change #(onChange (.-value (.-target %)))}]])
+            :value name
+            :on-change #(onChange (target-val %))}]])
 
 (defc CronPanel < PureMixin
   [cron onChange]
   (let [{:keys [error? text] :as desc} (cron/describe cron)]
-    (println desc)
     [:div.CronPanel
      [:div.Widget
       [:input {:type "text"
                :placeholder "* * * * *"
                :value cron
                :max-length "100"
-               :on-change #(onChange (.-value (.-target %)))}]
+               :on-change #(onChange (target-val %))}]
       [:span.Help "Cron: minute, hour, day-of-month, month, day-of-week"]]
      [:div {:class (if error? ["Description" "Error"] "Description")}
       text]]))
@@ -74,7 +73,7 @@
 (defn- result-block
   [name data]
   [:div.ResultBlock
-   [:div.Title (str "\u25be " name)]
+   [:div.Title name]
    [:div.Result [:pre data]]])
 
 (defc ResultPanel < PureMixin
@@ -85,9 +84,9 @@
     (when (:isError result)
       (result-block "Error:" (:error result)))
     (when-not (blank? (:result result))
-      (result-block "Script's returned result" (:result result)))
+      (result-block "Returned result" (:result result)))
     (when-not (blank? (:output result))
-      (result-block "Script's captured stdout" (:output result)))]])
+      (result-block "Captured stdout" (:output result)))]])
 
 (defc ControlBar < PureMixin
   [{:keys [text name cron] :as script} ch]
@@ -99,9 +98,10 @@
 (defcs Editor < PureMixin
   (rum/local nil :this/ed)
   (rum/local "" :this/name)
+  (rum/local default-code :this/text)
   (rum/local "* * * * *" :this/cron)
   {:did-mount (fn [state]
-                (let [cm (mk-editor)]
+                (let [cm (mk-editor #(reset! (:this/text state) %))]
                   (reset! (:this/ed state) cm)
                   state))}
   [locals state ch]
@@ -112,6 +112,5 @@
    (when-let [result (:script/test-result state)]
      (ResultPanel result ch))
    (ControlBar {:name @(:this/name locals)
-                :text (code @(:this/ed locals))
-                :cron @(:this/cron locals)}
-               ch)])
+                :text @(:this/text locals)
+                :cron @(:this/cron locals)} ch)])
