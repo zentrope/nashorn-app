@@ -58,12 +58,12 @@
 
 (defmethod handle! :script/list
   [db msg]
-  (response 200 :server/extentions {:data (db/extensions db)}))
+  (response 200 :server/script-list {:data (db/scripts db)}))
 
 (defmethod handle! :script/save
   [db msg]
-  (db/save-extension db (:script msg))
-  (response 200 :server/extension-save {}))
+  (db/save-script db (:script msg))
+  (response 200 :server/script-save {}))
 
 ;;-----------------------------------------------------------------------------
 ;; endpoints

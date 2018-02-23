@@ -74,27 +74,44 @@
         (when-not (accomplished? (-> m meta :name str))
           (run-and-record! conn m))))))
 
+;;-----------------------------------------------------------------------------
 ;; Migrations
+;;-----------------------------------------------------------------------------
 
 (defn- mig-001
   [conn]
   (load-and-invoke! conn "sql/mig-001.sql"))
 
+;;-----------------------------------------------------------------------------
+;; Convenience
+;;-----------------------------------------------------------------------------
+
+(defn- scope-identity
+  [result]
+  ;; h2 only
+  (first (vals (first result))))
+
+;;-----------------------------------------------------------------------------
 ;; Queries
+;;-----------------------------------------------------------------------------
 
-(defn extensions
+(defn scripts
   [this]
-  (doall (jdbc/query (:spec this) ["select * from extension"])))
+  (doall (jdbc/query (:spec this) ["select * from script"])))
 
-(defn save-extension
-  [this extension]
-  (jdbc/insert! (:spec this) "extension"
-                {:name (:name extension)
-                 :crontab (:cron extension)
-                 :script (:text extension)
-                 :status "inactive"}))
+(defn save-script
+  [this script]
+  (let [result (jdbc/insert! (:spec this) "script"
+                             {:name (:name script)
+                              :crontab (:cron script)
+                              :script (:text script)
+                              :status "inactive"})]
+    (log/infof "ID just saved is: `%s`." (scope-identity result))
+    result))
 
+;;-----------------------------------------------------------------------------
 ;; Bootstrap
+;;-----------------------------------------------------------------------------
 
 (defn start!
   [config]

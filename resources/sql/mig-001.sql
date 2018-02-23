@@ -1,4 +1,4 @@
-create table if not exists extension (
+create table if not exists script (
   id bigint auto_increment primary key,
   created timestamp not null default now(),
   updated timestamp not null default now(),
@@ -12,4 +12,4 @@ create table if not exists extension (
   status enum ('active', 'inactive') default 'inactive'
 );
 
-create index if not exists ext_status on extension(status);
+create index if not exists script_status on script(status);

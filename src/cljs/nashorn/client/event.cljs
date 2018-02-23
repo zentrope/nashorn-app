@@ -1,6 +1,6 @@
 (ns nashorn.client.event
   (:require
-   [cljs.core.async :refer [<! go-loop put!]]
+   [cljs.core.async :refer [<! go-loop]]
    [clojure.string :as string]
    [nashorn.client.http :as http]))
 
