@@ -46,6 +46,9 @@ figwheel: clean-client ## Start figwheel plugin for working with CLJS
 db-console: ## Start a db-console web app (for h2).
 	java -jar $(shell find ~/.m2 -iname "h2*jar" | sort | tail -1) || true
 
+db-reset: ## Reset (really, delete) the database (h2).
+	rm -rf ~/.nashorn_app/storage.mv.db
+
 help: ## Show makefile based help
 	@grep -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
 		| awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-25s\033[0m %s\n", $$1, $$2}' \
