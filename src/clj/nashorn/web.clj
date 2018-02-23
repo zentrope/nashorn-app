@@ -8,6 +8,10 @@
    [nashorn.webhacks :as webhacks]
    [org.httpkit.server :as httpd]))
 
+;;-----------------------------------------------------------------------------
+;; convenience
+;;-----------------------------------------------------------------------------
+
 (defn- rlog
   ([request msg]
    (log/info (webhacks/request-str request) (pr-str msg)))
@@ -30,78 +34,67 @@
    (log/error (pr-str {:code code :reason reason :msg msg}))
    (response 500 :server/error {:code code :reason reason :msg msg})))
 
-;;
+;;-----------------------------------------------------------------------------
+;; query handlers
+;;-----------------------------------------------------------------------------
+
+(defmulti handle!
+  (fn [db msg]
+    (:event msg)))
+
+(defmethod handle! :default
+  [_ msg]
+  (error :no-handler msg))
+
+(defmethod handle! :script/docs
+  [db _]
+  (let [docs (-> "documentation.edn" io/resource  slurp edn/read-string)]
+    (response 200 :server/docs {:docs docs})))
+
+(defmethod handle! :script/test
+  [db msg]
+  (let [run-result (script/eval-script (:text msg))]
+    (response 200 :server/test-result run-result)))
+
+(defmethod handle! :script/list
+  [db msg]
+  (response 200 :server/extentions {:data (db/extensions db)}))
+
+(defmethod handle! :script/save
+  [db msg]
+  (db/save-extension db (:script msg))
+  (response 200 :server/extension-save {}))
+
+;;-----------------------------------------------------------------------------
+;; endpoints
+;;-----------------------------------------------------------------------------
 
 (defn- home
   [request]
   (rlog request)
   (webhacks/raw-file request "public/index.html"))
 
-;;
-
-(defmulti query!
-  (fn [db msg]
-    (:event msg)))
-
-(defmethod query! :default
-  [_ msg]
-  (error :no-handler msg))
-
-(defmethod query! :script/docs
-  [db _]
-  (let [docs (-> "documentation.edn" io/resource  slurp edn/read-string)]
-    (response 200 :server/docs {:docs docs})))
-
-(defmethod query! :script/test
-  [db msg]
-  (let [run-result (script/eval-script (:text msg))]
-    (response 200 :server/test-result run-result)))
-
-(defmethod query! :extension/list
-  [db msg]
-  (response 200 :server/extentions {:data (db/extensions db)}))
-
-(defn- query
-  [request db]
-  (let [msg (-> request :body slurp webhacks/decode)]
-    (rlog request msg)
-    (query! db msg)))
-
-;;
-
-(defmulti mutate!
-  (fn [db msg] (:event msg)))
-
-(defmethod mutate! :default
-  [_ msg]
-  (error :no-handler msg))
-
-(defmethod mutate! :script/save
-  [db msg]
-  (db/save-extension db (:script msg))
-  (response 200 :server/extension-save {}))
-
-(defn- mutate
+(defn- dispatch
   [request db]
   (let [msg (-> request :body slurp webhacks/decode)]
     (rlog request msg)
     (try
-      (mutate! db msg)
+      (handle! db msg)
       (catch Throwable t
         (error :exception (str t) msg)))))
 
-;;
+;;-----------------------------------------------------------------------------
+;; service
+;;-----------------------------------------------------------------------------
 
 (defn- routes
   [request db]
   (-> (case (:uri request)
-        "/"           (home request)
-        "/mutate"     (mutate request db)
-        "/query"      (query request db)
+        "/"       (home request)
+        "/mutate" (dispatch request db)
+        "/query"  (dispatch request db)
         (webhacks/resource request))
       (assoc-in [:headers "Cache-Control"] "no-cache")))
-
-;;
 
 (defn start!
   [config]
