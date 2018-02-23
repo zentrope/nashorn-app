@@ -27,6 +27,11 @@
     (http/get ch "docs"))
   (assoc state :view :view/new-script))
 
+(defmethod mutate! :script/save
+  [state ch msg]
+  (http/post ch "mutate" msg)
+  state)
+
 (defmethod mutate! :script/test
   [state ch msg]
   (http/post ch "test" (:text msg))

@@ -32,6 +32,12 @@
     (doto (.fromTextArea js/CodeMirror place editor-config)
       (.on "change" #(onChange (.getValue %1))))))
 
+(defn- saveable?
+  [{:keys [text cron name] :as script}]
+  (and (not (blank? text))
+       (not (blank? cron))
+       (not (blank? name))))
+
 (defc NamePanel < PureMixin
   [name onChange]
   [:div.NamePanel
@@ -91,7 +97,8 @@
 (defc ControlBar < PureMixin
   [{:keys [text name cron] :as script} ch]
   [:div.ControlBar
-   [:button {:disabled true} "Save"]
+   [:button {:disabled (not (saveable? script))
+             :onClick (send! ch :script/save {:script script})} "Save"]
    [:button {:onClick #(do-send! ch :script/test {:text text})} "Test"]
    [:button {:onClick (send! ch :script/done)} "Done"]])
 
