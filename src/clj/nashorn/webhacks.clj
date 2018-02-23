@@ -4,7 +4,7 @@
   ;; another dependency.
   ;;
   (:require
-   [clojure.data.json :as json]
+   [clojure.edn :as edn]
    [clojure.java.io :as io]
    [clojure.string :as string]))
 
@@ -50,8 +50,8 @@
 
 (defn decode
   [data]
-  (json/read-str data :key-fn keyword))
+  (edn/read-string data))
 
 (defn encode
   [data]
-  (json/write-str data))
+  (pr-str data))

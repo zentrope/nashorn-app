@@ -9,7 +9,6 @@
   :dependencies
   [[org.clojure/clojure "1.10.0-alpha4"]
    [org.clojure/core.async "0.4.474"]
-   [org.clojure/data.json "0.2.6"]
    [integrant "0.7.0-alpha1"]
    [http-kit "2.3.0-alpha5"]
    [org.clojure/java.jdbc "0.7.5"]

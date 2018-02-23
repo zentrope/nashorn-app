@@ -2,10 +2,11 @@
   (:refer-clojure
    :exclude [get])
   (:require
-   [cljs.core.async :refer [put!]]))
+   [cljs.core.async :refer [put!]]
+   [cljs.reader :refer [read-string]]))
 
 (def ^:private headers
-  #js {"content-type" "application/json"})
+  #js {"content-type" "application/edn"})
 
 (defn- urlify
   [path]
@@ -15,7 +16,7 @@
   [body]
   (clj->js {:method  "POST"
             :headers headers
-            :body    (JSON.stringify (clj->js body))}))
+            :body    (pr-str body)}))
 
 (defn- check-status
   [response url config]
@@ -32,15 +33,20 @@
   (-> (js/fetch url config)
       ;;
       (.then #(check-status % url config))
-      (.then #(.json %))
-      (.then #(put! ch (js->clj % :keywordize-keys true)))
+      (.then #(.text %))
+      (.then #(read-string %))
+      (.then #(put! ch %))
       ;;
       (.catch #(put! ch {:event :server/error :error %}))))
 
-(defn post
+(defn- post
   [ch path msg]
   (run-fetch ch (urlify path) (postify msg)))
 
-(defn get
-  [ch path]
-  (run-fetch ch (urlify path) {:method "GET" :headers headers}))
+(defn mutate
+  [ch msg]
+  (post ch "mutate" msg))
+
+(defn query
+  [ch msg]
+  (post ch "query" msg))

@@ -24,24 +24,24 @@
 (defmethod mutate! :script/new
   [state ch msg]
   (when (empty? (:functions state))
-    (http/get ch "docs"))
+    (http/query ch {:event :script/docs}))
   (assoc state :view :view/new-script))
 
 (defmethod mutate! :script/save
   [state ch msg]
-  (http/post ch "mutate" msg)
+  (http/mutate ch msg)
   state)
 
 (defmethod mutate! :script/test
   [state ch msg]
-  (http/post ch "test" (:text msg))
+  (http/query ch msg)
   state)
 
-(defmethod mutate! "server/docs"
+(defmethod mutate! :server/docs
   [state _ data]
   (assoc state :functions (:docs data)))
 
-(defmethod mutate! "server/test-result"
+(defmethod mutate! :server/test-result
   [state _ data]
   (assoc state :script/test-result (dissoc data :event)))
 

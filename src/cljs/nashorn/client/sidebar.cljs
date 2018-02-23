@@ -17,7 +17,7 @@
   [:div.Footer [:div.Copyright "\u00a9 2018 Tripwire Inc"]])
 
 (def ^:private sb-header
-  [:div.Header [:div.Title "Extension Editor"]])
+  [:div.Header [:div.Title "Extensions Console"]])
 
 (defc SideBarScriptsPanel < PureMixin
   [scripts ch]
