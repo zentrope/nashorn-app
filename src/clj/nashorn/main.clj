@@ -1,17 +1,23 @@
 (ns nashorn.main
   (:require
    [clojure.stacktrace :refer [print-stack-trace]]
+   [clojure.string :refer [join]]
    [integrant.core :as ig]
    [nashorn.db :as db]
    [nashorn.logging :as log]
-   [nashorn.web :as web]))
+   [nashorn.web :as web])
+  (:import
+   (java.io File)))
+
+(def ^:private home-dir
+  (str "file://" (System/getProperty "user.home")))
 
 (def config
   {:svc/web {:port 2018 :db (ig/ref :svc/db)}
    :svc/db  {:spec {:subprotocol "h2"
-                    :subname     "file://%s/storage"
-                    :user        "sa"
-                    :password    ""}}})
+                    :subname (join File/separator [home-dir ".nashorn_app" "storage"])
+                    :user "sa"
+                    :password ""}}})
 
 (defn hook-shutdown! [f]
   (doto (Runtime/getRuntime)

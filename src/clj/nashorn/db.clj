@@ -5,18 +5,16 @@
    [clojure.string :as string]
    [nashorn.logging :as log]))
 
-(def ^:private sep
-  java.io.File/separator)
-
-(def ^:private home
-  (System/getProperty "user.home"))
+;;-----------------------------------------------------------------------------
 
 (defn- init-dir!
   [dir]
-  (.mkdirs (java.io.File. dir))
-  dir)
+  (let [fname (string/replace dir "file://" "")]
+    (.mkdirs (java.io.File. dir))))
 
-;; migration infrastructure
+;;-----------------------------------------------------------------------------
+;; Migration infrastructure
+;;-----------------------------------------------------------------------------
 
 (def ^:private migration-table
   (jdbc/create-table-ddl
@@ -86,7 +84,7 @@
 ;; Convenience
 ;;-----------------------------------------------------------------------------
 
-(defn- scope-identity
+(defn- pkey
   [result]
   ;; h2 only
   (first (vals (first result))))
@@ -99,30 +97,25 @@
   [this]
   (doall (jdbc/query (:spec this) ["select * from script"])))
 
+(defn script
+  [this id]
+  (first (jdbc/query (:spec this) ["select * from script where id=?" id])))
+
 (defn save-script
-  [this script]
-  (let [result (jdbc/insert! (:spec this) "script"
-                             {:name (:name script)
-                              :crontab (:cron script)
-                              :script (:text script)
-                              :status "inactive"})]
-    (log/infof "ID just saved is: `%s`." (scope-identity result))
-    result))
+  [{:keys [spec] :as this} {:keys [name cron text] :as new-script}]
+  (let [result (jdbc/insert! spec "script" {:name name :crontab cron :script script})]
+    (script this (pkey result))))
 
 ;;-----------------------------------------------------------------------------
 ;; Bootstrap
 ;;-----------------------------------------------------------------------------
 
 (defn start!
-  [config]
-  (let [spec (:spec config)
-        subname (:subname spec)
-        place (str home sep ".nashorn_app")
-        dir (init-dir! place)
-        spec (assoc spec :subname (format subname dir))]
-    (log/infof "→ data stored in %s." place)
-    (migrate! spec #'mig-001)
-    {:spec spec}))
+  [{:keys [spec] :as config}]
+  (init-dir! (:subname spec))
+  (log/infof "→ data stored in %s." (:subname spec))
+  (migrate! spec #'mig-001)
+  {:spec spec})
 
 (defn stop!
   [svc]

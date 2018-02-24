@@ -4,8 +4,8 @@
    [rum.core :refer [defc]]))
 
 (defn- script-item
-  [name ch]
-  [:div.Item {:key name} [:span.Script "= "] name])
+  [script ch]
+  [:div.Item {:key (:id script)} [:span.Script "= "] (:name script)])
 
 (defn- fn-item
   [{:keys [name] :as function-doc} ch]
@@ -17,14 +17,14 @@
   [:div.Footer [:div.Copyright "\u00a9 2018 Tripwire Inc"]])
 
 (def ^:private sb-header
-  [:div.Header [:div.Title "Extensions Console"]])
+  [:div.Header [:div.Title "Script Console"]])
 
 (defc SideBarScriptsPanel < PureMixin
   [scripts ch]
   [:section.Panel
-   [:div.Title "Scripts"]
+   [:div.Title "Extensions"]
    [:div.Body
-    (for [script (sort scripts)]
+    (for [script (sort-by :name scripts)]
       (script-item script ch))]])
 
 (defc SideBarFunctionsPanel < PureMixin
@@ -40,9 +40,9 @@
   [:section.SideBar
    sb-header
    [:div.Panels
-    (SideBarScriptsPanel ["github.js"] ch)
     (when editing?
-      (SideBarFunctionsPanel (:functions state) ch))]
+      (SideBarFunctionsPanel (:script/docs state) ch))
+    (SideBarScriptsPanel (:script/list state) ch)]
    [:div.Buttons
     (when-not (= (:view state) :view/new-script)
       (Button {:onClick (send! ch :script/new) :label "New Script"}))]

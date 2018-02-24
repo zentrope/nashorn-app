@@ -25,7 +25,8 @@
    :body (webhacks/encode (merge {:event event} msg))})
 
 (def ^:private reasons
-  {:no-handler "Unable to process message."})
+  {:no-handler "Unable to process message."
+   :db-error   "Database error."})
 
 (defn- error
   ([code msg]
@@ -58,12 +59,13 @@
 
 (defmethod handle! :script/list
   [db msg]
-  (response 200 :server/script-list {:data (db/scripts db)}))
+  (response 200 :server/script-list {:scripts (db/scripts db)}))
 
 (defmethod handle! :script/save
   [db msg]
-  (db/save-script db (:script msg))
-  (response 200 :server/script-save {}))
+  (if-let [saved (db/save-script db (:script msg))]
+    (response 200 :server/script-save saved)
+    (error :db-error msg)))
 
 ;;-----------------------------------------------------------------------------
 ;; endpoints

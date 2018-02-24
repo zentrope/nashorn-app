@@ -14,8 +14,9 @@
   state)
 
 (defmethod mutate! :script/done
-  [state _ msg]
-  (assoc state :view :view/all-scripts :script/test-result nil))
+  [state ch msg]
+  (http/query ch {:event :script/list})
+  (assoc state :view :view/home :script/test-result nil))
 
 (defmethod mutate! :script/done-results
   [state _ msg]
@@ -37,9 +38,11 @@
   (http/query ch msg)
   state)
 
+;; server responses
+
 (defmethod mutate! :server/docs
   [state _ data]
-  (assoc state :functions (:docs data)))
+  (assoc state :script/docs (:docs data)))
 
 (defmethod mutate! :server/error
   [state _ data]
@@ -49,6 +52,15 @@
 (defmethod mutate! :server/test-result
   [state _ data]
   (assoc state :script/test-result (dissoc data :event)))
+
+(defmethod mutate! :server/script-save
+  [state ch _]
+  (http/query ch {:event :script/list})
+  (assoc state :view :view/home :script/test-result nil))
+
+(defmethod mutate! :server/script-list
+  [state _ msg]
+  (assoc state :script/list (:scripts msg)))
 
 (defn loop!
   [ch f]
