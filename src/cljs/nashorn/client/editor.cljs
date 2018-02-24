@@ -118,12 +118,13 @@
                   (reset! (:this/ed state) cm)
                   state))}
   [locals state ch]
-  [:section.EditorArea
-   (NamePanel @(:this/name locals) #(reset! (:this/name locals) %))
-   (CronPanel @(:this/cron locals) #(reset! (:this/cron locals) %))
-   (EditorPanel @(:this/ed locals) ch)
-   (when-let [result (:script/test-result state)]
-     (ResultPanel result ch))
+  [:section
+   [:section.EditorArea
+    (NamePanel @(:this/name locals) #(reset! (:this/name locals) %))
+    (CronPanel @(:this/cron locals) #(reset! (:this/cron locals) %))
+    (EditorPanel @(:this/ed locals) ch)
+    (when-let [result (:script/test-result state)]
+      (ResultPanel result ch))]
    (ControlBar {:name @(:this/name locals)
-                :text @(:this/text locals)
-                :cron @(:this/cron locals)} ch)])
+                 :text @(:this/text locals)
+                 :cron @(:this/cron locals)} ch)])
