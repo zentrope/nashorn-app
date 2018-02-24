@@ -26,5 +26,9 @@
                           (-> new :rum/args clean)))})
 
 (defc Button < PureMixin
-  [{:keys [onClick label]}]
-  [:div.Button {:onClick onClick} label])
+  [{:keys [onClick label disabled?] :or {disabled? false label "Button"}}]
+  (let [class (if disabled? ["Button" "Disabled"] ["Button" "Enabled"])
+        handler (if disabled? nil onClick)
+        props (cond-> {:class class}
+                (not disabled?) (assoc :onClick onClick))]
+    [:div props label]))
