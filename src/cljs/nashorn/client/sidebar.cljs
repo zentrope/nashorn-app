@@ -9,12 +9,8 @@
 
 (defn- fn-item
   [{:keys [name] :as function-doc} ch]
-  [:div.Item {:key name
-              :onClick (send! ch :function/show {:function function-doc})}
+  [:div.Item {:key name :onClick (send! ch :function/show {:doc function-doc})}
    [:span.Fn "\u03bb "] name])
-
-(def ^:private sb-footer
-  [:div.Footer [:div.Copyright "\u00a9 2018 Tripwire Inc"]])
 
 (def ^:private sb-header
   [:div.Header [:div.Title "Script Console"]])
@@ -45,5 +41,4 @@
     (SideBarScriptsPanel (:script/list state) ch)]
    [:div.Buttons
     (when-not (= (:view state) :view/new-script)
-      (Button {:onClick (send! ch :script/new) :label "New Script"}))]
-   sb-footer])
+      (Button {:onClick (send! ch :script/new) :label "New Script"}))]])
