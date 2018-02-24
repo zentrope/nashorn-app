@@ -4,6 +4,7 @@
   (:require
    [cljs.core.async :refer [put!]]
    [clojure.walk :refer [postwalk]]
+   [nashorn.client.icon :as icon]
    [rum.core :as rum :refer [defc]]))
 
 (defn do-send!
@@ -25,10 +26,18 @@
                     (not= (-> old :rum/args clean)
                           (-> new :rum/args clean)))})
 
+(def button-icons
+  {:close (icon/Close)
+   :new   (icon/New)
+   :run   (icon/Run)
+   :save  (icon/Save)})
+
 (defc Button < PureMixin
-  [{:keys [onClick label disabled?] :or {disabled? false label "Button"}}]
+  [{:keys [type onClick label disabled?] :or {disabled? false label "Button"}}]
   (let [class (if disabled? ["Button" "Disabled"] ["Button" "Enabled"])
         handler (if disabled? nil onClick)
         props (cond-> {:class class}
                 (not disabled?) (assoc :onClick onClick))]
-    [:div props label]))
+    [:div props
+     [:div.Icon (button-icons type)]
+     [:div.Label label]]))

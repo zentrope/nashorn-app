@@ -54,11 +54,10 @@ html, body {
 
   border-top: 1px solid #eaebeb;
   box-sizing: border-box;
-  padding-left: 15px;
-  padding-right: 15px;
 
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
 .SideBar .Buttons .Button {
@@ -72,7 +71,7 @@ html, body {
   top: 40px;
   left: 0;
   width: 200px;
-  bottom: 55px;
+  bottom: 40px;
   padding-top: 20px;
   box-sizing: border-box;
   overflow-y: auto;
@@ -240,18 +239,19 @@ html, body {
 
 .EditorArea .ControlBar {
   margin-top: 10px;
-  height: 30px;
-  padding-top: 5px;
-  padding-left: 5px;
+  height: 40px;
   box-sizing: border-box;
 
   border: 1px solid #d8d8d8;
   border-radius: 2px;
   background-color: #f7f7f7;
+
+  display: flex;
+  align-items: center;
+  /* justify-content: flex-start; */
 }
 
-.EditorArea .ControlBar button {
-  margin-right: 10px;
+.EditorArea .ControlBar .Button {
 }
 
 
@@ -392,31 +392,61 @@ html, body {
 /* */
 
 .Button {
-  flex: 1;
+  margin-right: 5px;
+  margin-left: 5px;
   font-size: 10pt;
   text-align: center;
 
   border-radius: 2px;
 
-  padding-top: 4px;
-  padding-bottom: 4px;
-
+  padding: 4px;
+  padding-left: 8px;
+  padding-right: 8px;
   display: flex;
+
   align-items: center;
   justify-content: center;
 
   cursor: pointer;
   color: #666;
-  border: 1px transparent;
+  border: 1px solid transparent;
 
   -webkit-user-select: none;
   -moz-user-select: none;
   user-select: none;
+
 }
 
-.Button.Disabled {
+.Button .Icon {
+  display: inline;
+  flex: 1;
+  fill: #369;
+  width: 15px;
+  height: 15px;
+
+  padding-right: 2px;
+
+  display: flex;
+  align-items: center;
+}
+
+.Button .Label {
+  flex: 2;
+  padding-right: 2px;
+  font-size: 10pt;
+  white-space: nowrap;
+
+  display: flex;
+  align-items: center;
+}
+
+.Button.Disabled .Label {
   color: silver;
   cursor: default;
+}
+
+.Button.Disabled .Icon {
+  fill: silver;
 }
 
 .Button.Enabled:hover {

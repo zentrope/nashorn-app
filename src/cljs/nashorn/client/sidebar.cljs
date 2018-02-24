@@ -40,6 +40,7 @@
       (SideBarFunctionsPanel (:script/docs state) ch))
     (SideBarScriptsPanel (:script/list state) ch)]
    [:div.Buttons
-    (Button {:onClick (send! ch :script/new)
+    (Button {:type :new
+             :onClick (send! ch :script/new)
              :disabled? editing?
              :label "New Script"})]])

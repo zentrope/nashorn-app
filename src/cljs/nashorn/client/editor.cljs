@@ -5,7 +5,7 @@
    [cljsjs.codemirror]
    [cljsjs.codemirror.mode.javascript]
    [nashorn.client.cron :as cron]
-   [nashorn.client.ui :refer [do-send! send! PureMixin WorkArea]]
+   [nashorn.client.ui :refer [do-send! send! PureMixin WorkArea Button]]
    [rum.core :as rum :refer [defc defcs]]))
 
 (def ^:private default-code
@@ -97,10 +97,16 @@
 (defc ControlBar < PureMixin
   [{:keys [text name cron] :as script} ch]
   [:div.ControlBar
-   [:button {:disabled (not (saveable? script))
-             :onClick (send! ch :script/save {:script script})} "Save"]
-   [:button {:onClick #(do-send! ch :script/test {:text text})} "Test"]
-   [:button {:onClick (send! ch :script/done)} "Done"]])
+   (Button {:type :save
+            :disabled? (not (saveable? script))
+            :onClick (send! ch :script/save {:script script})
+            :label "Save"})
+   (Button {:type :run
+            :onClick #(do-send! ch :script/test {:text text})
+            :label "Test run"})
+   (Button {:type :close
+            :onClick (send! ch :script/done)
+            :label "Done"})])
 
 (defcs Editor < PureMixin
   (rum/local nil :this/ed)
