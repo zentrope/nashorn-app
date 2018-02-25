@@ -10,7 +10,7 @@
 (defn- init-dir!
   [dir]
   (let [fname (string/replace dir "file://" "")]
-    (.mkdirs (java.io.File. dir))))
+    (.mkdirs (java.io.File. fname))))
 
 ;;-----------------------------------------------------------------------------
 ;; Migration infrastructure
