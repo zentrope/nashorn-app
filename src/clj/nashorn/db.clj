@@ -106,6 +106,10 @@
   (let [result (jdbc/insert! spec "script" {:name name :crontab cron :script script})]
     (script this (pkey result))))
 
+(defn status
+  [{:keys [spec] :as this} id status]
+  (jdbc/execute! spec ["update script set status=?, updated=now() where id=?" status id]))
+
 ;;-----------------------------------------------------------------------------
 ;; Bootstrap
 ;;-----------------------------------------------------------------------------

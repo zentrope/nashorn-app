@@ -247,13 +247,13 @@ html, body {
 
   border-top: 1px solid #eaebeb;
 
+  padding-left: 7px;
   display: flex;
   align-items: center;
 }
 
 .ControlBar .Button {
 }
-
 
 /* ResultPanel */
 
@@ -345,9 +345,33 @@ html, body {
 
 /* Components */
 
+.Lister .Toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.Lister .Toggle:hover .ToggleOff {
+  fill: MediumSeaGreen;
+}
+
+.Lister .Toggle:hover .ToggleOn {
+  fill: IndianRed;
+}
+
+.Lister .Toggle:active {
+  opacity: 0.66
+}
+
 .Lister table {
   width: 100%;
   border-collapse: collapse;
+
+  -ms-user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .Lister table thead tr {
@@ -456,6 +480,22 @@ html, body {
 .Button.Enabled:active {
   color: #1b60c2;
   background-color: #e4e6e9;
+}
+
+/* Icons */
+
+.Icon {
+  fill: #369;
+  width: 15px;
+  height: 12px;
+}
+
+.Icon.ToggleOn {
+  fill: MediumSeaGreen;
+}
+
+.Icon.ToggleOff {
+  fill: #444;
 }
 
 /* Work Area */

@@ -52,14 +52,19 @@
   (let [docs (-> "documentation.edn" io/resource  slurp edn/read-string)]
     (response 200 :server/docs {:docs docs})))
 
+(defmethod handle! :script/list
+  [db msg]
+  (response 200 :server/script-list {:scripts (db/scripts db)}))
+
+(defmethod handle! :script/status
+  [db msg]
+  (db/status db (:id msg) (:status msg))
+  (handle! db {:event :script/list}))
+
 (defmethod handle! :script/test
   [db msg]
   (let [run-result (script/eval-script (:text msg))]
     (response 200 :server/test-result run-result)))
-
-(defmethod handle! :script/list
-  [db msg]
-  (response 200 :server/script-list {:scripts (db/scripts db)}))
 
 (defmethod handle! :script/save
   [db msg]

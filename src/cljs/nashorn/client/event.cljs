@@ -33,6 +33,11 @@
   (http/mutate ch msg)
   state)
 
+(defmethod mutate! :script/status
+  [state ch msg]
+  (http/mutate ch msg)
+  state)
+
 (defmethod mutate! :script/test
   [state ch msg]
   (http/query ch msg)

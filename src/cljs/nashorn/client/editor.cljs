@@ -103,7 +103,7 @@
             :label "Save"})
    (Button {:type :run
             :onClick #(do-send! ch :script/test {:text text})
-            :label "Test run"})
+            :label "Run"})
    (Button {:type :close
             :onClick (send! ch :script/done)
             :label "Done"})])
