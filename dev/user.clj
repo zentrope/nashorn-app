@@ -3,7 +3,7 @@
    [integrant.repl :refer [clear go halt prep init reset reset-all]]
    [nashorn.main :as main]))
 
-(integrant.repl/set-prep! (constantly #'main/config))
+(integrant.repl/set-prep! (constantly main/config))
 
 (defn restart []
   (halt)
