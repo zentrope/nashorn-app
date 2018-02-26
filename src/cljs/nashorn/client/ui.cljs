@@ -3,7 +3,6 @@
    nashorn.client.ui)
   (:require
    [cljs.core.async :refer [put!]]
-   [clojure.walk :refer [postwalk]]
    [nashorn.client.icon :as icon]
    [rum.core :as rum :refer [defc]]))
 
@@ -17,14 +16,8 @@
   (fn [e]
     (do-send! ch event msg)))
 
-(defn clean
-  [data]
-  (postwalk #(if (fn? %) :clean/fn %) data))
-
 (def PureMixin
-  {:should-update (fn [old new]
-                    (not= (-> old :rum/args clean)
-                          (-> new :rum/args clean)))})
+  rum/static)
 
 (def button-icons
   {:close (icon/Close)

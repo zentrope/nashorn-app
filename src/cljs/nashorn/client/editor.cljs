@@ -62,7 +62,7 @@
       text]]))
 
 (defc EditorPanel < PureMixin
-  [editor-obj ch]
+  []
   [:section.EditorPanel
    [:div.EditorContainer
     [:textarea#CodeMirrorEditor
@@ -88,7 +88,7 @@
    (result-header result ch)
    [:div.ResultBlocks
     (when (:isError result)
-      (result-block "Error:" (:error result)))
+      (result-block "Runtime error" (:error result)))
     (when-not (blank? (:result result))
       (result-block "Returned result" (:result result)))
     (when-not (blank? (:output result))
@@ -102,29 +102,30 @@
             :onClick (send! ch :script/save {:script script})
             :label "Save"})
    (Button {:type :run
-            :onClick #(do-send! ch :script/test {:text text})
+            :onClick (send! ch :script/test {:text text})
             :label "Run"})
    (Button {:type :close
             :onClick (send! ch :script/done)
             :label "Done"})])
 
+(def ^:private default-form
+  {:text default-code :cron "* * * * *" :name ""})
+
 (defcs Editor < PureMixin
-  (rum/local nil :this/ed)
-  (rum/local "" :this/name)
-  (rum/local default-code :this/text)
-  (rum/local "* * * * *" :this/cron)
+  (rum/local nil          :this/ed)   ;; The editor object
+  (rum/local default-form :this/form) ;; The editor + metadata
   {:did-mount (fn [state]
-                (let [cm (mk-editor #(reset! (:this/text state) %))]
+                (let [cm (mk-editor #(swap! (:this/form state) assoc :text %))]
                   (reset! (:this/ed state) cm)
                   state))}
   [locals state ch]
-  [:section
-   [:section.EditorArea
-    (NamePanel @(:this/name locals) #(reset! (:this/name locals) %))
-    (CronPanel @(:this/cron locals) #(reset! (:this/cron locals) %))
-    (EditorPanel @(:this/ed locals) ch)
-    (when-let [result (:script/test-result state)]
-      (ResultPanel result ch))]
-   (ControlBar {:name @(:this/name locals)
-                 :text @(:this/text locals)
-                 :cron @(:this/cron locals)} ch)])
+  (let [form (:this/form locals)
+        cm (:this/ed locals)]
+    [:section
+     [:section.EditorArea
+      (NamePanel (:name @form) #(swap! form assoc :name %))
+      (CronPanel (:cron @form) #(swap! form assoc :cron %))
+      (EditorPanel)
+      (when-let [result (:script/test-result state)]
+        (ResultPanel result ch))]
+     (ControlBar @form ch)]))

@@ -103,12 +103,14 @@
 
 (defn save-script
   [{:keys [spec] :as this} {:keys [name cron text] :as new-script}]
-  (let [result (jdbc/insert! spec "script" {:name name :crontab cron :script script})]
+  (let [values {:name name :crontab cron :script text}
+        result (jdbc/insert! spec "script" values)]
     (script this (pkey result))))
 
 (defn status
   [{:keys [spec] :as this} id status]
-  (jdbc/execute! spec ["update script set status=?, updated=now() where id=?" status id]))
+  (let [sql "update script set status=?, updated=now() where id=?"]
+    (jdbc/execute! spec [sql status id])))
 
 ;;-----------------------------------------------------------------------------
 ;; Bootstrap
