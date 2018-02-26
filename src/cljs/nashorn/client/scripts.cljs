@@ -1,5 +1,6 @@
 (ns nashorn.client.scripts
   (:require
+   [nashorn.client.run-result :refer [ResultPanel]]
    [nashorn.client.ui :refer [send! DisplayBlock PureMixin WorkArea Table Button]]
    [nashorn.client.icon :as icon]
    [rum.core :as rum :refer [defc]])
@@ -44,7 +45,8 @@
   [{:keys [id status] :as script} ch]
   (let [active? (zero? status)]
     [:div.ControlBar
-     (Button {:type :run :label "Run"})
+     (Button {:type :run :label "Run"
+              :onClick (send! ch :script/test {:text (:script script)})})
      (if (zero? status)
        (Button {:type :stop
                 :label "Deactivate"
@@ -81,12 +83,14 @@
                 :selected? #(= (:id %) (:id focus))} ch))
 
 (defc Scripts < PureMixin
-  [scripts focus ch]
+  [scripts focus run-result ch]
   (WorkArea
    [:section.ScriptArea
     (SummaryView (sort-by :name scripts) focus ch)
     (when-not (nil? focus)
-      (DetailView focus ch))]
+      (DetailView focus ch))
+    (when-not (nil? run-result)
+      (ResultPanel run-result ch))]
    (if (nil? focus)
      (EmptyControlBar)
      (ControlBar focus ch))))

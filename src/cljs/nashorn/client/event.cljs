@@ -26,7 +26,7 @@
   [state ch msg]
   (when (empty? (:functions state))
     (http/query ch {:event :script/docs}))
-  (assoc state :view :view/new-script))
+  (assoc state :view :view/new-script :script/test-result nil))
 
 (defmethod mutate! :script/save
   [state ch msg]
@@ -45,11 +45,11 @@
 
 (defmethod mutate! :script/focus
   [state _ msg]
-  (assoc state :script/focus (:id msg)))
+  (assoc state :script/focus (:id msg) :script/test-result nil))
 
 (defmethod mutate! :script/unfocus
   [state _ msg]
-  (assoc state :script/focus nil))
+  (assoc state :script/focus nil :script/test-result nil))
 
 ;; server responses
 

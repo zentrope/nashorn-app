@@ -17,7 +17,7 @@
 (defmacro DisplayBlock
   [{:keys [title commands]} & body]
   `[:div.DisplayBlock
-   [:div.Header
-    [:div.Title ~title]
-    [:div.Commands ~@commands]]
+    [:div.Header
+     [:div.Title ~title]
+     [:div.Commands ~@commands]]
     [:div.Body ~@body]])

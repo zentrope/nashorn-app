@@ -43,6 +43,8 @@ h1 {
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
+
+  border-bottom: 1px solid #eaebeb;
 }
 
 .SideBar .Header .Title {
@@ -157,6 +159,8 @@ h1 {
 .ScriptArea .Lister {
   flex: 1;
 }
+
+/* Detail Table Mode */
 
 table.Detailer {
   width: 100%;
@@ -312,58 +316,20 @@ table.Detailer tbody tr td {
 
 /* ResultPanel */
 
-.EditorArea .ResultPanel {
-  flex: 1;
-  margin-top: 10px;
-
+.ResultBlocks {
   display: flex;
   flex-direction: column;
+
+  height: 300px;
 }
 
-.EditorArea .ResultPanel .Header {
-  height: 30px;
-  background-color: #7ebb96;
-  display: flex;
-  align-items: center;
-  padding: 0 10px 0 10px;
-
-}
-
-  .EditorArea .ResultPanel .Header.Error {
-    background-color: IndianRed;
-  }
-
-  .EditorArea .ResultPanel .Header.Error .Title {
-    color: white;
-  }
-
-  .EditorArea .ResultPanel .Header .Title {
-    flex: 1;
-    color: black;
-    font-weight: bold;
-    font-size: 11pt;
-  }
-
-  .EditorArea .ResultPanel .Header .Controls {
-    flex: 1;
-
-    display: flex;
-    justify-content: flex-end;
-  }
-
-.EditorArea .ResultPanel .ResultBlocks {
+.ResultBlocks .ResultBlock {
   flex: 1;
 
-  display: flex;
-  flex-direction: column;
-}
-
-.ResultPanel .ResultBlocks .ResultBlock {
-  flex: 1;
-
-  border-left: 1px solid #e6e6e6;
-  border-right: 1px solid #e6e6e6;
-  border-bottom: 1px solid #e6e6e6;
+  border-top: 1px solid #e6e6e6;
+  /* border-left: 1px solid #e6e6e6; */
+  /* border-right: 1px solid #e6e6e6; */
+  /* border-bottom: 1px solid #e6e6e6; */
 
   display: flex;
   flex-direction: column;
@@ -371,31 +337,41 @@ table.Detailer tbody tr td {
   position: relative;
 }
 
-.ResultPanel .ResultBlocks .ResultBlock .Title {
+.ResultBlocks .ResultBlock.Error {
+  border-top: 3px solid red;
+}
+
+.ResultBlocks .ResultBlock.Error .Title {
+  color: indianred;
+}
+
+.ResultBlocks .ResultBlock .Title {
   position: absolute;
   top: 5px;
   right: 5px;
   display: flex;
   font-size: 9pt;
-  color: #aaa;
+  color: #888;
 }
 
-.ResultPanel .ResultBlocks .ResultBlock .Result {
+.ResultBlocks .ResultBlock .Result {
   flex: 1;
   overflow-y: auto;
 
   padding: 5px;
-
+  padding-top: 20px;
   size: 11pt;
   display: flex;
 }
 
-.ResultPanel .ResultBlocks .ResultBlock .Result pre {
+.ResultBlocks .ResultBlock .Result pre {
   flex: 1;
   color: #369;
   overflow: auto;
 
   margin: 0;
+
+  display: flex;
 }
 
 /* Components */

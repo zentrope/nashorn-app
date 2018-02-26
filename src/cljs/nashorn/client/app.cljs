@@ -17,9 +17,11 @@
   [state ch]
   (case (:view state)
     :view/new-script (Editor state ch)
-    :view/home       (Scripts (:script/list state)
-                              (find-focus state) ch)
-    (Scripts (:script/list state) ch)))
+    ;; :view/home
+    (Scripts (:script/list state)
+             (find-focus state)
+             (:script/test-result state)
+             ch)))
 
 (defc RootUI < PureMixin
   [state ch]

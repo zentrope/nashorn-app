@@ -1,10 +1,10 @@
 (ns nashorn.client.editor
   (:require
-   [clojure.pprint :refer [pprint]]
    [clojure.string :as string :refer [blank?]]
    [cljsjs.codemirror]
    [cljsjs.codemirror.mode.javascript]
    [nashorn.client.cron :as cron]
+   [nashorn.client.run-result :refer [ResultPanel]]
    [nashorn.client.ui :refer [do-send! send! PureMixin WorkArea Button]]
    [rum.core :as rum :refer [defc defcs]]))
 
@@ -68,31 +68,6 @@
     [:textarea#CodeMirrorEditor
      {:autoFocus true
       :value default-code}]]])
-
-(defn- result-header
-  [result ch]
-  [:div {:class (if (:isError result) ["Header" "Error"] ["Header"])}
-    [:div.Title "Script run results"]
-    [:div.Controls
-     [:button {:onClick (send! ch :script/done-results)} "Close"]]])
-
-(defn- result-block
-  [name data]
-  [:div.ResultBlock
-   [:div.Title name]
-   [:div.Result [:pre data]]])
-
-(defc ResultPanel < PureMixin
-  [result ch]
-  [:section.ResultPanel
-   (result-header result ch)
-   [:div.ResultBlocks
-    (when (:isError result)
-      (result-block "Runtime error" (:error result)))
-    (when-not (blank? (:result result))
-      (result-block "Returned result" (:result result)))
-    (when-not (blank? (:output result))
-      (result-block "Captured stdout" (:output result)))]])
 
 (defc ControlBar < PureMixin
   [{:keys [text name cron] :as script} ch]
