@@ -65,7 +65,7 @@
 (defc DetailView < PureMixin
   [{:keys [id status created updated last_run crontab name] :as script} ch]
   (DisplayBlock {:title name
-                 :commands [(Button {:type :close :label "Close"
+                 :commands [(Button {:type :close :label "Unfocus"
                                      :onClick (send! ch :script/unfocus)})]}
    [:table.Detailer
     [:tbody
