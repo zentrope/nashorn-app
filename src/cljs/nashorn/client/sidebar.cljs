@@ -4,24 +4,28 @@
    [rum.core :refer [defc]]))
 
 (defn- script-item
-  [script ch]
-  [:div.Item {:key (:id script)} [:span.Script "= "] (:name script)])
+  [script selected? ch]
+  [:div {:key (:id script)
+         :class ["Item" (if selected? "Selected")]
+         :onClick (send! ch :script/focus {:id (:id script)})}
+   [:span.Script "= "] (:name script)])
 
 (defn- fn-item
   [{:keys [name] :as function-doc} ch]
-  [:div.Item {:key name :onClick (send! ch :function/show {:doc function-doc})}
+  [:div.Item {:key name
+              :onClick (send! ch :function/show {:doc function-doc})}
    [:span.Fn "\u03bb "] name])
 
 (def ^:private sb-header
   [:div.Header [:div.Title "Script Console"]])
 
 (defc SideBarScriptsPanel < PureMixin
-  [scripts ch]
+  [scripts focus ch]
   [:section.Panel
    [:div.Title "Extensions"]
    [:div.Body
     (for [script (sort-by :name scripts)]
-      (script-item script ch))]])
+      (script-item script (= focus (:id script)) ch))]])
 
 (defc SideBarFunctionsPanel < PureMixin
   [functions ch]
@@ -33,12 +37,12 @@
 
 (defc SideBar < PureMixin
   [state editing? ch]
-  [:section.SideBar
-   sb-header
+  [:section.SideBar sb-header
    [:div.Panels
     (when editing?
       (SideBarFunctionsPanel (:script/docs state) ch))
-    (SideBarScriptsPanel (:script/list state) ch)]
+    (SideBarScriptsPanel (sort-by :name (:script/list state))
+                         (:script/focus state) ch)]
    [:div.Buttons
     (Button {:type :new
              :onClick (send! ch :script/new)

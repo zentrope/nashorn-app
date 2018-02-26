@@ -6,11 +6,19 @@
    [nashorn.client.ui :refer [send! PureMixin WorkArea]]
    [rum.core :as rum :refer [defc]]))
 
+
+(defn- find-focus
+  [{:keys [script/focus :script/list]}]
+  (if (nil? focus)
+    nil
+    (first (filter #(= (:id %) focus) list))))
+
 (defc UIFrame < PureMixin
   [state ch]
   (case (:view state)
     :view/new-script (Editor state ch)
-    :view/home       (Scripts (:script/list state) ch)
+    :view/home       (Scripts (:script/list state)
+                              (find-focus state) ch)
     (Scripts (:script/list state) ch)))
 
 (defc RootUI < PureMixin

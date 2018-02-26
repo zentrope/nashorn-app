@@ -15,6 +15,7 @@
   (atom {:script/docs        {}         ; help for script extension functions
          :script/list        []         ; list of saved scripts
          :script/test-result nil        ; result form testing a script
+         :script/focus       nil        ; currently focussed script
          :view               :view/home ; current UI view
          }))
 

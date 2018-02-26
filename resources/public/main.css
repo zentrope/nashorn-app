@@ -120,6 +120,10 @@ h1 {
   text-overflow: ellipsis;
 }
 
+.SideBar .Panels .Panel .Body .Item.Selected {
+  background: #D5FDD5;
+}
+
 .SideBar .Panels .Panel .Body .Item .Fn {
   color: mediumseagreen;
   padding-right: 4px;

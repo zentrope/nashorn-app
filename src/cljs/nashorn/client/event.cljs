@@ -43,6 +43,14 @@
   (http/query ch msg)
   state)
 
+(defmethod mutate! :script/focus
+  [state _ msg]
+  (assoc state :script/focus (:id msg)))
+
+(defmethod mutate! :script/unfocus
+  [state _ msg]
+  (assoc state :script/focus nil))
+
 ;; server responses
 
 (defmethod mutate! :server/docs
