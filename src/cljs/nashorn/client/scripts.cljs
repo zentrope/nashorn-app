@@ -24,7 +24,7 @@
   [{:keys [rows onClick selected?] :as attrs} ch]
   [:div.Lister
    (Table
-    ["" "Updated" "Last run" "Extension"]
+    ["" "Extension" "Updated" "Last run"]
     (for [row rows]
       [:tr {:class ["Clickable" (if (selected? row) "Selected")]
             :onClick #(onClick row)}
