@@ -17,8 +17,10 @@
   :main ^:skip-aot nashorn.stub
   :min-lein-eversion "2.8.1"
   :source-paths ["src/clj"]
+
   :java-source-paths ["src/java"]
   :javac-opts ["-Xlint:unchecked"]
+
   :figwheel {:css-dirs ["resources/public"]}
   :cljsbuild {:builds [{:id "dev"
                         :source-paths ["src/cljs"]

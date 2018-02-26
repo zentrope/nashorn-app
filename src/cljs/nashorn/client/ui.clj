@@ -13,3 +13,11 @@
     [:thead
      [:tr (for [c# ~cols] [:th c#])]]
     [:tbody ~@body]])
+
+(defmacro DisplayBlock
+  [{:keys [title commands]} & body]
+  `[:div.DisplayBlock
+   [:div.Header
+    [:div.Title ~title]
+    [:div.Commands ~@commands]]
+    [:div.Body ~@body]])

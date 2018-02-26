@@ -1,0 +1,118 @@
+/* For the more generic components in the app. */
+
+/* DISPLAY BLOCK */
+
+.DisplayBlock {
+  border-radius: 4px;
+  border: 1px solid #eaebeb;
+
+  margin-top: 20px;
+}
+
+.DisplayBlock .Header {
+  display: flex;
+  align-items: center;
+  height: 30px;
+  background-color: #f1f1f1;
+}
+
+.DisplayBlock .Header .Title {
+  flex: 4;
+  padding-left: 10px;
+}
+
+.DisplayBlock .Header .Commands {
+
+  text-align: right;
+  display: flex;
+  align-items: center;
+}
+
+.DisplayBlock .Body {
+  padding: 15px;
+}
+
+/* ICONS */
+
+.Icon {
+  fill: #369;
+  width: 15px;
+  height: 12px;
+}
+
+.Icon.ToggleOn {
+  fill: MediumSeaGreen;
+}
+
+.Icon.ToggleOff {
+  fill: #444;
+}
+
+/* BUTTON */
+
+.Button {
+  margin-right: 5px;
+  margin-left: 5px;
+  font-size: 10pt;
+  text-align: center;
+
+  border-radius: 4px;
+
+  padding: 4px;
+  padding-left: 8px;
+  padding-right: 8px;
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  color: #666;
+  border: 1px solid transparent;
+
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+
+}
+
+.Button .Icon {
+  display: inline;
+  flex: 1;
+  fill: #369;
+  width: 15px;
+  height: 15px;
+
+  padding-right: 2px;
+
+  display: flex;
+  align-items: center;
+}
+
+.Button .Label {
+  flex: 2;
+  padding-right: 2px;
+  font-size: 10pt;
+  white-space: nowrap;
+
+  display: flex;
+  align-items: center;
+}
+
+.Button.Disabled .Label {
+  color: silver;
+  cursor: default;
+}
+
+.Button.Disabled .Icon {
+  fill: silver;
+}
+
+.Button.Enabled:hover {
+  border: 1px solid #e4e6e9;
+}
+
+.Button.Enabled:active {
+  color: #1b60c2;
+  background-color: #e4e6e9;
+}

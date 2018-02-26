@@ -6,6 +6,14 @@ html, body {
   box-sizing: border-box;
 }
 
+h1 {
+  font-size: 14pt;
+  font-weight: normal;
+  margin: 0;
+  margin-top: 0pt;
+  margin-bottom: 10pt;
+}
+
 .App {
 }
 
@@ -130,7 +138,6 @@ html, body {
 
 /* Script Summary Area */
 
-
 .ScriptArea {
   position: fixed;
   top: 0;
@@ -147,28 +154,23 @@ html, body {
   flex: 1;
 }
 
-.ScriptArea .Detailer {
-  margin-top: 40px;
-}
-
-.ScriptArea .Detailer table {
+table.Detailer {
   width: 100%;
   border-collapse: collapse;
 }
 
-.ScriptArea .Detailer table tbody tr {
-  border-top: 1px solid #f1f1f1;
-  border-bottom: 1px solid #f1f1f1;
+table.Detailer tbody tr {
 }
 
-.ScriptArea .Detailer table tbody tr th {
+table.Detailer tbody tr th {
   font-size: 11pt;
   text-align: left;
-  padding: 4px;
+  padding: 5px;
+  padding-left: 0px;
   width: 84px;
 }
 
-.ScriptArea .Detailer table tbody tr td {
+table.Detailer tbody tr td {
   font-size: 11pt;
   text-align: left;
   padding: 4px;
@@ -430,6 +432,7 @@ html, body {
 
 .Lister table tbody tr.Selected {
   background: #eaebeb;
+  background: #D5FDD5;
 }
 
 .Lister table tbody tr td {
@@ -453,91 +456,6 @@ html, body {
 
 .Clickable:active {
   opacity: 0.75;
-}
-
-/* */
-
-.Button {
-  margin-right: 5px;
-  margin-left: 5px;
-  font-size: 10pt;
-  text-align: center;
-
-  border-radius: 4px;
-
-  padding: 4px;
-  padding-left: 8px;
-  padding-right: 8px;
-  display: flex;
-
-  align-items: center;
-  justify-content: center;
-
-  cursor: pointer;
-  color: #666;
-  border: 1px solid transparent;
-
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  user-select: none;
-
-}
-
-.Button .Icon {
-  display: inline;
-  flex: 1;
-  fill: #369;
-  width: 15px;
-  height: 15px;
-
-  padding-right: 2px;
-
-  display: flex;
-  align-items: center;
-}
-
-.Button .Label {
-  flex: 2;
-  padding-right: 2px;
-  font-size: 10pt;
-  white-space: nowrap;
-
-  display: flex;
-  align-items: center;
-}
-
-.Button.Disabled .Label {
-  color: silver;
-  cursor: default;
-}
-
-.Button.Disabled .Icon {
-  fill: silver;
-}
-
-.Button.Enabled:hover {
-  border: 1px solid #e4e6e9;
-}
-
-.Button.Enabled:active {
-  color: #1b60c2;
-  background-color: #e4e6e9;
-}
-
-/* Icons */
-
-.Icon {
-  fill: #369;
-  width: 15px;
-  height: 12px;
-}
-
-.Icon.ToggleOn {
-  fill: MediumSeaGreen;
-}
-
-.Icon.ToggleOff {
-  fill: #444;
 }
 
 /* Work Area */

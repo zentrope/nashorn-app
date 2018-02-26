@@ -1,7 +1,7 @@
 (ns nashorn.client.scripts
   (:require
    [clojure.pprint :refer [pprint]]
-   [nashorn.client.ui :refer [send! PureMixin WorkArea Table Button]]
+   [nashorn.client.ui :refer [send! DisplayBlock PureMixin WorkArea Table Button]]
    [nashorn.client.icon :as icon]
    [rum.core :as rum :refer [defc defcs]])
   (:import
@@ -65,31 +65,32 @@
               :onClick #(dismiss)})]))
 
 (defc DetailView < PureMixin
-  [{:keys [id status created updated last_run crontab name] :as script}]
-  [:div.Detailer
-   [:h1 name]
-   [:table
+  [{:keys [id status created updated last_run crontab name] :as script} dismiss]
+  (DisplayBlock {:title name
+                 :commands [(Button {:type :close :label "Close" :onClick #(dismiss)})]}
+   [:table.Detailer
     [:tbody
      [:tr [:th "Created"] [:td (datef created)]]
      [:tr [:th "Updated"] [:td (datef updated)]]
      [:tr [:th "Last run"] [:td (datef last_run)]]
      [:tr [:th "Schedule"] [:td crontab]]
-     [:tr [:th "Status"] [:td (if (zero? status) "Active" "Inactive")]]]]
-   ;; [:pre (with-out-str (pprint cur-script))]
-   ])
+     [:tr [:th "Status"] [:td (if (zero? status) "Active" "Inactive")]]]]))
+
+(defc SummaryView < PureMixin
+  [scripts cur-script onClick ch]
+  (ScriptTable {:rows scripts
+                      :selected? #(= (:id %) (:id cur-script))
+                      :onClick onClick} ch))
 
 (defcs Scripts < PureMixin
-  (rum/local nil :script/focus)
+  (rum/local 5 :script/focus)
   [locals scripts ch]
   (let [cur-script (find-focus scripts @(:script/focus locals))]
     (WorkArea
      [:section.ScriptArea
-      [:h1 "Summary"]
-      (ScriptTable {:rows (sort-by :name scripts)
-                    :selected? #(= (:id %) (:id cur-script))
-                    :onClick #(reset! (:script/focus locals) (:id %))} ch)
+      (SummaryView (sort-by :name scripts) cur-script  #(reset! (:script/focus locals) (:id %)) ch)
       (when-not (nil? cur-script)
-        (DetailView cur-script))]
+        (DetailView cur-script #(reset! (:script/focus locals) nil)))]
      (if (nil? cur-script)
         (EmptyControlBar)
         (ControlBar cur-script #(reset! (:script/focus locals) nil) ch)))))
