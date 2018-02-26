@@ -39,10 +39,10 @@
   [state editing? ch]
   [:section.SideBar sb-header
    [:div.Panels
-    (when editing?
-      (SideBarFunctionsPanel (:script/docs state) ch))
-    (SideBarScriptsPanel (sort-by :name (:script/list state))
-                         (:script/focus state) ch)]
+    (if editing?
+      (SideBarFunctionsPanel (:script/docs state) ch)
+      (SideBarScriptsPanel (sort-by :name (:script/list state))
+                           (:script/focus state) ch))]
    [:div.Buttons
     (Button {:type :new
              :onClick (send! ch :script/new)
