@@ -20,12 +20,14 @@
   rum/static)
 
 (def button-icons
-  {:close      (icon/Close)
-   :new        (icon/New)
-   :play       (icon/Play)
-   :run        (icon/Run)
-   :save       (icon/Save)
-   :stop       (icon/Stop)})
+  {:close  (icon/Close)
+   :delete (icon/Delete)
+   :edit   (icon/Edit)
+   :new    (icon/New)
+   :play   (icon/Play)
+   :run    (icon/Run)
+   :save   (icon/Save)
+   :stop   (icon/Stop)})
 
 (defc Button < PureMixin
   [{:keys [type onClick label disabled?] :or {disabled? false label "Button"}}]

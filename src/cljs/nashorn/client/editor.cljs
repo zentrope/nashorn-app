@@ -5,7 +5,7 @@
    [cljsjs.codemirror.mode.javascript]
    [nashorn.client.cron :as cron]
    [nashorn.client.run-result :refer [ResultPanel]]
-   [nashorn.client.ui :refer [do-send! send! PureMixin WorkArea Button]]
+   [nashorn.client.ui :refer [do-send! send! PureMixin WorkArea Button ControlBar]]
    [rum.core :as rum :refer [defc defcs]]))
 
 (def ^:private default-code
@@ -69,9 +69,9 @@
      {:autoFocus true
       :value default-code}]]])
 
-(defc ControlBar < PureMixin
+(defc Controls < PureMixin
   [{:keys [text name cron] :as script} ch]
-  [:div.ControlBar
+  (ControlBar
    (Button {:type :save
             :disabled? (not (saveable? script))
             :onClick (send! ch :script/save {:script script})
@@ -81,7 +81,7 @@
             :label "Run"})
    (Button {:type :close
             :onClick (send! ch :script/done)
-            :label "Done"})])
+            :label "Done"})))
 
 (def ^:private default-form
   {:text default-code :cron "* * * * *" :name ""})
@@ -103,4 +103,4 @@
       (EditorPanel)
       (when-let [result (:script/test-result state)]
         (ResultPanel result ch))]
-     (ControlBar @form ch)]))
+     (Controls @form ch)]))

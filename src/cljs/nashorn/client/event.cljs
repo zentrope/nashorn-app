@@ -13,6 +13,11 @@
   (println "Unhandled:" (pr-str msg))
   state)
 
+(defmethod mutate! :script/delete
+  [state ch msg]
+  (http/mutate ch {:event :script/delete :id (:id msg)})
+  state)
+
 (defmethod mutate! :script/done
   [state ch msg]
   (http/query ch {:event :script/list})

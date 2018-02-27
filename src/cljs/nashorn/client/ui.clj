@@ -21,3 +21,8 @@
      [:div.Title ~title]
      [:div.Commands ~@commands]]
     [:div.Body ~@body]])
+
+(defmacro ControlBar
+  [& buttons]
+  `[:div.ControlBar
+    ~@buttons])

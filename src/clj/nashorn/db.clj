@@ -93,6 +93,11 @@
 ;; Queries
 ;;-----------------------------------------------------------------------------
 
+(defn delete-script
+  [this id]
+  (let [sql "delete from script where id=?"]
+    (jdbc/execute! (:spec this) [sql id])))
+
 (defn scripts
   [this]
   (doall (jdbc/query (:spec this) ["select * from script"])))

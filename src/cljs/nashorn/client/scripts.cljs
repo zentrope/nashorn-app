@@ -1,7 +1,8 @@
 (ns nashorn.client.scripts
   (:require
    [nashorn.client.run-result :refer [ResultPanel]]
-   [nashorn.client.ui :refer [send! DisplayBlock PureMixin WorkArea Table Button]]
+   [nashorn.client.ui :refer
+    [do-send! send! ControlBar DisplayBlock PureMixin WorkArea Table Button]]
    [nashorn.client.icon :as icon]
    [rum.core :as rum :refer [defc]])
   (:import
@@ -13,6 +14,12 @@
 (defn- datef
   [s]
   (if (nil? s) "-" (.format iso-ish s)))
+
+(defn- confirm-delete
+  [{:keys [id name]} ch]
+  (fn [_]
+    (when (js/confirm (str "Delete the '" name "' extension?"))
+      (do-send! ch :script/delete {:id id}))))
 
 (defc Badge < PureMixin
   [status]
@@ -33,41 +40,35 @@
        [:td {:width "25%"} (datef (:updated row))]
        [:td {:width "25%"} (datef (:last_run row))]]))])
 
-(defn- find-focus
-  [scripts id]
-  (first (filter #(= (:id %) id) scripts)))
-
-(defc EmptyControlBar
-  []
-  [:div.ControlBar])
-
-(defc ControlBar < PureMixin
+(defc Controls
   [{:keys [id status] :as script} ch]
-  (let [active? (zero? status)]
-    [:div.ControlBar
-     (Button {:type :run :label "Run"
-              :onClick (send! ch :script/test {:text (:script script)})})
-     (if (zero? status)
-       (Button {:type :stop
-                :label "Deactivate"
-                :onClick (send! ch :script/status {:id id :status "inactive"})})
-       (Button {:type :play
-                :label "Activate"
-                :onClick (send! ch :script/status {:id id :status "active"})}))
-     (Button {:type :new
-              :disabled? active?
-              :label "Delete"})
-     (Button {:type :new
-              :disabled? active?
-              :label "Edit"})
-     (Button {:type :close
-              :label "Unfocus"
-              :onClick (send! ch :script/unfocus)})]))
+  (if (nil? script)
+    (ControlBar)
+    (let [active? (zero? status)]
+      (ControlBar
+       (Button {:type :run
+                :label "Run"
+                :onClick (send! ch :script/test {:text (:script script)})})
+       (Button {:type (if active? :stop :play)
+                :label (if active? "Deactivate" "Activate")
+                :onClick (send! ch :script/status
+                                {:id id :status (if active? "inactive" "active")})})
+       (Button {:label "Delete"
+                :type :delete
+                :disabled? active?
+                :onClick (confirm-delete script ch)})
+       (Button {:type :edit
+                :disabled? active?
+                :label "Edit"})
+       (Button {:type :close
+                :label "Unfocus"
+                :onClick (send! ch :script/unfocus)})))))
 
 (defc DetailView < PureMixin
   [{:keys [id status created updated last_run crontab name] :as script} ch]
   (DisplayBlock {:title name
-                 :commands [(Button {:type :close :label "Unfocus"
+                 :commands [(Button {:type :close
+                                     :label "Unfocus"
                                      :onClick (send! ch :script/unfocus)})]}
    [:table.Detailer
     [:tbody
@@ -91,6 +92,4 @@
       (DetailView focus ch))
     (when-not (nil? run-result)
       (ResultPanel run-result ch))]
-   (if (nil? focus)
-     (EmptyControlBar)
-     (ControlBar focus ch))))
+   (Controls focus ch)))

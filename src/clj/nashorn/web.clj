@@ -47,6 +47,11 @@
   [_ msg]
   (error :no-handler msg))
 
+(defmethod handle! :script/delete
+  [db msg]
+  (db/delete-script db (:id msg))
+  (handle! db {:event :script/list}))
+
 (defmethod handle! :script/docs
   [db _]
   (let [docs (-> "documentation.edn" io/resource  slurp edn/read-string)]
