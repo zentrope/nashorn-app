@@ -106,6 +106,10 @@
   [this id]
   (first (jdbc/query (:spec this) ["select * from script where id=?" id])))
 
+(defn script-mark-run
+  [this {:keys [id]}]
+  (jdbc/execute! (:spec this) ["update script set last_run=now() where id=?" id]))
+
 (defn script-save
   [{:keys [spec] :as this} {:keys [name cron text] :as new-script}]
   (let [values {:name name :crontab cron :script text}

@@ -24,6 +24,15 @@
    :headers {"content-type" "application/edn"}
    :body (webhacks/encode (merge {:event event} msg))})
 
+(defn- responses
+  "Merge multiple responses into one, with multiple messages in the body."
+  [responses]
+  (let [status (first (reverse (sort-by :status responses)))
+        body (mapv :body responses)]
+    {:status status
+     :headers {"content-type" "application/edn"}
+     :body (str "[" (apply str body) "]")}))
+
 (def ^:private reasons
   {:no-handler "Unable to process message."
    :db-error   "Database error."})
@@ -61,6 +70,19 @@
   [db msg]
   (response 200 :server/script-list {:scripts (db/scripts db)}))
 
+(defmethod handle! :script/run
+  [db msg]
+  (let [run-result (script/eval-script (:text msg))]
+    (db/script-mark-run db {:id (:id msg)})
+    (responses [(response 200 :server/test-result run-result)
+                (handle! db {:event :script/list})])))
+
+(defmethod handle! :script/save
+  [db msg]
+  (if-let [saved (db/script-save db (:script msg))]
+    (response 200 :server/script-save saved)
+    (error :db-error msg)))
+
 (defmethod handle! :script/status
   [db msg]
   (db/script-status db (select-keys msg [:id :status]))
@@ -70,12 +92,6 @@
   [db msg]
   (let [run-result (script/eval-script (:text msg))]
     (response 200 :server/test-result run-result)))
-
-(defmethod handle! :script/save
-  [db msg]
-  (if-let [saved (db/script-save db (:script msg))]
-    (response 200 :server/script-save saved)
-    (error :db-error msg)))
 
 ;;-----------------------------------------------------------------------------
 ;; endpoints

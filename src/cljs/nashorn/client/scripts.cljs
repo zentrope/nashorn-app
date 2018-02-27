@@ -48,7 +48,7 @@
       (ControlBar
        (Button {:type :run
                 :label "Run"
-                :onClick (send! ch :script/test {:text (:script script)})})
+                :onClick (send! ch :script/run script)})
        (Button {:type (if active? :stop :play)
                 :label (if active? "Deactivate" "Activate")
                 :onClick (send! ch :script/status

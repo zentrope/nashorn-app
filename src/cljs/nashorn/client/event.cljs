@@ -27,11 +27,21 @@
   [state _ msg]
   (assoc state :script/test-result nil))
 
+(defmethod mutate! :script/focus
+  [state _ msg]
+  (assoc state :script/focus (:id msg) :script/test-result nil))
+
 (defmethod mutate! :script/new
   [state ch msg]
   (when (empty? (:functions state))
     (http/send! ch {:event :script/docs}))
   (assoc state :view :view/new-script :script/test-result nil))
+
+(defmethod mutate! :script/run
+  [state ch msg]
+  (println "MSG:" (pr-str msg))
+  (http/send! ch {:event :script/run :id (:id msg) :text (:script msg)})
+  (assoc state :script/test-result nil))
 
 (defmethod mutate! :script/save
   [state ch msg]
@@ -47,10 +57,6 @@
   [state ch msg]
   (http/send! ch msg)
   (assoc state :script/test-result nil))
-
-(defmethod mutate! :script/focus
-  [state _ msg]
-  (assoc state :script/focus (:id msg) :script/test-result nil))
 
 (defmethod mutate! :script/unfocus
   [state _ msg]
@@ -85,7 +91,10 @@
   (go-loop []
     (when-let [msg (<! ch)]
       (try
-        (f msg)
+        (if (vector? msg)
+          (doseq [m msg]
+            (f m))
+          (f msg))
         (catch js/Error e
           (println "ERROR:" (pr-str {:error e :msg msg}))))
       (recur))))
