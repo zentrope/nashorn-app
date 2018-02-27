@@ -33,10 +33,6 @@
   [v]
   (includes? v "/"))
 
-(defn- steps
-  [from to step]
-  (for [x (range from (inc to)) :when (= 0 (mod x step))] x))
-
 (defn- to-int
   [x]
   (js/parseInt x 10))
@@ -57,9 +53,9 @@
       (case (count tokens)
         1 [(if (= from "*") from (to-int from))]
         2 (if (= from "*")
-            (steps min max (to-int to))
+            (range min (inc max) (to-int to))
             (range (to-int from) (inc (to-int to))))
-        (steps (to-int from) (to-int to) (to-int step))))))
+        (range (to-int from) (inc (to-int to)) (to-int step))))))
 
 (defn- check!
   [tag values min max]
