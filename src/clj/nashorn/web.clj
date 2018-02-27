@@ -49,7 +49,7 @@
 
 (defmethod handle! :script/delete
   [db msg]
-  (db/delete-script db (:id msg))
+  (db/script-delete db (:id msg))
   (handle! db {:event :script/list}))
 
 (defmethod handle! :script/docs
@@ -63,7 +63,7 @@
 
 (defmethod handle! :script/status
   [db msg]
-  (db/status db (:id msg) (:status msg))
+  (db/script-status db (select-keys msg [:id :status]))
   (handle! db {:event :script/list}))
 
 (defmethod handle! :script/test
@@ -73,7 +73,7 @@
 
 (defmethod handle! :script/save
   [db msg]
-  (if-let [saved (db/save-script db (:script msg))]
+  (if-let [saved (db/script-save db (:script msg))]
     (response 200 :server/script-save saved)
     (error :db-error msg)))
 

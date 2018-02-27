@@ -93,7 +93,7 @@
 ;; Queries
 ;;-----------------------------------------------------------------------------
 
-(defn delete-script
+(defn script-delete
   [this id]
   (let [sql "delete from script where id=?"]
     (jdbc/execute! (:spec this) [sql id])))
@@ -106,14 +106,14 @@
   [this id]
   (first (jdbc/query (:spec this) ["select * from script where id=?" id])))
 
-(defn save-script
+(defn script-save
   [{:keys [spec] :as this} {:keys [name cron text] :as new-script}]
   (let [values {:name name :crontab cron :script text}
         result (jdbc/insert! spec "script" values)]
     (script this (pkey result))))
 
-(defn status
-  [{:keys [spec] :as this} id status]
+(defn script-status
+  [{:keys [spec] :as this} {:keys [id status]}]
   (let [sql "update script set status=?, updated=now() where id=?"]
     (jdbc/execute! spec [sql status id])))
 
