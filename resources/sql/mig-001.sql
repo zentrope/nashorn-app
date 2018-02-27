@@ -9,7 +9,5 @@ create table if not exists script (
   crontab varchar not null default '* * * * *',
   script varchar not null,
   language varchar not null default 'JavaScript',
-  status enum ('active', 'inactive') default 'inactive'
+  status enum ('active', 'inactive') not null default 'inactive'
 );
-
-create index if not exists script_status on script(status);

@@ -23,12 +23,6 @@
     [:name :varchar "not null"]
     [:created_at :timestamp "not null" "default current_timestamp"]]))
 
-(defn- sql-now
-  ([]
-   (java.sql.Timestamp. (System/currentTimeMillis)))
-  ([ms]
-   (java.sql.Timestamp. ms)))
-
 (defn- already-run?
   [conn]
   (->> (jdbc/query conn ["select name from migration"])
@@ -41,7 +35,7 @@
   (let [m-name (-> migration meta :name str)]
     (log/info "→ running db migration:" m-name)
     (migration conn)
-    (jdbc/insert! conn :migration {:name m-name :created_at (sql-now)})))
+    (jdbc/insert! conn :migration {:name m-name})))
 
 (defn- load-sql!
   [sql-source]
@@ -84,9 +78,8 @@
 ;; Convenience
 ;;-----------------------------------------------------------------------------
 
-(defn- pkey
+(defn- pkey ;; h2 only
   [result]
-  ;; h2 only
   (first (vals (first result))))
 
 ;;-----------------------------------------------------------------------------
@@ -112,13 +105,13 @@
 
 (defn script-save
   [{:keys [spec] :as this} {:keys [name cron text] :as new-script}]
-  (let [values {:name name :crontab cron :script text}
+  (let [values {:name name :crontab cron :script text :status "inactive"}
         result (jdbc/insert! spec "script" values)]
     (script this (pkey result))))
 
 (defn script-status
   [this {:keys [id status]}]
-  (let [sql "update script set status=? updated=now() where id=?"]
+  (let [sql "update script set status=?, updated=now() where id=?"]
     (jdbc/execute! (:spec this) [sql status id])))
 
 ;;-----------------------------------------------------------------------------
