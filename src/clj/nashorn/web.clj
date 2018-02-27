@@ -102,9 +102,8 @@
 (defn- routes
   [request db]
   (-> (case (:uri request)
-        "/"       (home request)
-        "/mutate" (dispatch request db)
-        "/query"  (dispatch request db)
+        "/"         (home request)
+        "/dispatch" (dispatch request db)
         (webhacks/resource request))
       (assoc-in [:headers "Cache-Control"] "no-cache")))
 

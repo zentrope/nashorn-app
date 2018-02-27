@@ -30,10 +30,6 @@
   [ch path msg]
   (run-fetch ch (urlify path) (postify msg)))
 
-(defn mutate
+(defn send!
   [ch msg]
-  (post ch "mutate" msg))
-
-(defn query
-  [ch msg]
-  (post ch "query" msg))
+  (post ch "dispatch" msg))

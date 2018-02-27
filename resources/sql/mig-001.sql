@@ -8,7 +8,7 @@ create table if not exists script (
   category varchar default '',
   crontab varchar not null default '* * * * *',
   script varchar not null,
-  language varchar not null default 'javascript',
+  language varchar not null default 'JavaScript',
   status enum ('active', 'inactive') default 'inactive'
 );
 

@@ -28,7 +28,7 @@
   (println "Welcome to the Extension Manager")
   (let [ch (chan)]
     (add-watch app-state :state (fn [k r o n] (app/render! n ch)))
-    (http/query ch {:event :script/list})
+    (http/send! ch {:event :script/list})
     (app/render! @app-state ch)
     (event/loop! ch #(reset! app-state (event/mutate! @app-state ch %)))))
 

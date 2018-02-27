@@ -15,12 +15,12 @@
 
 (defmethod mutate! :script/delete
   [state ch msg]
-  (http/mutate ch {:event :script/delete :id (:id msg)})
+  (http/send! ch {:event :script/delete :id (:id msg)})
   state)
 
 (defmethod mutate! :script/done
   [state ch msg]
-  (http/query ch {:event :script/list})
+  (http/send! ch {:event :script/list})
   (assoc state :view :view/home :script/test-result nil))
 
 (defmethod mutate! :script/done-results
@@ -30,22 +30,22 @@
 (defmethod mutate! :script/new
   [state ch msg]
   (when (empty? (:functions state))
-    (http/query ch {:event :script/docs}))
+    (http/send! ch {:event :script/docs}))
   (assoc state :view :view/new-script :script/test-result nil))
 
 (defmethod mutate! :script/save
   [state ch msg]
-  (http/mutate ch msg)
+  (http/send! ch msg)
   state)
 
 (defmethod mutate! :script/status
   [state ch msg]
-  (http/mutate ch msg)
+  (http/send! ch msg)
   state)
 
 (defmethod mutate! :script/test
   [state ch msg]
-  (http/query ch msg)
+  (http/send! ch msg)
   (assoc state :script/test-result nil))
 
 (defmethod mutate! :script/focus
@@ -73,7 +73,7 @@
 
 (defmethod mutate! :server/script-save
   [state ch _]
-  (http/query ch {:event :script/list})
+  (http/send! ch {:event :script/list})
   (assoc state :view :view/home :script/test-result nil))
 
 (defmethod mutate! :server/script-list
