@@ -117,17 +117,17 @@
     (script this (pkey result))))
 
 (defn script-status
-  [{:keys [spec] :as this} {:keys [id status]}]
-  (let [sql "update script set status=?, updated=now() where id=?"]
-    (jdbc/execute! spec [sql status id])))
+  [this {:keys [id status]}]
+  (let [sql "update script set status=? updated=now() where id=?"]
+    (jdbc/execute! (:spec this) [sql status id])))
 
 ;;-----------------------------------------------------------------------------
 ;; Bootstrap
 ;;-----------------------------------------------------------------------------
 
 (defn start!
-  [{:keys [spec] :as config}]
-  (init-dir! (:subname spec))
+  [{:keys [spec app-dir] :as config}]
+  (init-dir! app-dir)
   (log/infof "→ data stored in %s." (:subname spec))
   (migrate! spec #'mig-001)
   {:spec spec})

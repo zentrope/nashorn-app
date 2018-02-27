@@ -9,15 +9,16 @@
   (:import
    (java.io File)))
 
-(def ^:private home-dir
-  (str "file://" (System/getProperty "user.home")))
+(def ^:private app-dir
+  (str (System/getProperty "user.home") File/separator ".nashorn_app"))
 
 (def config
   {:svc/web {:port 2018 :db (ig/ref :svc/db)}
-   :svc/db  {:spec {:subprotocol "h2"
-                    :subname (join File/separator [home-dir ".nashorn_app" "storage"])
-                    :user "sa"
-                    :password ""}}})
+   :svc/db  {:app-dir app-dir
+             :spec    {:subprotocol "h2"
+                       :subname     (str "file://" app-dir File/separator "storage")
+                       :user        "sa"
+                       :password    ""}}})
 
 (defn hook-shutdown! [f]
   (doto (Runtime/getRuntime)
