@@ -44,7 +44,7 @@
                    :plugins [[lein-ancient "0.6.15"]
                              [lein-cljsbuild "1.1.7" :exclusions [org.clojure/clojure]]
                              [lein-figwheel "0.5.14"  :exclusions [org.clojure/clojure]]]
-                   :dependencies [[org.clojure/clojurescript "1.9.946"]
+                   :dependencies [[org.clojure/clojurescript "1.10.64"]
                                   [cljsjs/codemirror "5.31.0-0"]
                                   [rum "0.11.2" :exclusions [com.cognitect/transit-clj
                                                              com.cognitect/transit-cljs]]
