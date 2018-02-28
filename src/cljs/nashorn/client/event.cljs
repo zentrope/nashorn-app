@@ -88,7 +88,6 @@
 
 (defmethod mutate! :server/script-save
   [state ch _]
-  (http/send! ch {:event :script/list})
   (assoc state :view :view/home :script/test-result nil))
 
 (defmethod mutate! :server/script-update

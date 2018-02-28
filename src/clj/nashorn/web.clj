@@ -80,7 +80,8 @@
 (defmethod handle! :script/save
   [db msg]
   (if-let [saved (db/script-save db (:script msg))]
-    (response 200 :server/script-save saved)
+    (responses (response 200 :server/script-save saved)
+               (handle! db {:event :script/list}))
     (error :db-error msg)))
 
 (defmethod handle! :script/status
