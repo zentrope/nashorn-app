@@ -30,9 +30,10 @@
   (.-value (.-target e)))
 
 (defn- mk-editor
-  [onChange]
+  [initial-value onChange]
   (let [place (.getElementById js/document "CodeMirrorEditor")]
     (doto (.fromTextArea js/CodeMirror place editor-config)
+      (.setValue initial-value)
       (.on "change" #(onChange (.getValue %1))))))
 
 (defn- saveable?
@@ -89,13 +90,15 @@
 
 (def ^:private WillMountMixin
   {:will-mount (fn [state]
-                 (let [[script run-result ch] (:rum/args state)]
-                  (reset! (:this/form state) (if (empty? script) default-form script))
-                  state))})
+                 (let [[script _ _] (:rum/args state)]
+                   (reset! (:this/form state) (if (empty? script) default-form script))
+                   state))})
 
 (def ^:private DidMountMixin
   {:did-mount (fn [state]
-                (let [cm (mk-editor #(swap! (:this/form state) assoc :script %))]
+                (let [[script _ _] (:rum/args state)
+                      cm (mk-editor (:script script)
+                                    #(swap! (:this/form state) assoc :script %))]
                   (reset! (:this/ed state) cm)
                   state))})
 
