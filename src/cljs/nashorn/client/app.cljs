@@ -26,10 +26,13 @@
                run-result
                ch))))
 
+(def ^:private editing?
+  #{:view/new-script :view/edit-script})
+
 (defc RootUI < PureMixin
   [state ch]
   [:section.App
-   (SideBar state (= (:view state) :view/new-script) ch)
+   (SideBar state (editing? (:view state)) ch)
    (UIFrame state ch)])
 
 (defn render!
