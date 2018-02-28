@@ -9,14 +9,17 @@
   (:import
    (java.io File)))
 
+(def ^:private sep
+  File/separator)
+
 (def ^:private app-dir
-  (str (System/getProperty "user.home") File/separator ".nashorn_app"))
+  (str (System/getProperty "user.home") sep ".kfi" sep "nashorn_app"))
 
 (def config
   {:svc/web {:port 2018 :db (ig/ref :svc/db)}
    :svc/db  {:app-dir app-dir
              :spec    {:subprotocol "h2"
-                       :subname     (str "file://" app-dir File/separator "storage")
+                       :subname     (str "file://" app-dir sep "storage")
                        :user        "sa"
                        :password    ""}}})
 
