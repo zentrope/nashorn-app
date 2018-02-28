@@ -43,7 +43,6 @@
 
 (defmethod mutate! :script/run
   [state ch msg]
-  (println "MSG:" (pr-str msg))
   (http/send! ch {:event :script/run :id (:id msg) :text (:script msg)})
   (assoc state :script/test-result nil))
 
