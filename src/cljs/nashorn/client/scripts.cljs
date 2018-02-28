@@ -31,12 +31,11 @@
   [{:keys [rows selected?] :as attrs} ch]
   [:div.Lister
    (Table
-    ["" "Extension" "Updated" "Last run"]
+    ["Extension" "Updated" "Last run"]
     (for [row rows]
       [:tr {:class ["Clickable" (if (selected? row) "Selected")]
             :onClick (send! ch :script/focus {:id (:id row)})}
-       [:td {:width "2%"} (Badge (:status row))]
-       [:td {:width "48%"} (:name row)]
+       [:td {:width "48%"} (Badge (:status row)) (:name row)]
        [:td {:width "25%"} (datef (:updated row))]
        [:td {:width "25%"} (datef (:last_run row))]]))])
 
