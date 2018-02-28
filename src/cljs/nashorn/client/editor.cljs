@@ -22,6 +22,9 @@
             "lineWrapping"    false
             "lineNumbers"     true}))
 
+(def ^:private default-form
+  {:script default-code :crontab "* * * * *" :name ""})
+
 (defn- target-val
   [e]
   (.-value (.-target e)))
@@ -33,9 +36,9 @@
       (.on "change" #(onChange (.getValue %1))))))
 
 (defn- saveable?
-  [{:keys [text cron name] :as script}]
-  (and (not (blank? text))
-       (not (blank? cron))
+  [{:keys [script crontab name] :as form}]
+  (and (not (blank? script))
+       (not (blank? crontab))
        (not (blank? name))))
 
 (defc NamePanel < PureMixin
@@ -70,37 +73,47 @@
       :value default-code}]]])
 
 (defc Controls < PureMixin
-  [{:keys [text name cron] :as script} ch]
-  (ControlBar
-   (Button {:type :save
-            :disabled? (not (saveable? script))
-            :onClick (send! ch :script/save {:script script})
-            :label "Save"})
-   (Button {:type :run
-            :onClick (send! ch :script/test {:text text})
-            :label "Run"})
-   (Button {:type :close
-            :onClick (send! ch :script/done)
-            :label "Done"})))
+  [{:keys [id script name crontab] :as form} ch]
+  (let [event (if (nil? id) :script/save :script/update)]
+    (ControlBar
+     (Button {:type :save
+              :disabled? (not (saveable? form))
+              :onClick (send! ch event {:script form})
+              :label (if (nil? id) "Save" "Update")})
+     (Button {:type :run
+              :onClick (send! ch :script/test {:text script})
+              :label "Run"})
+     (Button {:type :close
+              :onClick (send! ch :script/done)
+              :label "Done"}))))
 
-(def ^:private default-form
-  {:text default-code :cron "* * * * *" :name ""})
+(def ^:private WillMountMixin
+  {:will-mount (fn [state]
+                 (let [[script run-result ch] (:rum/args state)]
+                  (reset! (:this/form state) (if (empty? script) default-form script))
+                  state))})
 
-(defcs Editor < PureMixin
-  (rum/local nil          :this/ed)   ;; The editor object
-  (rum/local default-form :this/form) ;; The editor + metadata
+(def ^:private DidMountMixin
   {:did-mount (fn [state]
-                (let [cm (mk-editor #(swap! (:this/form state) assoc :text %))]
+                (let [cm (mk-editor #(swap! (:this/form state) assoc :script %))]
                   (reset! (:this/ed state) cm)
-                  state))}
-  [locals state ch]
+                  state))})
+
+(def ^:private EdMixin
+  (rum/local nil :this/ed))
+
+(def ^:private FormMixin
+  (rum/local :nil :this/form))
+
+(defcs Editor < PureMixin EdMixin FormMixin WillMountMixin DidMountMixin
+  [locals script run-result ch]
   (let [form (:this/form locals)
-        cm (:this/ed locals)]
+        cm   (:this/ed locals)]
     [:section
      [:section.EditorArea
       (NamePanel (:name @form) #(swap! form assoc :name %))
-      (CronPanel (:cron @form) #(swap! form assoc :cron %))
+      (CronPanel (:crontab @form) #(swap! form assoc :crontab %))
       (EditorPanel)
-      (when-let [result (:script/test-result state)]
-        (ResultPanel result ch))]
+      (when run-result
+        (ResultPanel run-result ch))]
      (Controls @form ch)]))

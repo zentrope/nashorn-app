@@ -57,9 +57,10 @@
                 :type :delete
                 :disabled? active?
                 :onClick (confirm-delete script ch)})
-       (Button {:type :edit
+       (Button {:label "Edit"
+                :type :edit
                 :disabled? active?
-                :label "Edit"})
+                :onClick (send! ch :script/edit {:id id})})
        (Button {:type :close
                 :label "Unfocus"
                 :onClick (send! ch :script/unfocus)})))))

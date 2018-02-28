@@ -95,7 +95,7 @@
   [this]
   (doall (jdbc/query (:spec this) ["select * from script"])))
 
-(defn script
+(defn script-find
   [this id]
   (first (jdbc/query (:spec this) ["select * from script where id=?" id])))
 
@@ -104,15 +104,21 @@
   (jdbc/execute! (:spec this) ["update script set last_run=now() where id=?" id]))
 
 (defn script-save
-  [{:keys [spec] :as this} {:keys [name cron text] :as new-script}]
-  (let [values {:name name :crontab cron :script text :status "inactive"}
+  [{:keys [spec] :as this} {:keys [name crontab script]}]
+  (let [values {:name name :crontab crontab :script script :status "inactive"}
         result (jdbc/insert! spec "script" values)]
-    (script this (pkey result))))
+    (script-find this (pkey result))))
 
 (defn script-status
   [this {:keys [id status]}]
   (let [sql "update script set status=?, updated=now() where id=?"]
     (jdbc/execute! (:spec this) [sql status id])))
+
+(defn script-update
+  [this {:keys [name script crontab id]}]
+  (let [sql "update script set name=?, script=?, crontab=?, updated=now() where id=?"]
+    (jdbc/execute! (:spec this) [sql name script crontab id])
+    (script-find this id)))
 
 ;;-----------------------------------------------------------------------------
 ;; Bootstrap

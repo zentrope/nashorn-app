@@ -27,6 +27,10 @@
   [state _ msg]
   (assoc state :script/test-result nil))
 
+(defmethod mutate! :script/edit
+  [state ch msg]
+  (assoc state :script/focus (:id msg) :view :view/edit-script))
+
 (defmethod mutate! :script/focus
   [state _ msg]
   (assoc state :script/focus (:id msg) :script/test-result nil))
@@ -62,6 +66,11 @@
   [state _ msg]
   (assoc state :script/focus nil :script/test-result nil))
 
+(defmethod mutate! :script/update
+  [state ch {:keys [event script]}]
+  (http/send! ch {:event :script/update :script script})
+  state)
+
 ;; server responses
 
 (defmethod mutate! :server/docs
@@ -80,6 +89,10 @@
 (defmethod mutate! :server/script-save
   [state ch _]
   (http/send! ch {:event :script/list})
+  (assoc state :view :view/home :script/test-result nil))
+
+(defmethod mutate! :server/script-update
+  [state ch _]
   (assoc state :view :view/home :script/test-result nil))
 
 (defmethod mutate! :server/script-list

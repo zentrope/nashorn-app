@@ -26,7 +26,7 @@
 
 (defn- responses
   "Merge multiple responses into one, with multiple messages in the body."
-  [responses]
+  [& responses]
   (let [status (first (reverse (sort-by :status responses)))
         body (mapv :body responses)]
     {:status status
@@ -45,7 +45,7 @@
    (response 500 :server/error {:code code :reason reason :msg msg})))
 
 ;;-----------------------------------------------------------------------------
-;; query handlers
+;; handlers
 ;;-----------------------------------------------------------------------------
 
 (defmulti handle!
@@ -74,8 +74,8 @@
   [db msg]
   (let [run-result (script/eval-script (:text msg))]
     (db/script-mark-run db {:id (:id msg)})
-    (responses [(response 200 :server/test-result run-result)
-                (handle! db {:event :script/list})])))
+    (responses (response 200 :server/test-result run-result)
+               (handle! db {:event :script/list}))))
 
 (defmethod handle! :script/save
   [db msg]
@@ -92,6 +92,13 @@
   [db msg]
   (let [run-result (script/eval-script (:text msg))]
     (response 200 :server/test-result run-result)))
+
+(defmethod handle! :script/update
+  [db msg]
+  (if-let [updated (db/script-update db (:script msg))]
+    (responses (response 200 :server/script-update updated)
+               (handle! db {:event :script/list}))
+    (error :db-error msg)))
 
 ;;-----------------------------------------------------------------------------
 ;; endpoints

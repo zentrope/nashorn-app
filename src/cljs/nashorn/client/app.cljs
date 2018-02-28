@@ -15,13 +15,16 @@
 
 (defc UIFrame < PureMixin
   [state ch]
-  (case (:view state)
-    :view/new-script (Editor state ch)
-    ;; :view/home
-    (Scripts (:script/list state)
-             (find-focus state)
-             (:script/test-result state)
-             ch)))
+  (let [script (find-focus state)
+        run-result (:script/test-result state)]
+    (case (:view state)
+      :view/new-script  (Editor {} run-result ch)
+      :view/edit-script (Editor script run-result ch)
+      ;; :view/home
+      (Scripts (:script/list state)
+               script
+               run-result
+               ch))))
 
 (defc RootUI < PureMixin
   [state ch]
