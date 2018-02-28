@@ -47,7 +47,7 @@ db-console: ## Start a db-console web app (for h2).
 	java -jar $(shell find ~/.m2 -iname "h2*jar" | sort | tail -1) || true
 
 db-reset: ## Reset (really, delete) the database (h2).
-	rm -rf ~/.nashorn_app/storage.mv.db
+	rm -rf ~/.kfi/nashorn_app/storage.mv.db
 
 help: ## Show makefile based help
 	@grep -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
