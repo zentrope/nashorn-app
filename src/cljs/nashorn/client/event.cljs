@@ -13,6 +13,29 @@
   (println "Unhandled:" (pr-str msg))
   state)
 
+(defmethod mutate! :props/done
+  [state _ _]
+  (assoc state :view :view/home :env/focus nil))
+
+(defmethod mutate! :props/edit
+  [state ch msg]
+  (http/send! ch {:event :script/docs})
+  (assoc state :view :view/props-edit :env/focus (:key msg)))
+
+(defmethod mutate! :props/focus
+  [state _ msg]
+  (assoc state :env/focus (:key msg)))
+
+(defmethod mutate! :props/new
+  [state ch _]
+  (http/send! ch {:event :script/docs})
+  (assoc state :view :view/props-new :env/focus nil))
+
+(defmethod mutate! :props/save
+  [state ch msg]
+  (http/send! ch msg)
+  state)
+
 (defmethod mutate! :script/delete
   [state ch msg]
   (http/send! ch {:event :script/delete :id (:id msg)})
@@ -29,6 +52,8 @@
 
 (defmethod mutate! :script/edit
   [state ch msg]
+  (when (empty? (:script/docs state))
+    (http/send! ch {:event :script/docs}))
   (assoc state :script/focus (:id msg) :view :view/edit-script))
 
 (defmethod mutate! :script/focus
@@ -37,7 +62,7 @@
 
 (defmethod mutate! :script/new
   [state ch msg]
-  (when (empty? (:functions state))
+  (when (empty? (:script/docs state))
     (http/send! ch {:event :script/docs}))
   (assoc state :view :view/new-script :script/test-result nil))
 
@@ -75,6 +100,10 @@
 (defmethod mutate! :server/docs
   [state _ data]
   (assoc state :script/docs (:docs data)))
+
+(defmethod mutate! :server/env-list
+  [state _ msg]
+  (assoc state :env/properties (:vars msg)))
 
 (defmethod mutate! :server/error
   [state _ data]

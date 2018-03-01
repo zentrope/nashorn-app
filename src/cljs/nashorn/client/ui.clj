@@ -22,6 +22,12 @@
      [:div.Commands ~@commands]]
     [:div.Body ~@body]])
 
+(defmacro Form
+  [& fields]
+  `[:div.Form
+    [:div.Fields
+     ~@fields]])
+
 (defmacro ControlBar
   [& buttons]
   `[:div.ControlBar

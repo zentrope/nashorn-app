@@ -86,6 +86,22 @@
 ;; Queries
 ;;-----------------------------------------------------------------------------
 
+(defn env-find
+  [this key]
+  (let [result (first (jdbc/query (:spec this) ["select * from environment where key=?" key]))]
+    (or result "")))
+
+(defn env-set
+  [this {:keys [key value hidden?]}]
+  (jdbc/with-db-transaction [tx (:spec this)]
+    (jdbc/delete! tx :environment ["key = ?" key])
+    (jdbc/insert! tx :environment {:key key :value value :hidden (or hidden? false)}))
+  (env-find this key))
+
+(defn env-vars
+  [this]
+  (doall (jdbc/query (:spec this) ["select * from environment order by key"])))
+
 (defn script-delete
   [this id]
   (let [sql "delete from script where id=?"]
@@ -93,7 +109,7 @@
 
 (defn scripts
   [this]
-  (doall (jdbc/query (:spec this) ["select * from script"])))
+  (doall (jdbc/query (:spec this) ["select * from script order by name"])))
 
 (defn script-find
   [this id]

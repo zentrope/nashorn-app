@@ -52,9 +52,20 @@
   (fn [db msg]
     (:event msg)))
 
+(defmethod handle! :env/list
+  [db _]
+  (response 200 :server/env-list {:vars (db/env-vars db)}))
+
 (defmethod handle! :default
   [_ msg]
   (error :no-handler msg))
+
+(defmethod handle! :props/save
+  [db msg]
+  (let [result (db/env-set db (:property msg))]
+    (responses
+     (response 200 :server/prop-saved {:saved result})
+     (handle! db {:event :env/list}))))
 
 (defmethod handle! :script/delete
   [db msg]
@@ -63,7 +74,7 @@
 
 (defmethod handle! :script/docs
   [db _]
-  (let [docs (-> "documentation.edn" io/resource  slurp edn/read-string)]
+  (let [docs (-> "documentation.edn" io/resource slurp edn/read-string)]
     (response 200 :server/docs {:docs docs})))
 
 (defmethod handle! :script/list

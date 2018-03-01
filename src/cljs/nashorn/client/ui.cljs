@@ -38,3 +38,22 @@
     [:div props
      [:div.Icon (button-icons type)]
      [:div.Label label]]))
+
+(defc Field < PureMixin
+  [{:keys [title onChange] :as props}]
+  [:div.Field
+   [:div.Title (or title "")]
+   [:input (assoc props :onChange #(onChange (.-value (.-target %))))]])
+
+(defc MultiLineField < PureMixin
+  {:did-mount (fn [state]
+                (let [{:keys [id value]} (first (:rum/args state))
+                      node (rum/ref-node state id)]
+                  (set! (.-innerText node) value)
+                  state))}
+  [{:keys [title id onChange value]}]
+  [:div.Field
+   [:div.Title (or title "")]
+   [:div.TextArea {:ref id
+                   :onInput #(onChange (.-innerText (.-target %)))
+                   :contentEditable "true"}]])

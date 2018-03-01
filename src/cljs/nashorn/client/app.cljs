@@ -1,11 +1,11 @@
 (ns nashorn.client.app
   (:require
    [nashorn.client.editor :refer [Editor]]
+   [nashorn.client.properties :refer [Properties]]
    [nashorn.client.scripts :refer [Scripts]]
    [nashorn.client.sidebar :refer [SideBar]]
    [nashorn.client.ui :refer [send! PureMixin WorkArea]]
    [rum.core :as rum :refer [defc]]))
-
 
 (defn- find-focus
   [{:keys [script/focus :script/list]}]
@@ -15,19 +15,18 @@
 
 (defc UIFrame < PureMixin
   [state ch]
-  (let [script (find-focus state)
+  (let [script     (find-focus state)
         run-result (:script/test-result state)]
     (case (:view state)
       :view/new-script  (Editor {} run-result ch)
       :view/edit-script (Editor script run-result ch)
-      ;; :view/home
-      (Scripts (:script/list state)
-               script
-               run-result
-               ch))))
+      :view/props-edit  (Properties (:env/properties state) (:env/focus state) ch)
+      :view/props-new   (Properties (:env/properties state) (:env/focus state) ch)
+      (Scripts (:script/list state) script run-result ch))))
 
 (def ^:private editing?
-  #{:view/new-script :view/edit-script})
+  #{:view/new-script :view/edit-script
+    :view/props-edit :view/props-new})
 
 (defc RootUI < PureMixin
   [state ch]

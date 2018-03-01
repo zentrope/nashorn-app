@@ -45,7 +45,7 @@ function pollIssues(owner, name, last) {
 
   // The prints can be captured by the evaluator. The result of the
   // last expression is returned as the result of the eval.
-  return "done";
+  // return "done";
 }
 
 pollIssues("clojure-emacs", "cider", 3);

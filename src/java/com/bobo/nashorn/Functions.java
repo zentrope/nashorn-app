@@ -11,14 +11,28 @@ import java.util.Scanner;
 import javax.net.ssl.HttpsURLConnection;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 
+import clojure.java.api.Clojure;
+import clojure.lang.IFn;
+import clojure.lang.PersistentArrayMap;
+
 public final class Functions {
 
-  public static String lookup(String name) {
-    if (name == "github_token") {
-      // My personal system, so...
-      return System.getenv("HOMEBREW_GITHUB_API_TOKEN");
+  public static String lookup(String name) throws Exception {
+
+    IFn deref = Clojure.var("clojure.core", "deref");
+    IFn get = Clojure.var("clojure.core", "get");
+    IFn envFind = Clojure.var("nashorn.db", "env-find");
+
+    Object config = deref.invoke(Clojure.var("nashorn.main", "config"));
+    Object dbRef = get.invoke(config, Clojure.read(":svc/db"));
+    Object result = envFind.invoke(dbRef, name);
+    Object value = get.invoke(result, Clojure.read(":value"));
+
+    if (value == null) {
+      throw new IllegalArgumentException(format("No value for '%s' in environment.", name));
     }
-    return System.getenv(name);
+
+    return (String)value;
   }
 
   public static String format(String fmt, Object ...args) {

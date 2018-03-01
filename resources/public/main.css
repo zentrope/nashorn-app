@@ -68,10 +68,13 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: center;
+
+  padding-right: 15px;
+  padding-left: 15px;
 }
 
 .SideBar .Buttons .Button {
-  font-weight: 400;
+  margin: 0;
 }
 
 /* SideBar Panels */
@@ -106,13 +109,15 @@ h1 {
 
 .SideBar .Panels .Panel .Body .Item {
   font-size: 11pt;
+
+  padding: 2px;
   padding-top: 3px;
   padding-bottom: 3px;
-  padding-left: 8px;
+  margin: 2px 8px 4px 0;
+
   cursor: pointer;
   border-radius: 2px;
 
-  margin: 2px 0 4px 0;
   -webkit-user-select: none;
   -moz-user-select: none;
   user-select: none;
@@ -120,21 +125,42 @@ h1 {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+
+  display: flex;
+  align-items: center;
 }
 
 .SideBar .Panels .Panel .Body .Item.Selected {
   background: #D5FDD5;
 }
 
-.SideBar .Panels .Panel .Body .Item .Fn {
-  color: mediumseagreen;
-  padding-right: 4px;
+.SideBar .Panels .Panel .Body .Item .Icon {
+  width: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.SideBar .Panels .Panel .Body .Item .Script {
-  color: DodgerBlue;
-  font-weight: bold;
-  padding-right: 4px;
+.SideBar .Panels .Panel .Body .Item .Label {
+  flex: 1;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.SideBar .Panels .Panel .Body .Item .Icon.Fn {
+  color: DarkOrange;
+  font-size: 11pt;
+}
+
+
+.SideBar .Panels .Panel .Body .Item .Icon.Env {
+  fill: mediumseagreen;
+}
+
+.SideBar .Panels .Panel .Body .Item .Icon.Script {
+  fill: DodgerBlue;
 }
 
 .SideBar .Panels .Panel .Body .Item:active {

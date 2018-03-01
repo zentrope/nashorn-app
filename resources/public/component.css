@@ -31,6 +31,112 @@
   padding: 15px;
 }
 
+/* FORM */
+
+.Form {
+}
+
+.Form .Fields {
+
+  display: flex;
+  flex-direction: column;
+}
+
+.Form .Fields .Field {
+  flex: 1;
+
+  border-left: none;
+  border-right: none;
+
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+
+  position: relative;
+}
+
+.Form .Fields .Field .Title {
+  position: absolute;
+  bottom: 1px;
+  right: 7px;
+  color: #369;
+  font-size: 10pt;
+  background-color: white;
+  padding-top: 5px;
+  padding-left: 10px;
+  padding-bottom: 4px;
+  opacity: 0.9;
+  border-top-left-radius: 4px;
+}
+
+.Form .Fields .Field input {
+  flex: 1;
+
+  margin: 0;
+  border: none;
+
+  font-size: 11pt;
+  padding: 10px;
+  padding-bottom:5px;
+  padding-left: 0;
+
+  color: #369;
+  outline: none;
+  border-bottom: 1px solid #d8d8d8;
+}
+
+.Form .Fields .Field input:focus {
+  border-bottom: 1px solid #369;
+}
+
+.Form .Fields .Field textarea {
+  flex: 1;
+
+  margin: 0;
+  border: none;
+
+  font-size: 10pt;
+  font-family: menlo, monaco, monospace;
+  padding: 10px;
+  padding-bottom:5px;
+  padding-left: 0;
+
+  /* resize: none; */
+
+  max-height: 166px;
+  outline: none;
+  color: #369;
+  border-bottom: 1px solid #d8d8d8;
+}
+
+.Form .Fields .Field .TextArea {
+  content: editable;
+  overflow: auto;
+
+  flex: 1;
+
+  margin: 0;
+  border: none;
+
+  font-size: 10pt;
+  font-family: menlo, monaco, monospace;
+  padding: 10px;
+  padding-bottom:5px;
+  padding-left: 0;
+
+  /* resize: none; */
+
+  min-height: 36pt;
+  max-height: 166px;
+  outline: none;
+  color: #369;
+  border-bottom: 1px solid #d8d8d8;
+}
+
+.Form .Fields .Field .TextArea:focus {
+  border-bottom: 1px solid #369;
+}
+
 /* ICONS */
 
 .Icon {
@@ -50,8 +156,8 @@
 /* BUTTON */
 
 .Button {
-  margin-right: 5px;
-  margin-left: 5px;
+  /* margin-right: 5px; */
+  /* margin-left: 5px; */
   font-size: 10pt;
   text-align: center;
 
