@@ -97,7 +97,7 @@
 (def ^:private DidMountMixin
   {:did-mount (fn [state]
                 (let [[script _ _] (:rum/args state)
-                      cm (mk-editor (:script script)
+                      cm (mk-editor (or (:script script) default-code)
                                     #(swap! (:this/form state) assoc :script %))]
                   (reset! (:this/ed state) cm)
                   state))})
