@@ -48,8 +48,7 @@
                      :class ["Item" (when (= (:key property) focus) "Selected")]}
               (not editing?) (assoc :onClick (send! ch :props/focus {:key (:key property)})))
        [:div.Icon.Env (icon/Env)]
-       [:div.Label (:key property)]]
-      )]])
+       [:div.Label (:key property)]])]])
 
 (defc SideBar < PureMixin
   [state editing? ch]

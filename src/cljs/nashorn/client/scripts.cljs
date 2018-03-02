@@ -2,7 +2,7 @@
   (:require
    [nashorn.client.run-result :refer [ResultPanel]]
    [nashorn.client.ui :refer
-    [do-send! send! ControlBar DisplayBlock PureMixin WorkArea Table Button]]
+    [do-send! send! Conditional ControlBar DisplayBlock PureMixin WorkArea Table Button]]
    [nashorn.client.icon :as icon]
    [rum.core :as rum :refer [defc]])
   (:import
@@ -41,28 +41,34 @@
 
 (defc Controls
   [{:keys [id status] :as script} ch]
-  (if (nil? script)
-    (ControlBar)
-    (let [active? (zero? status)]
-      (ControlBar
-       (Button {:type :close
-                :label "Done"
-                :onClick (send! ch :script/unfocus)})
-       (Button {:type :run
-                :label "Run"
-                :onClick (send! ch :script/run script)})
-       (Button {:type (if active? :stop :play)
-                :label (if active? "Deactivate" "Activate")
-                :onClick (send! ch :script/status
-                                {:id id :status (if active? "inactive" "active")})})
-       (Button {:label "Delete"
-                :type :delete
-                :disabled? active?
-                :onClick (confirm-delete script ch)})
-       (Button {:label "Edit"
-                :type :edit
-                :disabled? active?
-                :onClick (send! ch :script/edit {:id id})})))))
+  (let [active? (zero? status)
+        focussed? (not (nil? script))]
+    (ControlBar
+      (Conditional focussed?
+        (Button {:type :close
+                 :label "Done"
+                 :onClick (send! ch :script/unfocus)}))
+
+      (Button {:type :new
+               :label "New"
+               :onClick (send! ch :script/new)})
+
+      (Conditional focussed?
+        (Button {:type :run
+                 :label "Run"
+                 :onClick (send! ch :script/run script)})
+        (Button {:type (if active? :stop :play)
+                 :label (if active? "Deactivate" "Activate")
+                 :onClick (send! ch :script/status
+                                 {:id id :status (if active? "inactive" "active")})})
+        (Button {:label "Delete"
+                 :type :delete
+                 :disabled? active?
+                 :onClick (confirm-delete script ch)})
+        (Button {:label "Edit"
+                 :type :edit
+                 :disabled? active?
+                 :onClick (send! ch :script/edit {:id id})})))))
 
 (defc DetailView < PureMixin
   [{:keys [id status created updated last_run crontab name] :as script} ch]
