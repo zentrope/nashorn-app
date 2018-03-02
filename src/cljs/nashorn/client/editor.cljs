@@ -77,16 +77,16 @@
   [{:keys [id script name crontab] :as form} ch]
   (let [event (if (nil? id) :script/save :script/update)]
     (ControlBar
+     (Button {:type :close
+              :onClick (send! ch :script/done)
+              :label "Done"})
      (Button {:type :save
               :disabled? (not (saveable? form))
               :onClick (send! ch event {:script form})
               :label (if (nil? id) "Create" "Save")})
      (Button {:type :run
               :onClick (send! ch :script/test {:text script})
-              :label "Run"})
-     (Button {:type :close
-              :onClick (send! ch :script/done)
-              :label "Done"}))))
+              :label "Run"}))))
 
 (def ^:private WillMountMixin
   {:will-mount (fn [state]

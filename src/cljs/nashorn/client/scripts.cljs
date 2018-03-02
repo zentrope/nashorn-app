@@ -45,6 +45,9 @@
     (ControlBar)
     (let [active? (zero? status)]
       (ControlBar
+       (Button {:type :close
+                :label "Done"
+                :onClick (send! ch :script/unfocus)})
        (Button {:type :run
                 :label "Run"
                 :onClick (send! ch :script/run script)})
@@ -59,17 +62,12 @@
        (Button {:label "Edit"
                 :type :edit
                 :disabled? active?
-                :onClick (send! ch :script/edit {:id id})})
-       (Button {:type :close
-                :label "Unfocus"
-                :onClick (send! ch :script/unfocus)})))))
+                :onClick (send! ch :script/edit {:id id})})))))
 
 (defc DetailView < PureMixin
   [{:keys [id status created updated last_run crontab name] :as script} ch]
-  (DisplayBlock {:title name
-                 :commands [(Button {:type :close
-                                     :label "Unfocus"
-                                     :onClick (send! ch :script/unfocus)})]}
+  (DisplayBlock
+   {:title name :commands []}
    [:table.Detailer
     [:tbody
      [:tr [:th "Created"] [:td (datef created)]]

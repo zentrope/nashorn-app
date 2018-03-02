@@ -14,7 +14,8 @@
 (defn send!
   [ch event & [msg]]
   (fn [e]
-    (do-send! ch event msg)))
+    (do-send! ch event msg)
+    (.stopPropagation e)))
 
 (def PureMixin
   rum/static)
