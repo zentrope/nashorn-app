@@ -60,6 +60,10 @@
   [state _ msg]
   (assoc state :script/focus (:id msg) :script/test-result nil))
 
+(defmethod mutate! :script/home
+  [state _ msg]
+  (assoc state :script/focus nil :view :view/home))
+
 (defmethod mutate! :script/new
   [state ch msg]
   (when (empty? (:script/docs state))

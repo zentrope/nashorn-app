@@ -22,7 +22,8 @@
 (defc SideBarScriptsPanel < PureMixin
   [scripts focus ch]
   [:section.Panel
-   [:div.Title "Extensions"]
+   [:div.Title.Active {:onClick (send! ch :script/home)}
+    "Extensions"]
    [:div.Body
     (for [script (sort-by :name scripts)]
       (script-item script (= focus (:id script)) ch))]])

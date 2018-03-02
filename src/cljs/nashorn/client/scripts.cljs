@@ -90,6 +90,6 @@
     (SummaryView (sort-by :name scripts) focus ch)
     (when-not (nil? focus)
       (DetailView focus ch))
-    (when-not (nil? run-result)
+    (when (and run-result focus)
       (ResultPanel run-result ch))]
    (Controls focus ch)))

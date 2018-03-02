@@ -101,7 +101,18 @@ h1 {
   color: #222;
   font-size: 11pt;
   font-weight: bold;
+  padding: 4px;
   padding-bottom: 4px;
+
+  border-radius: 2px;
+}
+
+.SideBar .Panels .Panel .Title.Active {
+  cursor: pointer;
+}
+
+.SideBar .Panels .Panel .Title.Active:active {
+  background-color: #e4e6e9;
 }
 
 .SideBar .Panels .Panel .Body {
