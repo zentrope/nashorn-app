@@ -144,8 +144,8 @@
   (assoc state :script/test-result (dissoc data :event)))
 
 (defmethod mutate! :server/script-save
-  [state ch _]
-  (assoc state :view :view/home :script/test-result nil))
+  [state ch msg]
+  (assoc state :view :view/home :script/test-result nil :script/focus (:id (:saved msg))))
 
 (defmethod mutate! :server/script-update
   [state ch _]
