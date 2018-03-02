@@ -17,7 +17,7 @@ import clojure.lang.PersistentArrayMap;
 
 public final class Functions {
 
-  public static String lookup(String name) throws Exception {
+  public static String lookup(String name) throws IllegalArgumentException {
 
     IFn deref = Clojure.var("clojure.core", "deref");
     IFn get = Clojure.var("clojure.core", "get");
@@ -33,6 +33,15 @@ public final class Functions {
     }
 
     return (String)value;
+  }
+
+  public static String lookup(String name, String defaultValue) {
+    try {
+      return lookup(name);
+    }
+    catch (IllegalArgumentException e) {
+      return defaultValue;
+    }
   }
 
   public static String format(String fmt, Object ...args) {
