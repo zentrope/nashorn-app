@@ -31,14 +31,15 @@
    :stop   (icon/Stop)})
 
 (defc Button < PureMixin
-  [{:keys [type onClick label disabled?] :or {disabled? false label "Button"}}]
+  [{:keys [type onClick label disabled?] :or {disabled? false}}]
   (let [class (if disabled? ["Button" "Disabled"] ["Button" "Enabled"])
         handler (if disabled? nil onClick)
         props (cond-> {:class class}
                 (not disabled?) (assoc :onClick onClick))]
     [:div props
      [:div.Icon (button-icons type)]
-     [:div.Label label]]))
+     (when label
+       [:div.Label label])]))
 
 (defc Field < PureMixin
   [{:keys [title onChange] :as props}]

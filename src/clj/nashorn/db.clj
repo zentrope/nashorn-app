@@ -86,15 +86,19 @@
 ;; Queries
 ;;-----------------------------------------------------------------------------
 
+(defn env-delete
+  [this key]
+  (jdbc/execute! (:spec this) ["delete from environment where key=?" key]))
+
 (defn env-find
   [this key]
   (let [result (first (jdbc/query (:spec this) ["select * from environment where key=?" key]))]
     (or result "")))
 
 (defn env-set
-  [this {:keys [key value hidden?]}]
+  [this {:keys [old-key key value hidden?]}]
   (jdbc/with-db-transaction [tx (:spec this)]
-    (jdbc/delete! tx :environment ["key = ?" key])
+    (jdbc/execute! tx ["delete from environment where key = ? or key = ?" old-key key])
     (jdbc/insert! tx :environment {:key key :value value :hidden (or hidden? false)}))
   (env-find this key))
 

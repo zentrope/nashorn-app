@@ -32,3 +32,8 @@
   [& buttons]
   `[:div.ControlBar
     ~@buttons])
+
+(defmacro Conditional
+  [test & body]
+  `(when ~test
+     (list ~@body)))

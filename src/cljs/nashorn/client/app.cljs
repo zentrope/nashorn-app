@@ -1,7 +1,7 @@
 (ns nashorn.client.app
   (:require
    [nashorn.client.editor :refer [Editor]]
-   [nashorn.client.properties :refer [Properties]]
+   [nashorn.client.properties :refer [NewProp EditProp Properties]]
    [nashorn.client.scripts :refer [Scripts]]
    [nashorn.client.sidebar :refer [SideBar]]
    [nashorn.client.ui :refer [send! PureMixin WorkArea]]
@@ -13,6 +13,14 @@
     nil
     (first (filter #(= (:id %) focus) list))))
 
+(defn- find-prop
+  [state]
+  (let [props (:env/properties state)
+        key (:env/focus state)]
+    (if (nil? key)
+      nil
+      (reduce #(if (= (:key %2) key) (reduced %2) nil) nil props))))
+
 (defc UIFrame < PureMixin
   [state ch]
   (let [script     (find-focus state)
@@ -20,8 +28,9 @@
     (case (:view state)
       :view/new-script  (Editor {} run-result ch)
       :view/edit-script (Editor script run-result ch)
-      :view/props-edit  (Properties (:env/properties state) (:env/focus state) ch)
-      :view/props-new   (Properties (:env/properties state) (:env/focus state) ch)
+      :view/props-home  (Properties (:env/properties state) (:env/focus state) ch)
+      :view/props-edit  (EditProp (find-prop state) ch)
+      :view/props-new   (NewProp {:key "" :value ""} ch)
       (Scripts (:script/list state) script run-result ch))))
 
 (def ^:private editing?

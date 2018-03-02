@@ -39,16 +39,17 @@
 (defc PropertyPanel < PureMixin
   [properties focus editing? ch]
   [:section.Panel
-   [:div.Title "Properties"]
+   (if editing?
+     [:div.Title "Properties"]
+     [:div.Title.Active {:onClick (send! ch :props/home)} "Properties"])
    [:div.Body
     (for [property (sort-by :key properties)]
-      [:div {:key (:key property)
-             :class ["Item" (when (= (:key property) focus) "Selected")]
-             :onClick (if editing?
-                        nil
-                        (send! ch :props/edit {:key (:key property)}))}
+      [:div (cond-> {:key (:key property)
+                     :class ["Item" (when (= (:key property) focus) "Selected")]}
+              (not editing?) (assoc :onClick (send! ch :props/focus {:key (:key property)})))
        [:div.Icon.Env (icon/Env)]
-       [:div.Label (:key property)]])]])
+       [:div.Label (:key property)]]
+      )]])
 
 (defc SideBar < PureMixin
   [state editing? ch]
@@ -62,10 +63,10 @@
     (PropertyPanel (:env/properties state) (:env/focus state) editing? ch)]
    [:div.Buttons
     (Button {:type :new
-             :onClick (send! ch :script/new)
+             :label "Script"
              :disabled? editing?
-             :label "Script"})
+             :onClick (send! ch :script/new)})
     (Button {:type :new
-             :label "Properties"
+             :label "Property"
              :disabled? editing?
              :onClick (send! ch :props/new)})]])

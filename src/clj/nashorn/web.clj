@@ -60,6 +60,13 @@
   [_ msg]
   (error :no-handler msg))
 
+(defmethod handle! :props/delete
+  [db msg]
+  (db/env-delete db (:key msg))
+  (responses
+   (response 200 :server/prop-deleted {:key (:key msg)})
+   (handle! db {:event :env/list})))
+
 (defmethod handle! :props/save
   [db msg]
   (let [result (db/env-set db (:property msg))]

@@ -2,8 +2,8 @@
   (:require
    [clojure.string :refer [blank? trim]]
    [nashorn.client.ui
-    :refer [send! Button ControlBar DisplayBlock Form
-            Field MultiLineField
+    :refer [do-send! send! Button Conditional ControlBar
+            DisplayBlock Form Field MultiLineField
             PureMixin Table WorkArea]]
    [rum.core :as rum :refer [defc defcs]]))
 
@@ -21,32 +21,21 @@
                    (reset! (:this/form state) (if prop prop {:key "" :value ""})))
                  state)})
 
-(defcs PropertyForm < PureMixin FormMixin WillMountMixin
-  [locals prop ch]
-  (let [form (:this/form locals)
-        editing? (:updated @form)
-        title (if editing? "Property editor" "Set a property")]
-    (DisplayBlock
-     {:title title
-      :commands [(Button {:type :save
-                          :disabled? (not (saveable? @form))
-                          :label (if editing? "Update" "Save")
-                          :onClick (send! ch :props/save {:property @form})})
-                 (Button {:type :close
-                          :label "Cancel"
-                          :onClick (send! ch :props/done)})]}
-     (Form
-      (Field
-       {:title "Property name"
-        :type "text"
-        :autoFocus "true"
-        :value (:key @form)
-        :onChange #(swap! (:this/form locals) assoc :key %)})
-      (MultiLineField
-       {:title "Property value"
-        :id "pvalue"
-        :value (:value @form)
-        :onChange #(swap! (:this/form locals) assoc :value %)})))))
+(defc Widgets < PureMixin
+  [form {:keys [onKeyChange onValChange]} prop edit? ch]
+  (DisplayBlock
+   {:title (if edit? "Property editor" "Set a property")
+    :commands []}
+   (Form
+    (Field {:title "Property name"
+            :type "text"
+            :autoFocus "true"
+            :value (:key form)
+            :onChange onKeyChange})
+    (MultiLineField {:title "Property value"
+                     :id "pvalue"
+                     :value (:value form)
+                     :onChange onValChange}))))
 
 (defc VarTable < PureMixin
   [properties focus ch]
@@ -59,19 +48,57 @@
        [:td key]
        [:td value]]))])
 
-(defn- find-prop
-  [props key]
-  (if (nil? key)
-    nil
-    (reduce #(if (= (:key %2) key) (reduced %2) nil) nil props)))
+(defn- update!
+  [form key]
+  (fn [v]
+    (swap! form assoc key v)))
 
-(defc Properties < PureMixin
-  [properties focus ch]
-  (let [prop (find-prop properties focus)]
+(defn- confirm-delete
+  [ch focus]
+  (when (js/confirm (str "Delete the '" focus "' property?"))
+    (do-send! ch :props/delete {:key focus})))
+
+(defcs PropsForm < PureMixin FormMixin WillMountMixin
+  [locals property edit? ch]
+  (let [form (:this/form locals)]
     (WorkArea
-     (VarTable properties focus ch)
-     (PropertyForm prop ch)
+     (Widgets @form {:onKeyChange (update! form :key)
+                     :onValChange (update! form :value)} edit? ch)
      (ControlBar
       (Button {:label "Done"
                :type :close
-               :onClick (send! ch :props/done)})))))
+               :onClick (send! ch :props/done)})
+      (Button {:type :save
+               :disabled? (not (saveable? @form))
+               :label (if edit? "Update" "Save")
+               :onClick (send! ch :props/save {:property @form})})))))
+
+(defc NewProp < PureMixin
+  [property ch]
+  (PropsForm property false ch))
+
+(defc EditProp < PureMixin
+  [property ch]
+  (PropsForm (assoc property :old-key (:key property)) true ch))
+
+(defc Properties < PureMixin
+  [properties focus ch]
+  (WorkArea
+   (VarTable properties focus ch)
+   (ControlBar
+    (Conditional focus
+      (Button {:label "Done"
+               :type :close
+               :onClick (send! ch :props/unfocus)}))
+    (Button {:label "New"
+             :type :new
+             :onClick (send! ch :props/new)})
+    (Conditional focus
+      (Button {:label "Edit"
+               :type :edit
+               :onClick (send! ch :props/edit {:key focus})})
+      (Button {:label "Delete"
+               :type :delete
+               :onClick #(confirm-delete ch focus)
+               ;; :onClick (send! ch :props/delete {:key focus})
+               })))))
