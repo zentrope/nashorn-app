@@ -39,20 +39,42 @@
                                    :optimizations :whitespace
                                    :main "nashorn.client.main"}}]}
   ;;
-  :profiles {:uberjar {:aot [nashorn.stub]}
-             :dev {:resource-paths ^:replace ["dev" "resources"]
-                   :plugins [[lein-ancient "0.6.15"]
-                             [lein-cljsbuild "1.1.7" :exclusions
-                              [org.clojure/clojure]]
-                             [lein-figwheel "0.5.15" :exclusions
-                              [org.clojure/clojure]]]
-                   :dependencies [[org.clojure/clojurescript "1.10.64"]
-                                  [cljsjs/codemirror "5.31.0-0"]
-                                  [rum "0.11.2" :exclusions
-                                   [com.cognitect/transit-clj
-                                    com.cognitect/transit-cljs]]
-                                  [integrant/repl "0.3.0"]]}}
+  :profiles
+  {;; The uberjar AOT compiles just the stub, which loads the rest of
+   ;; the app which is packaged as source (in Clojure fashion).
+   :uberjar
+   {:aot [nashorn.stub]}
+   ;;
+   ;; The `dev` profile is for working with the CLJS->JS client and
+   ;; for managing aspects of the project, such as dependency updates.
+   :dev
+   {:resource-paths
+    ^:replace ["dev" "resources"]
+    ;;
+    :plugins
+    [[lein-ancient "0.6.15"]   ;; To track dependency updates
+     [lein-cljsbuild "1.1.7"]  ;; To manage clojurescript builds
+     [lein-figwheel "0.5.15"]] ;; Dynamic web-client re-load
+
+    :dependencies
+    [ ;; Fancy REPL editor at the command line
+     [com.bhauman/rebel-readline "0.1.1"]
+     ;;
+     ;; Clojure to JS compiler
+     [org.clojure/clojurescript "1.10.64"]
+     ;;
+     ;; A programming language editor.
+     [cljsjs/codemirror "5.31.0-0"]
+     ;;
+     ;; React wrapper
+     [rum "0.11.2" :exclusions [com.cognitect/transit-clj
+                                com.cognitect/transit-cljs]]
+     ;;
+     ;; Helpers for working with the system at the REPL
+     [integrant/repl "0.3.0"]]}}
+
   :auto-clean false
+
   :clean-targets ^{:protect false}
   ["resources/public/out"
    "resources/public/main.js"

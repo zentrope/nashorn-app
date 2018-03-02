@@ -28,6 +28,9 @@ updates: ## Search for available updates to dependencies
 run: ## Run the application
 	lein trampoline run || true
 
+repl: ## Start a fancy server-side REPL
+	lein trampoline run -m rebel-readline.main || true
+
 clean: ## Clean build artifacts
 	lein clean
 
