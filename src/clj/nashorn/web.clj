@@ -52,27 +52,27 @@
   (fn [db msg]
     (:event msg)))
 
-(defmethod handle! :env/list
-  [db _]
-  (response 200 :server/env-list {:vars (db/env-vars db)}))
-
 (defmethod handle! :default
   [_ msg]
   (error :no-handler msg))
 
 (defmethod handle! :props/delete
   [db msg]
-  (db/env-delete db (:key msg))
+  (db/property-delete db (:key msg))
   (responses
    (response 200 :server/prop-deleted {:key (:key msg)})
-   (handle! db {:event :env/list})))
+   (handle! db {:event :props/list})))
+
+(defmethod handle! :props/list
+  [db _]
+  (response 200 :server/props-list {:properties (db/properties db)}))
 
 (defmethod handle! :props/save
   [db msg]
-  (let [result (db/env-set db (:property msg))]
+  (let [result (db/property-set db (:property msg))]
     (responses
      (response 200 :server/prop-saved {:saved result})
-     (handle! db {:event :env/list}))))
+     (handle! db {:event :props/list}))))
 
 (defmethod handle! :script/delete
   [db msg]

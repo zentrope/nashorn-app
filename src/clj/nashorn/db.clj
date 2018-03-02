@@ -86,23 +86,23 @@
 ;; Queries
 ;;-----------------------------------------------------------------------------
 
-(defn env-delete
+(defn property-delete
   [this key]
   (jdbc/execute! (:spec this) ["delete from environment where key=?" key]))
 
-(defn env-find
+(defn property-find
   [this key]
   (let [result (first (jdbc/query (:spec this) ["select * from environment where key=?" key]))]
     (or result "")))
 
-(defn env-set
+(defn property-set
   [this {:keys [old-key key value hidden?]}]
   (jdbc/with-db-transaction [tx (:spec this)]
     (jdbc/execute! tx ["delete from environment where key = ? or key = ?" old-key key])
     (jdbc/insert! tx :environment {:key key :value value :hidden (or hidden? false)}))
-  (env-find this key))
+  (property-find this key))
 
-(defn env-vars
+(defn properties
   [this]
   (doall (jdbc/query (:spec this) ["select * from environment order by key"])))
 

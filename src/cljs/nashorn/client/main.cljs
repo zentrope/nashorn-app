@@ -12,14 +12,13 @@
 ;; app state
 
 (defonce app-state
-  (atom {:script/docs        {}         ; help for script extension functions
-         :script/list        []         ; list of saved scripts
-         :script/test-result nil        ; result form testing a script
-         :script/focus       nil        ; currently focussed script
-         :env/properties     []         ; environment vars
-         :env/focus          nil        ; currently focussed property
-         :view               :view/home ; current UI view
-         }))
+  (atom {:script/docs        {}  ; help for script extension functions
+         :script/list        []  ; list of saved scripts
+         :script/test-result nil ; result form testing a script
+         :script/focus       nil ; currently focussed script
+         :props/list         []  ; environment vars
+         :props/focus        nil ; currently focussed property
+         :view               :view/home}))
 
 (defn reload
   []
@@ -31,7 +30,7 @@
   (let [ch (chan)]
     (add-watch app-state :state (fn [k r o n] (app/render! n ch)))
     (http/send! ch {:event :script/list})
-    (http/send! ch {:event :env/list})
+    (http/send! ch {:event :props/list})
     (app/render! @app-state ch)
     (event/loop! ch #(reset! app-state (event/mutate! @app-state ch %)))))
 

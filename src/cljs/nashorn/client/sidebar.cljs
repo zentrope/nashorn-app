@@ -60,7 +60,7 @@
     (if editing?
       (DocumentationPanel (:script/docs state) ch)
       (SideBarScriptsPanel (sort-by :name (:script/list state)) (:script/focus state) ch))
-    (PropertyPanel (:env/properties state) (:env/focus state) editing? ch)]
+    (PropertyPanel (:props/list state) (:props/focus state) editing? ch)]
    [:div.Buttons
     (Button {:type :new
              :label "Script"

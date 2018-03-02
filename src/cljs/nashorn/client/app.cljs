@@ -15,8 +15,8 @@
 
 (defn- find-prop
   [state]
-  (let [props (:env/properties state)
-        key (:env/focus state)]
+  (let [props (:props/list state)
+        key (:props/focus state)]
     (if (nil? key)
       nil
       (reduce #(if (= (:key %2) key) (reduced %2) nil) nil props))))
@@ -28,7 +28,7 @@
     (case (:view state)
       :view/new-script  (Editor {} run-result ch)
       :view/edit-script (Editor script run-result ch)
-      :view/props-home  (Properties (:env/properties state) (:env/focus state) ch)
+      :view/props-home  (Properties (:props/list state) (:props/focus state) ch)
       :view/props-edit  (EditProp (find-prop state) ch)
       :view/props-new   (NewProp {:key "" :value ""} ch)
       (Scripts (:script/list state) script run-result ch))))

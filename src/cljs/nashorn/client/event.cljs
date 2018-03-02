@@ -20,26 +20,26 @@
 
 (defmethod mutate! :props/done
   [state _ _]
-  (assoc state :view :view/props-home :env/focus nil :script/focus nil))
+  (assoc state :view :view/props-home :props/focus nil :script/focus nil))
 
 (defmethod mutate! :props/edit
   [state ch msg]
   (http/send! ch {:event :script/docs})
-  (assoc state :view :view/props-edit :env/focus (:key msg)))
+  (assoc state :view :view/props-edit :props/focus (:key msg)))
 
 (defmethod mutate! :props/focus
   [state _ msg]
-  (assoc state :view :view/props-home :env/focus (:key msg) :script/focus nil))
+  (assoc state :view :view/props-home :props/focus (:key msg) :script/focus nil))
 
 (defmethod mutate! :props/home
   [state ch msg]
-  (http/send! ch {:event :env/list})
-  (assoc state :view :view/props-home :env/focus nil))
+  (http/send! ch {:event :props/list})
+  (assoc state :view :view/props-home :props/focus nil))
 
 (defmethod mutate! :props/new
   [state ch _]
   (http/send! ch {:event :script/docs})
-  (assoc state :view :view/props-new :env/focus nil))
+  (assoc state :view :view/props-new :props/focus nil))
 
 (defmethod mutate! :props/save
   [state ch msg]
@@ -48,7 +48,7 @@
 
 (defmethod mutate! :props/unfocus
   [state _ msg]
-  (assoc state :env/focus nil))
+  (assoc state :props/focus nil))
 
 (defmethod mutate! :script/delete
   [state ch msg]
@@ -73,7 +73,7 @@
 (defmethod mutate! :script/focus
   [state _ msg]
   (assoc state :view :view/script-home
-         :env/focus nil
+         :props/focus nil
          :script/focus (:id msg)
          :script/test-result nil))
 
@@ -122,9 +122,9 @@
   [state _ data]
   (assoc state :script/docs (:docs data)))
 
-(defmethod mutate! :server/env-list
+(defmethod mutate! :server/props-list
   [state _ msg]
-  (assoc state :env/properties (:vars msg)))
+  (assoc state :props/list (:properties msg)))
 
 (defmethod mutate! :server/prop-saved
   [state ch msg]
