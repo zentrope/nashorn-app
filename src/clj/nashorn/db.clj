@@ -88,23 +88,23 @@
 
 (defn property-delete
   [this key]
-  (jdbc/execute! (:spec this) ["delete from environment where key=?" key]))
+  (jdbc/execute! (:spec this) ["delete from properties where key=?" key]))
 
 (defn property-find
   [this key]
-  (let [result (first (jdbc/query (:spec this) ["select * from environment where key=?" key]))]
+  (let [result (first (jdbc/query (:spec this) ["select * from properties where key=?" key]))]
     (or result "")))
 
 (defn property-set
   [this {:keys [old-key key value hidden?]}]
   (jdbc/with-db-transaction [tx (:spec this)]
-    (jdbc/execute! tx ["delete from environment where key = ? or key = ?" old-key key])
-    (jdbc/insert! tx :environment {:key key :value value :hidden (or hidden? false)}))
+    (jdbc/execute! tx ["delete from properties where key = ? or key = ?" old-key key])
+    (jdbc/insert! tx :properties {:key key :value value :hidden (or hidden? false)}))
   (property-find this key))
 
 (defn properties
   [this]
-  (doall (jdbc/query (:spec this) ["select * from environment order by key"])))
+  (doall (jdbc/query (:spec this) ["select * from properties order by key"])))
 
 (defn script-delete
   [this id]

@@ -12,11 +12,11 @@ create table if not exists script (
   status      enum       ('active', 'inactive') not null default 'inactive'
 );
 
-create table if not exists environment (
+create table if not exists properties (
   updated     timestamp  not null default now(),
   key         varchar    not null primary key,
   value       varchar    not null default '',
   hidden      boolean    not null default false
 );
 
-create index if not exists env_key on environment (key);
+create index if not exists env_key on properties (key);
