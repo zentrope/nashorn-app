@@ -1,7 +1,7 @@
 (ns nashorn.client.run-result
   (:require
    [clojure.string :as string :refer [blank?]]
-   [nashorn.client.ui :refer [do-send! send! PureMixin WorkArea Button DisplayBlock]]
+   [nashorn.client.ui :refer [do-send! send! Button Conditional DisplayBlock PureMixin WorkArea ]]
    [rum.core :as rum :refer [defc]]))
 
 (defn- result-block
@@ -20,10 +20,10 @@
   [result ch]
   (DisplayBlock {:title "Script run results"
                  :commands [(on-dismiss ch)]}
-                [:div.ResultBlocks
-                 (when (:isError result)
-                   (result-block "Runtime error" (:error result) true))
-                 (when-not (blank? (:result result))
-                   (result-block "Returned result" (:result result) false))
-                 (when-not (blank? (:output result))
-                   (result-block "Captured stdout" (:output result) false))]))
+    [:div.ResultBlocks
+     (Conditional (:isError result)
+       (result-block "Runtime error" (:error result) true))
+     (Conditional (not (blank? (:result result)))
+       (result-block "Returned result" (:result result) false))
+     (Conditional (not (blank? (:output result)))
+       (result-block "Captured stdout" (:output result) false))]))
