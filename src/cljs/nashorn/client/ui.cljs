@@ -30,7 +30,7 @@
    :save   (icon/Save)
    :stop   (icon/Stop)})
 
-(defc Button < PureMixin
+(defc Button < PureMixin {:key-fn #(:label %)}
   [{:keys [type onClick label disabled?] :or {disabled? false}}]
   (let [class (if disabled? ["Button" "Disabled"] ["Button" "Enabled"])
         handler (if disabled? nil onClick)
