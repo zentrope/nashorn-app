@@ -18,13 +18,13 @@
   :min-lein-eversion "2.8.1"
 
 
-  :source-paths ["src/clj"]
+  :source-paths ["src/clj" "src/cljc"]
   :java-source-paths ["src/java"]
   :javac-opts ["-Xlint:unchecked"]
 
   :figwheel {:css-dirs ["resources/public"]}
   :cljsbuild {:builds [{:id "dev"
-                        :source-paths ["src/cljs"]
+                        :source-paths ["src/cljs" "src/cljc"]
                         :figwheel {:on-jsload "nashorn.client.main/reload"}
                         :compiler {:output-to "resources/public/main.js"
                                    :output-dir "resources/public/out"
@@ -34,7 +34,7 @@
                                    :source-map true
                                    :source-map-timestamp true}}
                        {:id "client"
-                        :source-paths ["src/cljs"]
+                        :source-paths ["src/cljs" "src/cljc"]
                         :compiler {:output-to "resources/public/main.js"
                                    :language-in :ecmascript5
                                    :optimizations :whitespace

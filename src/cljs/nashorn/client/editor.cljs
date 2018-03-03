@@ -3,7 +3,7 @@
    [clojure.string :as string :refer [blank?]]
    [cljsjs.codemirror]
    [cljsjs.codemirror.mode.javascript]
-   [nashorn.client.cron :as cron]
+   [nashorn.lib.cron :as cron]
    [nashorn.client.run-result :refer [ResultPanel]]
    [nashorn.client.ui :refer [do-send! send! PureMixin WorkArea Button ControlBar]]
    [rum.core :as rum :refer [defc defcs]]))

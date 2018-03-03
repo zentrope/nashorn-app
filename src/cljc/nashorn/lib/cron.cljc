@@ -1,8 +1,7 @@
-(ns nashorn.client.cron
+(ns nashorn.lib.cron
   (:require
    [clojure.string :refer [blank? split includes? join]])
-  (:import
-   [goog.string format]))
+  #?(:cljs (:import [goog.string format])))
 
 #_(defn- ord-suffix
     [c number]
@@ -35,7 +34,8 @@
 
 (defn- to-int
   [x]
-  (js/parseInt x 10))
+  #?(:cljs (js/parseInt x 10))
+  #?(:clj (Long/parseLong x)))
 
 (defn- tokenize
   [v]
@@ -96,5 +96,5 @@
     (try
       (let [{:keys [min hour day-of-month month day-of-week] :as tab} (parse cron)]
         {:error? false :text (pr-str tab)})
-      (catch :default e
+      (catch #?(:cljs :default :clj Throwable) e
         {:error? true :text (str e)}))))
