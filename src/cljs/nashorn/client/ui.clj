@@ -33,7 +33,8 @@
   `[:div.ControlBar
     ~@buttons])
 
-(defmacro Conditional
-  [test & body]
-  `(when ~test
-     (list ~@body)))
+(defmacro IncludeIf
+  [& clauses]
+  (list 'keep '(fn [x] x)
+        (mapv (fn [[t v]] (list 'when t v))
+              (partition 2 (rest `(list ~@clauses))))))

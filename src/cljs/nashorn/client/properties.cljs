@@ -1,10 +1,9 @@
 (ns nashorn.client.properties
   (:require
    [clojure.string :refer [blank? trim]]
-   [nashorn.client.ui
-    :refer [do-send! send! Button Conditional ControlBar
-            DisplayBlock Form Field MultiLineField
-            PureMixin Table WorkArea]]
+   [nashorn.client.ui :refer [do-send! send! Button ControlBar
+                              DisplayBlock Form Field IncludeIf MultiLineField
+                              PureMixin Table WorkArea]]
    [rum.core :as rum :refer [defc defcs]]))
 
 (defn- saveable?
@@ -86,19 +85,16 @@
   (WorkArea
    (VarTable properties focus ch)
    (ControlBar
-    (Conditional focus
-      (Button {:label "Done"
-               :type :close
-               :onClick (send! ch :props/unfocus)}))
-    (Button {:label "New"
-             :type :new
-             :onClick (send! ch :props/new)})
-    (Conditional focus
-      (Button {:label "Edit"
-               :type :edit
-               :onClick (send! ch :props/edit {:key focus})})
-      (Button {:label "Delete"
-               :type :delete
-               :onClick #(confirm-delete ch focus)
-               ;; :onClick (send! ch :props/delete {:key focus})
-               })))))
+     (IncludeIf
+       focus (Button {:label "Done"
+                      :type :close
+                      :onClick (send! ch :props/unfocus)})
+       true  (Button {:label "New"
+                      :type :new
+                      :onClick (send! ch :props/new)})
+       focus (Button {:label "Edit"
+                      :type :edit
+                      :onClick (send! ch :props/edit {:key focus})})
+       focus (Button {:label "Delete"
+                      :type :delete
+                      :onClick #(confirm-delete ch focus)})))))

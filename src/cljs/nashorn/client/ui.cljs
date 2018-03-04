@@ -20,7 +20,19 @@
 (def PureMixin
   rum/static)
 
-(def button-icons
+(defn- flat1
+  [lst]
+  (reduce (fn [a v]
+            (if (coll? v)
+              (apply conj a v)
+              (conj a v))) [] lst))
+
+(defn Container ;; Probably the same as react's Fragment
+  [name & items]
+  (let [el (keyword (str "section." name))]
+    (vec (cons el (flat1 items)))))
+
+(def ^:private button-icons
   {:close  (icon/Close)
    :delete (icon/Delete)
    :edit   (icon/Edit)
