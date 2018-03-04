@@ -48,21 +48,33 @@ public final class Functions {
     return String.format(fmt, args);
   }
 
-  public static String httpGet(String urlString) {
+  public static String httpGet(String urlString) throws Exception {
+    return httpGet(urlString, null);
+  }
+
+  public static String httpGet(String urlString, ScriptObjectMirror headers) throws Exception {
     try {
       URL url = new URL(urlString);
       HttpURLConnection conn = (HttpURLConnection)url.openConnection();
       conn.setRequestMethod("GET");
       conn.setRequestProperty("User-Agent", "bobo/nashorn");
+
+      if (headers != null) {
+        for (String header : headers.keySet()) {
+          String value = (String)headers.get(header);
+          System.out.println("Setting header:" + header + " : " + value);
+          conn.setRequestProperty(header, value);
+        }
+      }
       return readString(conn.getInputStream());
     }
     catch (Throwable t) {
       System.out.printf("ERROR: %s\n", t);
-      return null;
+      throw t;
     }
   }
 
-  public static Map<String, String> httpPost(String urlString, ScriptObjectMirror headers, String data) {
+  public static Map<String, String> httpPost(String urlString, ScriptObjectMirror headers, String data) throws Exception {
     try {
       URL url = new URL(urlString);
       HttpsURLConnection conn = (HttpsURLConnection)url.openConnection();
@@ -88,7 +100,7 @@ public final class Functions {
     }
     catch (Throwable t) {
       System.out.printf("ERROR: %s\n", t);
-      return null;
+      throw t;
     }
   }
 
