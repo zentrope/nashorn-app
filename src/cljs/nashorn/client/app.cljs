@@ -8,18 +8,16 @@
    [rum.core :as rum :refer [defc]]))
 
 (defn- find-focus
-  [{:keys [script/focus :script/list]}]
+  [{focus :script/focus, list :script/list}]
   (if (nil? focus)
     nil
     (first (filter #(= (:id %) focus) list))))
 
 (defn- find-prop
-  [state]
-  (let [props (:props/list state)
-        key (:props/focus state)]
-    (if (nil? key)
-      nil
-      (reduce #(if (= (:key %2) key) (reduced %2) nil) nil props))))
+  [{props :props/list, key :props/focus}]
+  (if (nil? key)
+    nil
+    (reduce #(if (= (:key %2) key) (reduced %2) nil) nil props)))
 
 (defc UIFrame < PureMixin
   [state ch]
