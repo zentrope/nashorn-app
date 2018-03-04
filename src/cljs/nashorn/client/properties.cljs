@@ -50,7 +50,7 @@
 (defn- update!
   [form key]
   (fn [v]
-    (swap! form assoc key v)))
+    (swap! form assoc key (trim v))))
 
 (defn- confirm-delete
   [ch focus]
