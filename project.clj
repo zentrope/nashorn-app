@@ -62,7 +62,7 @@
      [com.bhauman/rebel-readline "0.1.1"]
      ;;
      ;; Clojure to JS compiler
-     [org.clojure/clojurescript "1.10.64"]
+     [org.clojure/clojurescript "1.10.126"]
      ;;
      ;; A programming language editor.
      [cljsjs/codemirror "5.31.0-0"]
