@@ -39,10 +39,12 @@
 
 (defn- tokenize
   [v]
-  (let [[range-part step] (split v "/")
-        [min max]         (split range-part "-")]
+  (let [[range-part step] (split v #"/")
+        [min max]         (split range-part #"-")]
     (when (and (not (= min "*")) (nil? max) (not (blank? step)))
-      (throw "a step '/' must be preceded by a range 'x-y'"))
+      (let [err "a step '/' must be preceded by a range 'x-y'"]
+        (throw #?(:cljs err
+                  :clj (IllegalArgumentException. err)))))
     (filterv (complement nil?) [min max step])))
 
 (defn- parse-val
@@ -62,30 +64,34 @@
   (if (= "*" (first values))
     :done
     (if (not (<= min (first values) (last values) max))
-      (throw (format "%s values must be between %s and %s (or '*')" tag min max))
+      (let [err (format "%s values must be between %s and %s (or '*')" tag min max)]
+        (throw #?(:cljs err
+                  :clj (IllegalArgumentException. err))))
       :done)))
 
 (defn- expand-phase!
-  [{:keys [min hour day-of-month month day-of-week] :as crontab}]
-  {:min (parse-val min 0 59)
+  [{:keys [minute hour date month day] :as crontab}]
+  {:minute (parse-val minute 0 59)
    :hour (parse-val hour 0 23)
-   :day-of-month (parse-val day-of-month 1 31)
+   :date (parse-val date 1 31)
    :month (parse-val month 1 12)
-   :day-of-week (parse-val day-of-week 1 7)})
+   :day (parse-val day 1 7)})
 
 (defn- validate-phase!
-  [{:keys [min hour day-of-month month day-of-week] :as crontab}]
-  (check! "minute" min 0 59)
+  [{:keys [minute hour date month day] :as crontab}]
+  (check! "minute" minute 0 59)
   (check! "hour" hour 0 23)
-  (check! "day-of-month" day-of-month 1 31)
+  (check! "date" date 1 31)
   (check! "month" month 1 12)
-  (check! "day-of-week" day-of-week 1 7)
+  (check! "day" day 1 7)
   crontab)
 
-(defn- parse
+;; Public
+
+(defn parse
   [crontab]
-  (let [[min hour dom mo dow] (take 5 (split crontab #"\s"))]
-    (-> {:min min :hour hour :day-of-month dom :month mo :day-of-week dow}
+  (let [[minute hour date month day] (take 5 (split crontab #"\s"))]
+    (-> {:minute minute :hour hour :date date :month month :day day}
         (expand-phase!)
         (validate-phase!))))
 
@@ -94,7 +100,7 @@
   (if (= cron "* * * * *")
     {:error? false :text "Run manually."}
     (try
-      (let [{:keys [min hour day-of-month month day-of-week] :as tab} (parse cron)]
+      (let [{:keys [minute hour date month day] :as tab} (parse cron)]
         {:error? false :text (pr-str tab)})
       (catch #?(:cljs :default :clj Throwable) e
         {:error? true :text (str e)}))))
