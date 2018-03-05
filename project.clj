@@ -44,7 +44,7 @@
   {;; The uberjar AOT compiles just the stub, which loads the rest of
    ;; the app which is packaged as source (in Clojure fashion).
    :uberjar
-   {:aot [nashorn.stub]}
+   {:aot [nashorn.server.stub]}
    ;;
    ;; The `dev` profile is for working with the CLJS->JS client and
    ;; for managing aspects of the project, such as dependency updates.
