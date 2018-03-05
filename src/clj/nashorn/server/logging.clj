@@ -6,13 +6,13 @@
    [clojure.core.async :refer [go]]
    [clojure.string :as string])
   (:import
-   [java.text SimpleDateFormat]))
+   (java.text SimpleDateFormat)))
 
 (def ^:private datef
   (SimpleDateFormat. "yyyy-MM-dd HH:mm:ss,SSS"))
 
 (def ^:private fmt
-  "%s | oidb | %-17s | %-5s %-10s | %s")
+  "%s | extm | %-17s | %-5s %-24s | %s")
 
 (def ^:private levels
   {:info "INFO"
