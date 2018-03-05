@@ -35,33 +35,32 @@
   (try
     (let [schedules (db/script-schedules db)
           runnable (prune-manuals schedules)]
-      (log/info "- schedules:" {:runnable (count runnable) :total (count schedules)}
-                (pr-str runnable))
       (reset! store runnable))
     (catch Throwable t
       (log/errorf "Unable to query for scripts: %s." (str t)))))
 
 ;; The checker periodically compiles a new crontab from the active
-;; scripts in the store, evaluates which ones need to run, and
-;; enqueues them for the dispatcher to handle.
+;; scripts in the store, evaluates which ones need to run, then
+;; enqueues them for the dispatcher.
 
 (defn- checker
   [store db queue]
   (let [specs (mapv script->spec @store)
         crontab (sched/compile specs)]
-    (log/info "- specs are:" specs)
     (let [tasks (sched/tasks-to-run crontab (LocalDateTime/now))]
       (doseq [task tasks]
-        (put! queue task))
-      (log/info "- tasks to run:" (pr-str tasks)))))
+        (put! queue task)))))
+
+;; The dispatcher takes jobs from the queue and runs them in a go
+;; block.
 
 (defn- dispatch-job
   [db script-id]
-  (let [script (db/script-find db script-id)]
-    (log/info "- task to run" (select-keys script [:id :name :crontab]))
+  (let [script (db/script-find db script-id)
+        desc (select-keys script [:id :name :crontab])]
+    (log/infof "- running scheduled task: %s" (pr-str desc))
     (let [result (script/eval-script (:script script))]
-      (db/run-save db (assoc result :script-id script-id))
-      (log/info "- result:" (pr-str result)))))
+      (db/run-save db (assoc result :script-id script-id)))))
 
 (defn- dispatcher
   [db queue]
@@ -70,6 +69,8 @@
       ;; Dispatch in a go block to keep the queue flowing
       (go (dispatch-job db task))
       (recur))))
+
+;; Bootstrap
 
 (defn start!
   [{:keys [db] :as config}]
