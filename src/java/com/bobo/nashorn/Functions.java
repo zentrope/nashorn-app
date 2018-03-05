@@ -21,9 +21,9 @@ public final class Functions {
 
     IFn deref = Clojure.var("clojure.core", "deref");
     IFn get = Clojure.var("clojure.core", "get");
-    IFn envFind = Clojure.var("nashorn.db", "property-find");
+    IFn envFind = Clojure.var("nashorn.server.db", "property-find");
 
-    Object config = deref.invoke(Clojure.var("nashorn.main", "config"));
+    Object config = deref.invoke(Clojure.var("nashorn.server.main", "config"));
     Object dbRef = get.invoke(config, Clojure.read(":svc/db"));
     Object result = envFind.invoke(dbRef, name);
     Object value = get.invoke(result, Clojure.read(":value"));

@@ -1,7 +1,7 @@
 (ns user
   (:require
    [integrant.repl :refer [clear go halt prep init reset reset-all]]
-   [nashorn.main :as main]))
+   [nashorn.server.main :as main]))
 
 (integrant.repl/set-prep! (constantly main/config))
 

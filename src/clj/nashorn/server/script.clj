@@ -1,6 +1,6 @@
-(ns nashorn.script
+(ns nashorn.server.script
   (:require
-   [nashorn.logging :as log])
+   [nashorn.server.logging :as log])
   (:import
    [java.io StringWriter]
    [jdk.nashorn.api.scripting ClassFilter NashornScriptEngineFactory]

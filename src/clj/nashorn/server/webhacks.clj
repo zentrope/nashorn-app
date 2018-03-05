@@ -1,4 +1,4 @@
-(ns nashorn.webhacks
+(ns nashorn.server.webhacks
   ;;
   ;; Functions in support of simple web-serving in lieue of yet
   ;; another dependency.

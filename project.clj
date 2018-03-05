@@ -14,7 +14,7 @@
    [org.clojure/java.jdbc "0.7.5"]
    [com.h2database/h2 "1.4.196"]]
 
-  :main ^:skip-aot nashorn.stub
+  :main ^:skip-aot nashorn.server.stub
   :min-lein-eversion "2.8.1"
 
 

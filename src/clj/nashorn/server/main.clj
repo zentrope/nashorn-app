@@ -1,11 +1,11 @@
-(ns nashorn.main
+(ns nashorn.server.main
   (:require
    [clojure.stacktrace :refer [print-stack-trace]]
    [clojure.string :refer [join]]
    [integrant.core :as ig]
-   [nashorn.db :as db]
-   [nashorn.logging :as log]
-   [nashorn.web :as web])
+   [nashorn.server.db :as db]
+   [nashorn.server.logging :as log]
+   [nashorn.server.web :as web])
   (:import
    (java.io File)))
 

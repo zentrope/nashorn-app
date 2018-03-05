@@ -1,9 +1,9 @@
-(ns nashorn.db
+(ns nashorn.server.db
   (:require
    [clojure.java.io :as io]
    [clojure.java.jdbc :as jdbc]
    [clojure.string :as string]
-   [nashorn.logging :as log]))
+   [nashorn.server.logging :as log]))
 
 ;;-----------------------------------------------------------------------------
 

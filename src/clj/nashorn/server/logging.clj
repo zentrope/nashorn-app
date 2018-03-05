@@ -1,4 +1,4 @@
-(ns nashorn.logging
+(ns nashorn.server.logging
   ;;
   ;; Unbuffered, serialized console logging to avoid deps.
   ;;

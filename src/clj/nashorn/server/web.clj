@@ -1,11 +1,11 @@
-(ns nashorn.web
+(ns nashorn.server.web
   (:require
    [clojure.edn :as edn]
    [clojure.java.io :as io]
-   [nashorn.db :as db]
-   [nashorn.logging :as log]
-   [nashorn.script :as script]
-   [nashorn.webhacks :as webhacks]
+   [nashorn.server.db :as db]
+   [nashorn.server.logging :as log]
+   [nashorn.server.script :as script]
+   [nashorn.server.webhacks :as webhacks]
    [org.httpkit.server :as httpd]))
 
 ;;-----------------------------------------------------------------------------
