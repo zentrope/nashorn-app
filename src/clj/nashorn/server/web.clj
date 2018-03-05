@@ -88,6 +88,11 @@
   [db msg]
   (response 200 :server/script-list {:scripts (db/scripts db)}))
 
+(defmethod handle! :script/logs
+  [db {:keys [id] :as msg}]
+  (let [runs (db/script-runs db id)]
+    (response 200 :server/script-logs {:id id :logs runs})))
+
 (defmethod handle! :script/run
   [db msg]
   (let [run-result (script/eval-script (:text msg))]

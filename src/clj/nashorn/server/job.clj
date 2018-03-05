@@ -60,6 +60,7 @@
   (let [script (db/script-find db script-id)]
     (log/info "- task to run" (select-keys script [:id :name :crontab]))
     (let [result (script/eval-script (:script script))]
+      (db/run-save db (assoc result :script-id script-id))
       (log/info "- result:" (pr-str result)))))
 
 (defn- dispatcher

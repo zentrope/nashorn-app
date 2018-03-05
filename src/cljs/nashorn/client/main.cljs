@@ -16,6 +16,7 @@
          :script/list        []  ; list of saved scripts
          :script/test-result nil ; result form testing a script
          :script/focus       nil ; currently focussed script
+         :script/logs        []  ; run logs for a given script
          :props/list         []  ; environment vars
          :props/focus        nil ; currently focussed property
          :view               :view/home}))

@@ -74,6 +74,10 @@
   [conn]
   (load-and-invoke! conn "sql/mig-001.sql"))
 
+(defn- mig-002
+  [conn]
+  (load-and-invoke! conn "sql/mig-002.sql"))
+
 ;;-----------------------------------------------------------------------------
 ;; Convenience
 ;;-----------------------------------------------------------------------------
@@ -106,6 +110,15 @@
   [this]
   (doall (jdbc/query (:spec this) ["select * from properties order by key"])))
 
+(defn run-save
+  [this {:keys [result output isError error script-id]}]
+  (let [values {:script_id script-id
+                :result (or result "")
+                :output (or output "")
+                :error (if isError (or error "") "")
+                :status (if isError "failure" "success")}]
+    (jdbc/insert! (:spec this) "script_log" values)))
+
 (defn script-delete
   [this id]
   (let [sql "delete from script where id=?"]
@@ -123,6 +136,12 @@
 (defn script-find
   [this id]
   (first (jdbc/query (:spec this) ["select * from script where id=?" id])))
+
+(defn script-runs
+  "Return the logged runs for the given script."
+  [this id]
+  (let [sql "select * from script_log where script_id=? order by created"]
+    (doall (jdbc/query (:spec this) [sql id]))))
 
 (defn script-mark-run
   [this {:keys [id]}]
@@ -153,7 +172,8 @@
   [{:keys [spec app-dir] :as config}]
   (init-dir! app-dir)
   (log/infof "→ data stored in %s." (:subname spec))
-  (migrate! spec #'mig-001)
+  (migrate! spec #'mig-001
+                 #'mig-002)
   {:spec spec})
 
 (defn stop!

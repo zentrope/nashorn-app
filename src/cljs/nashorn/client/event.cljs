@@ -71,7 +71,8 @@
   (assoc state :script/focus (:id msg) :view :view/edit-script))
 
 (defmethod mutate! :script/focus
-  [state _ msg]
+  [state ch msg]
+  (http/send! ch {:event :script/logs :id (:id msg)})
   (assoc state :view :view/script-home
          :props/focus nil
          :script/focus (:id msg)
@@ -109,7 +110,7 @@
 
 (defmethod mutate! :script/unfocus
   [state _ msg]
-  (assoc state :script/focus nil :script/test-result nil))
+  (assoc state :script/focus nil :script/test-result nil :script/logs []))
 
 (defmethod mutate! :script/update
   [state ch {:keys [event script]}]
@@ -146,6 +147,10 @@
 (defmethod mutate! :server/script-save
   [state ch msg]
   (assoc state :view :view/home :script/test-result nil :script/focus (:id (:saved msg))))
+
+(defmethod mutate! :server/script-logs
+  [state ch msg]
+  (assoc state :script/logs (:logs msg)))
 
 (defmethod mutate! :server/script-update
   [state ch _]
