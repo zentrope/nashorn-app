@@ -128,10 +128,22 @@
   [this]
   (doall (jdbc/query (:spec this) ["select * from script order by name"])))
 
+(defn script-run-ids
+  [this]
+  (->> (jdbc/query (:spec this) ["select distinct script_id from script_log"])
+       (map :script_id)
+       (doall)))
+
 (defn script-schedules
   [this]
   (doall (jdbc/query (:spec this)
                      ["select id, crontab from script where status='active' order by id"])))
+
+(defn script-truncate-runs
+  [this script-id limit]
+  (let [sql "delete from script_log where script_id = ? and id not in
+               (select id from script_log order by created limit ?)"]
+    (jdbc/execute! (:spec this) [sql script-id limit])))
 
 (defn script-find
   [this id]

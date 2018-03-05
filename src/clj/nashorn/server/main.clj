@@ -4,6 +4,7 @@
    [clojure.string :refer [join]]
    [integrant.core :as ig]
    [nashorn.server.db :as db]
+   [nashorn.server.janitor :as janitor]
    [nashorn.server.job :as job]
    [nashorn.server.logging :as log]
    [nashorn.server.web :as web])
@@ -17,13 +18,14 @@
   (str (System/getProperty "user.home") sep ".kfi" sep "nashorn_app"))
 
 (def config
-  {:svc/web {:port 2018 :db (ig/ref :svc/db)}
-   :svc/job {:db (ig/ref :svc/db)}
-   :svc/db  {:app-dir app-dir
-             :spec    {:subprotocol "h2"
-                       :subname     (str "file://" app-dir sep "storage")
-                       :user        "sa"
-                       :password    ""}}})
+  {:svc/web     {:port 2018 :db (ig/ref :svc/db)}
+   :svc/job     {:db (ig/ref :svc/db)}
+   :svc/janitor {:db (ig/ref :svc/db)}
+   :svc/db      {:app-dir app-dir
+                 :spec    {:subprotocol "h2"
+                           :subname     (str "file://" app-dir sep "storage")
+                           :user        "sa"
+                           :password    ""}}})
 
 (defn hook-shutdown! [f]
   (doto (Runtime/getRuntime)
@@ -50,6 +52,18 @@
   [_ svc]
   (log/info "Stopping db service.")
   (db/stop! svc))
+
+;; Janitor component
+
+(defmethod ig/init-key :svc/janitor
+  [_ config]
+  (log/info "Starting janitor service.")
+  (janitor/start! config))
+
+(defmethod ig/halt-key! :svc/janitor
+  [_ svc]
+  (log/info "Stopping janitor service.")
+  (janitor/stop! svc))
 
 ;; Job component
 
