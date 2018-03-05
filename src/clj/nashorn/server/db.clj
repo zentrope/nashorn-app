@@ -115,6 +115,11 @@
   [this]
   (doall (jdbc/query (:spec this) ["select * from script order by name"])))
 
+(defn script-schedules
+  [this]
+  (doall (jdbc/query (:spec this)
+                     ["select id, crontab from script where status='active' order by id"])))
+
 (defn script-find
   [this id]
   (first (jdbc/query (:spec this) ["select * from script where id=?" id])))

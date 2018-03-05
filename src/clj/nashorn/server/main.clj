@@ -4,6 +4,7 @@
    [clojure.string :refer [join]]
    [integrant.core :as ig]
    [nashorn.server.db :as db]
+   [nashorn.server.job :as job]
    [nashorn.server.logging :as log]
    [nashorn.server.web :as web])
   (:import
@@ -17,6 +18,7 @@
 
 (def config
   {:svc/web {:port 2018 :db (ig/ref :svc/db)}
+   :svc/job {:db (ig/ref :svc/db)}
    :svc/db  {:app-dir app-dir
              :spec    {:subprotocol "h2"
                        :subname     (str "file://" app-dir sep "storage")
@@ -48,6 +50,18 @@
   [_ svc]
   (log/info "Stopping db service.")
   (db/stop! svc))
+
+;; Job component
+
+(defmethod ig/init-key :svc/job
+  [_ config]
+  (log/info "Starting job service.")
+  (job/start! config))
+
+(defmethod ig/halt-key! :svc/job
+  [_ svc]
+  (log/info "Stopping job service.")
+  (job/stop! svc))
 
 ;; Web component
 
