@@ -6,7 +6,6 @@
 
 (defn- result-block
   [name data error?]
-  (println "RESULT BLOCK:" name)
   [:div {:class ["ResultBlock" (if error? "Error")]}
    [:div.Title name]
    [:div.Result
