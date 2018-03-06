@@ -97,6 +97,7 @@
   [db msg]
   (let [run-result (script/eval-script (:text msg))]
     (db/script-mark-run db {:id (:id msg)})
+    (db/run-save db (assoc run-result :script-id (:id msg)))
     (responses (response 200 :server/test-result run-result)
                (handle! db {:event :script/list}))))
 
