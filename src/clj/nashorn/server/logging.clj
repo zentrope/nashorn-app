@@ -6,10 +6,11 @@
    [clojure.core.async :refer [go]]
    [clojure.string :as string])
   (:import
-   (java.text SimpleDateFormat)))
+   (java.time LocalDateTime)
+   (java.time.format DateTimeFormatter)))
 
 (def ^:private datef
-  (SimpleDateFormat. "yyyy-MM-dd HH:mm:ss,SSS"))
+  (DateTimeFormatter/ofPattern "yyyy-MM-dd HH:mm:ss,SSS"))
 
 (def ^:private fmt
   "%s | extm | %-17s | %-5s %-24s | %s")
@@ -25,7 +26,7 @@
 
 (defn- iso-date
   []
-  (.format datef (java.util.Date.)))
+  (.format datef (LocalDateTime/now)))
 
 (defn- gather
   [args]
