@@ -198,6 +198,7 @@ h1 {
   bottom: 40px;
 
   padding: 20px;
+  padding-top: 0;
 
   overflow-y: auto;
 }
@@ -423,7 +424,7 @@ table.Detailer tbody tr td {
 
 .DisplayBlock .Lister {
   padding: 4px;
-  padding-bottom: 15px;
+  padding-bottom: 5px;
   padding-top: 10px;
 }
 
@@ -479,9 +480,12 @@ table.Detailer tbody tr td {
   background: #D5FDD5;
 }
 
-.Lister table tbody tr td {
+.Lister table tbody tr {
   border-top: 1px solid #f1f1f1;
-  border-bottom: 1px solid #f1f1f1;
+}
+
+.Lister table tbody tr td {
+  /* border-bottom: 1px solid #f1f1f1; */
   font-size: 11pt;
   font-weight: normal;
   padding: 4px;
@@ -513,4 +517,5 @@ table.Detailer tbody tr td {
 
   box-sizing: border-box;
   padding: 20px;
+  padding-top: 0;
 }
