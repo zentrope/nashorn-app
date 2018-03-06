@@ -99,6 +99,7 @@
     (db/script-mark-run db {:id (:id msg)})
     (db/run-save db (assoc run-result :script-id (:id msg)))
     (responses (response 200 :server/test-result run-result)
+               (handle! db {:event :script/logs :id (:id msg)})
                (handle! db {:event :script/list}))))
 
 (defmethod handle! :script/save
