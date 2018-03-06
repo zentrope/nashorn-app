@@ -22,30 +22,31 @@
 
 (defc Widgets < PureMixin
   [form {:keys [onKeyChange onValChange]} prop edit? ch]
-  (DisplayBlock
-   {:title (if edit? "Property editor" "Set a property")
-    :commands []}
-   (Form
-    (Field {:title "Property name"
-            :type "text"
-            :autoFocus "true"
-            :value (:key form)
-            :onChange onKeyChange})
-    (MultiLineField {:title "Property value"
-                     :id "pvalue"
-                     :value (:value form)
-                     :onChange onValChange}))))
+  (DisplayBlock {:title (if edit? "Property editor" "Set a property")
+                 :commands []}
+    (Form
+     (Field
+      {:title "Property name"
+       :type "text"
+       :autoFocus "true"
+       :value (:key form)
+       :onChange onKeyChange})
+     (MultiLineField
+      {:title "Property value"
+       :id "pvalue"
+       :value (:value form)
+       :onChange onValChange}))))
 
 (defc VarTable < PureMixin
   [properties focus ch]
-  [:div.Lister
-   (Table
-    ["Key" "Value"]
-    (for [{:keys [key value]} (sort-by :key properties)]
-      [:tr {:class ["Clickable" (if (= focus key) "Selected")]
-            :onClick (send! ch :props/focus {:key key})}
-       [:td key]
-       [:td value]]))])
+  (DisplayBlock {:title "Properties" :commands []}
+    [:div.Lister
+     (Table ["Name" "Value"]
+       (for [{:keys [key value]} (sort-by :key properties)]
+         [:tr {:class ["Clickable" (if (= focus key) "Selected")]
+               :onClick (send! ch :props/focus {:key key})}
+          [:td key]
+          [:td value]]))]))
 
 (defn- update!
   [form key]
