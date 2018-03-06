@@ -20,7 +20,7 @@
 (def config
   {:svc/web     {:port 2018 :db (ig/ref :svc/db)}
    :svc/job     {:db (ig/ref :svc/db)}
-   :svc/janitor {:db (ig/ref :svc/db)}
+   :svc/janitor {:db (ig/ref :svc/db) :limit 3}
    :svc/db      {:app-dir app-dir
                  :spec    {:subprotocol "h2"
                            :subname     (str "file://" app-dir sep "storage")

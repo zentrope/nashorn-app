@@ -26,9 +26,8 @@
       (log/error (str t)))))
 
 (defn start!
-  [{:keys [db] :as config}]
-  (let [limit 3
-        duration (* 5 60 1000)
+  [{:keys [db limit] :as config}]
+  (let [duration (* 5 60 1000)
         delay (* 10 1000)
         cleaner (make-task delay duration #(clean-logs db limit))]
     {:cleaner cleaner}))
