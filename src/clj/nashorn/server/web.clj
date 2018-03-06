@@ -2,15 +2,26 @@
   (:require
    [clojure.edn :as edn]
    [clojure.java.io :as io]
+   [clojure.pprint :refer [pprint]]
    [nashorn.server.db :as db]
    [nashorn.server.logging :as log]
    [nashorn.server.script :as script]
    [nashorn.server.webhacks :as webhacks]
-   [org.httpkit.server :as httpd]))
+   [org.httpkit.server :as httpd])
+  (:import
+   (java.time LocalDateTime)
+   (java.time.format DateTimeFormatter)))
 
 ;;-----------------------------------------------------------------------------
 ;; convenience
 ;;-----------------------------------------------------------------------------
+
+(def ^:private datef
+  (DateTimeFormatter/ofPattern "yyyyMMddHHmmss"))
+
+(defn- mk-dump-file-name
+  []
+  (str "extensions-" (.format datef (LocalDateTime/now)) ".edn"))
 
 (defn- rlog
   ([request msg]
@@ -144,6 +155,15 @@
       (catch Throwable t
         (error :exception (str t) msg)))))
 
+(defn- download
+  [request db]
+  (let [dump (db/dump-all db)
+        fname (mk-dump-file-name)]
+    {:status 200
+     :body (with-out-str (pprint dump))
+     :headers {"content-type" "application/edn"
+               "content-disposition" (format "attachment;filename=\"%s\"" fname)}}))
+
 ;;-----------------------------------------------------------------------------
 ;; service
 ;;-----------------------------------------------------------------------------
@@ -153,6 +173,7 @@
   (-> (case (:uri request)
         "/"         (home request)
         "/dispatch" (dispatch request db)
+        "/download" (download request db)
         (webhacks/resource request))
       (assoc-in [:headers "Cache-Control"] "no-cache")))
 

@@ -177,6 +177,11 @@
     (jdbc/execute! (:spec this) [sql name script crontab id])
     (script-find this id)))
 
+(defn dump-all
+  [this]
+  {:scripts (scripts this)
+   :properties (properties this)})
+
 ;;-----------------------------------------------------------------------------
 ;; Bootstrap
 ;;-----------------------------------------------------------------------------

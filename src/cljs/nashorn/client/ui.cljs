@@ -1,7 +1,7 @@
 (ns nashorn.client.ui
-  (:require-macros
-   nashorn.client.ui)
+  (:require-macros nashorn.client.ui)
   (:require
+   [clojure.string :refer [blank?]]
    [cljs.core.async :refer [put!]]
    [nashorn.client.icon :as icon]
    [rum.core :as rum :refer [defc]]))
@@ -33,15 +33,16 @@
     (vec (cons el (flat1 items)))))
 
 (def ^:private button-icons
-  {:close   (icon/Close)
-   :delete  (icon/Delete)
-   :edit    (icon/Edit)
-   :new     (icon/New)
-   :play    (icon/Play)
-   :refresh (icon/Refresh)
-   :run     (icon/Run)
-   :save    (icon/Save)
-   :stop    (icon/Stop)})
+  {:close    (icon/Close)
+   :download (icon/Download)
+   :delete   (icon/Delete)
+   :edit     (icon/Edit)
+   :new      (icon/New)
+   :play     (icon/Play)
+   :refresh  (icon/Refresh)
+   :run      (icon/Run)
+   :save     (icon/Save)
+   :stop     (icon/Stop)})
 
 (defc Button < PureMixin {:key-fn #(:label %)}
   [{:keys [type onClick label disabled?] :or {disabled? false}}]
@@ -51,7 +52,7 @@
                 (not disabled?) (assoc :onClick onClick))]
     [:div props
      [:div.Icon (button-icons type)]
-     (when label
+     (when-not (blank? label)
        [:div.Label label])]))
 
 (defc Field < PureMixin

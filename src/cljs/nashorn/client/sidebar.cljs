@@ -50,6 +50,11 @@
        [:div.Icon.Env (icon/Env)]
        [:div.Label (:key property)]])]])
 
+(defn- download
+  []
+  (fn [e]
+    (set! (.-location js/window) "/download")))
+
 (defc SideBar < PureMixin
   [state editing? ch]
   [:section.SideBar
@@ -68,4 +73,8 @@
     (Button {:type :new
              :label "Property"
              :disabled? editing?
-             :onClick (send! ch :props/new)})]])
+             :onClick (send! ch :props/new)})
+    (Button {:type :download
+             :label ""
+             :disabled? editing?
+             :onClick (download)})]])
