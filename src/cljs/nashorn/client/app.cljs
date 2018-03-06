@@ -29,7 +29,8 @@
       :view/props-home  (Properties (:props/list state) (:props/focus state) ch)
       :view/props-edit  (EditProp (find-prop state) ch)
       :view/props-new   (NewProp {:key "" :value ""} ch)
-      (Scripts (:script/list state) script run-result ch))))
+      (Scripts (:script/list state) script run-result
+               (:script/logs state) ch))))
 
 (def ^:private editing?
   #{:view/new-script :view/edit-script

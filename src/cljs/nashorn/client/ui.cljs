@@ -33,14 +33,15 @@
     (vec (cons el (flat1 items)))))
 
 (def ^:private button-icons
-  {:close  (icon/Close)
-   :delete (icon/Delete)
-   :edit   (icon/Edit)
-   :new    (icon/New)
-   :play   (icon/Play)
-   :run    (icon/Run)
-   :save   (icon/Save)
-   :stop   (icon/Stop)})
+  {:close   (icon/Close)
+   :delete  (icon/Delete)
+   :edit    (icon/Edit)
+   :new     (icon/New)
+   :play    (icon/Play)
+   :refresh (icon/Refresh)
+   :run     (icon/Run)
+   :save    (icon/Save)
+   :stop    (icon/Stop)})
 
 (defc Button < PureMixin {:key-fn #(:label %)}
   [{:keys [type onClick label disabled?] :or {disabled? false}}]
