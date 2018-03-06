@@ -142,8 +142,9 @@
 (defn script-truncate-runs
   [this script-id limit]
   (let [sql "delete from script_log where script_id = ? and id not in
-               (select id from script_log order by created limit ?)"]
-    (jdbc/execute! (:spec this) [sql script-id limit])))
+               (select id from script_log where script_id = ?
+                  order by id desc limit ?)"]
+    (jdbc/execute! (:spec this) [sql script-id script-id limit])))
 
 (defn script-find
   [this id]
