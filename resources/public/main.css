@@ -24,6 +24,23 @@ h1 {
 }
 
 .App {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+#ImportPane {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 50000;
+  cursor: copy;
+  background: black;
+  opacity: 0.2;
 }
 
 /* SideBar */

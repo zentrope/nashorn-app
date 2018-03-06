@@ -1,11 +1,12 @@
 (ns nashorn.client.app
   (:require
    [nashorn.client.editor :refer [Editor]]
+   [nashorn.client.import-pane :refer [ImportPane]]
    [nashorn.client.properties :refer [NewProp EditProp Properties]]
    [nashorn.client.scripts :refer [Scripts]]
    [nashorn.client.sidebar :refer [SideBar]]
-   [nashorn.client.ui :refer [send! PureMixin WorkArea]]
-   [rum.core :as rum :refer [defc]]))
+   [nashorn.client.ui :refer [do-send! send! PureMixin WorkArea]]
+   [rum.core :as rum :refer [defc defcs]]))
 
 (defn- find-focus
   [{focus :script/focus, list :script/list}]
@@ -36,11 +37,13 @@
   #{:view/new-script :view/edit-script
     :view/props-edit :view/props-new})
 
-(defc RootUI < PureMixin
-  [state ch]
-  [:section.App
+(defcs RootUI < PureMixin (rum/local false :this/importing?)
+  [ls state ch]
+  [:section.App {:onDragOver #(reset! (:this/importing? ls) true)}
    (SideBar state (editing? (:view state)) ch)
-   (UIFrame state ch)])
+   (UIFrame state ch)
+   (when @(:this/importing? ls)
+     (ImportPane #(reset! (:this/importing? ls) false) ch))])
 
 (defn render!
   [state ch]
