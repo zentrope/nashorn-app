@@ -1,16 +1,12 @@
 (ns nashorn.server.janitor
   (:require
    [nashorn.server.db :as db]
-   [nashorn.server.logging :as log])
-  (:import
-   (java.util Timer TimerTask)))
+   [nashorn.server.logging :as log]
+   [nashorn.server.thread :as thread]))
 
-(defn- make-task
+(defn- schedule
   [delay duration f]
-  (let [timer (Timer. "janitor" true)
-        task (proxy [TimerTask] [] (run [] (f)))]
-    (doto timer
-      (.schedule task delay duration))))
+  (thread/fixed-delay-timer "janitor" delay duration :seconds f))
 
 (defn- clean-logs
   [db limit]
@@ -27,13 +23,13 @@
 
 (defn start!
   [{:keys [db limit] :as config}]
-  (let [duration (* 5 60 1000)
-        delay (* 10 1000)
-        cleaner (make-task delay duration #(clean-logs db limit))]
+  (let [duration (* 5 60) ;; five minutes
+        delay 10
+        cleaner (schedule delay duration #(clean-logs db limit))]
     {:cleaner cleaner}))
 
 (defn stop!
   [svc]
   (when-let [cleaner (:cleaner svc)]
-    (.cancel cleaner))
+    (thread/cancel cleaner))
   nil)

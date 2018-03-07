@@ -6,18 +6,14 @@
    [nashorn.server.db :as db]
    [nashorn.server.logging :as log]
    [nashorn.server.scheduler :as sched]
-   [nashorn.server.script :as script])
+   [nashorn.server.script :as script]
+   [nashorn.server.thread :as thread])
   (:import
-   (java.time LocalDateTime)
-   (java.util Timer TimerTask)))
+   (java.time LocalDateTime)))
 
-(let [id (atom 0)]
-  (defn- new-timer
-    [name delay f]
-    (let [timer (Timer. (str name "-" (swap! id inc)) true)
-          task (proxy [TimerTask] [] (run [] (f)))]
-      (doto timer
-        (.scheduleAtFixedRate task delay (* 60 1000))))))
+(defn- schedule
+  [name delay f]
+  (thread/fixed-rate-timer name delay 60 :seconds f))
 
 (defn- prune-manuals
   [schedules]
@@ -35,7 +31,9 @@
   (try
     (let [schedules (db/script-schedules db)
           runnable (prune-manuals schedules)]
-      (reset! store runnable))
+      (when-not (= runnable @store)
+        (log/info "- Database changed, re-caching schedules.")
+        (reset! store runnable)))
     (catch Throwable t
       (log/errorf "Unable to query for scripts: %s." (str t)))))
 
@@ -76,8 +74,8 @@
   [{:keys [db] :as config}]
   (let [store (atom [])
         queue (chan 100)
-        syncher (new-timer "job-gather"  5000 #(gather store db))
-        checker (new-timer "job-checker" 8000 #(checker store db queue))]
+        syncher (schedule "job-gather"   5 #(gather store db))
+        checker (schedule "job-checker" 15 #(checker store db queue))]
     (dispatcher db queue)
     {:store store :syncher syncher :checker checker :queue queue}))
 
@@ -86,7 +84,7 @@
   (when-let [q (:queue svc)]
     (close! q))
   (when-let [syncher (:syncher svc)]
-    (.cancel syncher))
+    (thread/cancel syncher))
   (when-let [checker (:checker svc)]
-    (.cancel checker))
+    (thread/cancel checker))
   nil)
