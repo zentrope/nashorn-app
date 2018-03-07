@@ -122,6 +122,10 @@
   (http/send! ch {:event :script/update :script script})
   state)
 
+(defmethod mutate! :error/dismiss
+  [state _ _]
+  (assoc state :server/error nil))
+
 ;; server responses
 
 (defmethod mutate! :server/import-complete
@@ -146,8 +150,8 @@
 
 (defmethod mutate! :server/error
   [state _ data]
-  (println "ERROR:" (:reason data))
-  state)
+  (println "SERVER.ERROR:" (pr-str data))
+  (assoc state :server/error data))
 
 (defmethod mutate! :server/test-result
   [state _ data]

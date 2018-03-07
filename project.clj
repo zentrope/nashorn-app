@@ -41,7 +41,8 @@
                                    :main "nashorn.client.main"}}]}
   ;;
   :profiles
-  {;; The uberjar AOT compiles just the stub, which loads the rest of
+  {
+   ;; The uberjar AOT compiles just the stub, which loads the rest of
    ;; the app which is packaged as source (in Clojure fashion).
    :uberjar
    {:aot [nashorn.server.stub]}
@@ -58,7 +59,8 @@
      [lein-figwheel "0.5.15"]] ;; Dynamic web-client re-load
 
     :dependencies
-    [ ;; Fancy REPL editor at the command line
+    [
+     ;; Fancy REPL editor at the command line
      [com.bhauman/rebel-readline "0.1.1"]
      ;;
      ;; Clojure to JS compiler

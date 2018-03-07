@@ -1,11 +1,9 @@
 (ns nashorn.client.main
   (:require
-   [clojure.string :as string]
-   [cljs.core.async :refer [chan go-loop put!]]
+   [cljs.core.async :refer [chan]]
    [nashorn.client.app :as app]
    [nashorn.client.event :as event]
-   [nashorn.client.http :as http]
-   [rum.core :as rum :refer [defc]]))
+   [nashorn.client.http :as http]))
 
 (enable-console-print!)
 
@@ -19,6 +17,7 @@
          :script/logs        []  ; run logs for a given script
          :props/list         []  ; environment vars
          :props/focus        nil ; currently focussed property
+         :server/error       nil ; reported server-side error
          :view               :view/home}))
 
 (defn reload

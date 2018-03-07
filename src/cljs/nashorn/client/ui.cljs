@@ -29,8 +29,11 @@
 
 (defn Container ;; Probably the same as react's Fragment
   [name & items]
-  (let [el (keyword (str "section." name))]
-    (vec (cons el (flat1 items)))))
+  (let [el (keyword (str "section." name))
+        props? (map? (first items))
+        props (if props? (first items) {})
+        body (if props? (rest items) items)]
+    (vec (concat [el props] (flat1 body)))))
 
 (def ^:private button-icons
   {:close    (icon/Close)
