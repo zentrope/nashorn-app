@@ -89,10 +89,10 @@
        (Table ["Run" "Result" "Captured" "Error"]
          (for [log logs]
            [:tr
-            [:td {:width "20%"} (datef (:created log))]
-            [:td {:width "27%"} (:result log)]
-            [:td {:width "27%"} (:output log)]
-            [:td {:width "26%"} (:error log)]]))])))
+            [:td {:width "25%"} (datef (:created log))]
+            [:td {:width "25%"} (:result log)]
+            [:td {:width "25%"} (:output log)]
+            [:td {:width "25%"} (:error log)]]))])))
 
 (defc SummaryView < PureMixin
   [scripts focus ch]
