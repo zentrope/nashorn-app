@@ -177,6 +177,20 @@
     (jdbc/execute! (:spec this) [sql name script crontab id])
     (script-find this id)))
 
+(defn import-all
+  [this data]
+  (let [scripts (:scripts data)
+        properties (:properties data)]
+    (jdbc/with-db-transaction [tx (:spec this)]
+      (doseq [{:keys [key value hidden]} properties]
+        (jdbc/execute! tx ["delete from properties where key = ?" key])
+        (jdbc/insert! tx :properties {:key key :value value :hidden (or hidden false)}))
+      (doseq [script scripts]
+        (when (:id script)
+          (jdbc/execute! tx ["delete from script_log where script_id=?" (:id script)])
+          (jdbc/execute! tx ["delete from script where id = ?" (:id script)]))
+        (jdbc/insert! tx :script (select-keys script [:id :name :script :crontab]))))))
+
 (defn dump-all
   [this]
   {:scripts (scripts this)

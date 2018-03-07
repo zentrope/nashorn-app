@@ -82,6 +82,11 @@
   [state _ msg]
   (assoc state :script/focus nil :view :view/home))
 
+(defmethod mutate! :script/import
+  [state ch msg]
+  (http/send! ch {:event :script/import :file (:file msg)})
+  state)
+
 (defmethod mutate! :script/new
   [state ch msg]
   (when (empty? (:script/docs state))
@@ -118,6 +123,10 @@
   state)
 
 ;; server responses
+
+(defmethod mutate! :server/import-complete
+  [state _ _]
+  (assoc state :props/focus nil :script/focus nil))
 
 (defmethod mutate! :server/docs
   [state _ data]

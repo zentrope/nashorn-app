@@ -95,6 +95,13 @@
   (let [docs (-> "documentation.edn" io/resource slurp edn/read-string)]
     (response 200 :server/docs {:docs docs})))
 
+(defmethod handle! :script/import [db msg]
+  (let [import-data (webhacks/decode (:file msg))]
+    (db/import-all db import-data)
+    (responses (response 200 :server/import-complete {})
+               (handle! db {:event :script/list})
+               (handle! db {:event :props/list}))))
+
 (defmethod handle! :script/list
   [db msg]
   (response 200 :server/script-list {:scripts (db/scripts db)}))
