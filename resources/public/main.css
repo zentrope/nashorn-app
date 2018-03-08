@@ -354,6 +354,20 @@ table.Detailer tbody tr td {
   border: 1px solid #d8d8d8;
 
   display: flex;
+  position: relative;
+}
+
+.EditorArea .EditorPanel .EditorContainer .Status {
+  color: MediumSeaGreen;
+  position: absolute;
+  bottom: 0px;
+  right: 2px;
+  font-size: 9pt;
+  background-color: white !important;
+}
+
+.EditorArea .EditorPanel .EditorContainer .Status.Dirty {
+  color: IndianRed;
 }
 
 .EditorArea .EditorPanel .EditorContainer textarea {

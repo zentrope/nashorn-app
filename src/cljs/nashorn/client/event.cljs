@@ -167,7 +167,7 @@
 
 (defmethod mutate! :server/script-update
   [state ch _]
-  (assoc state :view :view/home :script/test-result nil))
+  (assoc state :script/test-result nil))
 
 (defmethod mutate! :server/script-list
   [state _ msg]

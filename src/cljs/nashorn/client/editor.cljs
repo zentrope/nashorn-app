@@ -5,7 +5,7 @@
    [cljsjs.codemirror.mode.javascript]
    [nashorn.lib.cron :as cron]
    [nashorn.client.run-result :refer [ResultPanel]]
-   [nashorn.client.ui :refer [do-send! send! PureMixin WorkArea Button ControlBar]]
+   [nashorn.client.ui :refer [do-send! send! Button Container ControlBar IncludeIf PureMixin]]
    [rum.core :as rum :refer [defc defcs]]))
 
 (def ^:private default-code
@@ -66,15 +66,18 @@
       text]]))
 
 (defc EditorPanel < PureMixin
-  []
+  [{:keys [dirty?] :as spec}]
   [:section.EditorPanel
    [:div.EditorContainer
     [:textarea#CodeMirrorEditor
-     {:autoFocus true
-      :value default-code}]]])
+     {:autoFocus "true"
+      :value default-code}]
+    (if dirty?
+      [:div.Status.Dirty "UNSAVED"]
+      [:div.Status "SAVED"])]])
 
 (defc Controls < PureMixin
-  [{:keys [id script name crontab] :as form} ch]
+  [{:keys [id script name crontab] :as form} onSave ch]
   (let [event (if (nil? id) :script/save :script/update)]
     (ControlBar
      (Button {:type :close
@@ -82,8 +85,9 @@
               :label "Done"})
      (Button {:type :save
               :disabled? (not (saveable? form))
-              :onClick (send! ch event {:script form})
-              :label (if (nil? id) "Create" "Save")})
+              :onClick #(do (onSave)
+                            (do-send! ch event {:script form}))
+              :label (if (nil? id) "Create" "Update")})
      (Button {:type :run
               :onClick (send! ch :script/test {:text script})
               :label "Run"}))))
@@ -98,7 +102,9 @@
   {:did-mount (fn [state]
                 (let [[script _ _] (:rum/args state)
                       cm (mk-editor (or (:script script) default-code)
-                                    #(swap! (:this/form state) assoc :script %))]
+                                    (fn [v]
+                                      (swap! (:this/form state) assoc :script v)
+                                      (reset! (:this/dirty? state) true)))]
                   (reset! (:this/ed state) cm)
                   state))})
 
@@ -106,17 +112,33 @@
   (rum/local nil :this/ed))
 
 (def ^:private FormMixin
-  (rum/local :nil :this/form))
+  (rum/local nil :this/form))
 
-(defcs Editor < PureMixin EdMixin FormMixin WillMountMixin DidMountMixin
+(def ^:private DirtyMixin
+  (rum/local false :this/dirty?))
+
+(defn- update-form
+  [locals key]
+  (fn [v]
+    (swap! (:this/form locals) assoc key v)
+    (reset! (:this/dirty? locals) true)))
+
+;; TODO: Unify this stuff into a single form rather than all
+;;       these panels and vars
+
+;; TODO: Consider wrapping the CodeMirror editor outside this
+;;       namespace.
+
+(defcs Editor < PureMixin EdMixin FormMixin DirtyMixin WillMountMixin DidMountMixin
   [locals script run-result ch]
-  (let [form (:this/form locals)
-        cm   (:this/ed locals)]
+  (let [form   (:this/form locals)
+        cm     (:this/ed locals)
+        dirty? (:this/dirty? locals)]
     [:section
-     [:section.EditorArea
-      (NamePanel (:name @form) #(swap! form assoc :name %))
-      (CronPanel (:crontab @form) #(swap! form assoc :crontab %))
-      (EditorPanel)
-      (when run-result
-        (ResultPanel run-result ch))]
-     (Controls @form ch)]))
+     (Container "EditorArea" {}
+       (NamePanel (:name @form) (update-form locals :name))
+       (CronPanel (:crontab @form) (update-form locals :crontab))
+       (EditorPanel {:dirty? @dirty?})
+       (IncludeIf
+         run-result (ResultPanel run-result ch)))
+     (Controls @form #(reset! dirty? false) ch)]))
