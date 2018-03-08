@@ -310,6 +310,8 @@ table.Detailer tbody tr td {
   font-size: 10pt;
   padding-top: 4px;
   font-style: italic;
+  white-space: nowrap;
+  overflow-y: hidden;
 
   position: relative;
 }
