@@ -13,8 +13,7 @@
 
 (defn- on-dismiss
   [ch]
-  (Button {:label "Dismiss"
-           :type :close
+  (Button {:type :close
            :onClick (send! ch :script/done-results)}))
 
 (defc ResultPanel < PureMixin
