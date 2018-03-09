@@ -32,7 +32,7 @@
 
 (defmethod mutate! :props/edit
   [state ch msg]
-  (http/send! ch {:event :script/docs})
+  (http/send! ch {:event :docs/list})
   (assoc state :view :view/props-edit :props/focus (:key msg)))
 
 (defmethod mutate! :props/focus
@@ -46,7 +46,7 @@
 
 (defmethod mutate! :props/new
   [state ch _]
-  (http/send! ch {:event :script/docs})
+  (http/send! ch {:event :docs/list})
   (assoc state :view :view/props-new :props/focus nil))
 
 (defmethod mutate! :props/save
@@ -75,7 +75,7 @@
 (defmethod mutate! :script/edit
   [state ch msg]
   (when (empty? (:docs/list state))
-    (http/send! ch {:event :script/docs}))
+    (http/send! ch {:event :docs/list}))
   (assoc state :script/focus (:id msg) :view :view/edit-script))
 
 (defmethod mutate! :script/focus
@@ -98,7 +98,7 @@
 (defmethod mutate! :script/new
   [state ch msg]
   (when (empty? (:docs/list state))
-    (http/send! ch {:event :script/docs}))
+    (http/send! ch {:event :docs/list}))
   (assoc state :view :view/new-script :script/test-result nil))
 
 (defmethod mutate! :script/run

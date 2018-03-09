@@ -90,7 +90,7 @@
   (db/script-delete db (:id msg))
   (handle! db {:event :script/list}))
 
-(defmethod handle! :script/docs
+(defmethod handle! :docs/list
   [db _]
   (let [docs (-> "documentation.edn" io/resource slurp edn/read-string)]
     (response 200 :server/docs {:docs docs})))
