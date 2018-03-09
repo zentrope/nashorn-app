@@ -41,8 +41,9 @@
     [:div.Commands
      (Button {:type :close :onClick (send! ch :error/dismiss)})]]
    [:div.Body
-    [:p "code:" (:code error)]
-    [:p "reason:" (:reason error)]]])
+    [:p "code: " (str (:code error))]
+    [:p "reason: " (:reason error)]
+    [:p "message: " (pr-str (:msg error))]]])
 
 (def ^:private editing?
   #{:view/new-script :view/edit-script
