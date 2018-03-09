@@ -44,6 +44,7 @@
     {:id "client"
      :source-paths ["src/cljs" "src/cljc"]
      :compiler {:output-to "resources/public/main.js"
+                :aot-cache false ;; 1.10.145 is broken when this is true
                 :language-in :ecmascript5
                 :optimizations :whitespace
                 :main "nashorn.client.main"}}]}
