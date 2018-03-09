@@ -13,6 +13,14 @@
   (println "Unhandled:" (pr-str msg))
   state)
 
+(defmethod mutate! :docs/focus
+  [state _ msg]
+  (assoc state :docs/focus (:doc msg)))
+
+(defmethod mutate! :docs/unfocus
+  [state _ _]
+  (assoc state :docs/focus nil))
+
 (defmethod mutate! :props/delete
   [state ch msg]
   (http/send! ch {:event :props/delete :key (:key msg)})
@@ -58,7 +66,7 @@
 (defmethod mutate! :script/done
   [state ch msg]
   (http/send! ch {:event :script/list})
-  (assoc state :view :view/home :script/test-result nil))
+  (assoc state :view :view/home :script/test-result nil :docs/focus nil))
 
 (defmethod mutate! :script/done-results
   [state _ msg]
@@ -66,7 +74,7 @@
 
 (defmethod mutate! :script/edit
   [state ch msg]
-  (when (empty? (:script/docs state))
+  (when (empty? (:docs/list state))
     (http/send! ch {:event :script/docs}))
   (assoc state :script/focus (:id msg) :view :view/edit-script))
 
@@ -89,7 +97,7 @@
 
 (defmethod mutate! :script/new
   [state ch msg]
-  (when (empty? (:script/docs state))
+  (when (empty? (:docs/list state))
     (http/send! ch {:event :script/docs}))
   (assoc state :view :view/new-script :script/test-result nil))
 
@@ -134,7 +142,7 @@
 
 (defmethod mutate! :server/docs
   [state _ data]
-  (assoc state :script/docs (:docs data)))
+  (assoc state :docs/list (:docs data)))
 
 (defmethod mutate! :server/props-list
   [state _ msg]

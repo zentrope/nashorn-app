@@ -15,7 +15,7 @@
 (defn- fn-item
   [{:keys [name] :as function-doc} ch]
   [:div.Item {:key name
-              :onClick (send! ch :function/show {:doc function-doc})}
+              :onClick (send! ch :docs/focus {:doc function-doc})}
    [:div.Icon.Fn "\u03bb"]
    [:div.Label name]])
 
@@ -62,7 +62,7 @@
     [:div.Title "Script Console"]]
    [:div.Panels
     (if editing?
-      (DocumentationPanel (:script/docs state) ch)
+      (DocumentationPanel (:docs/list state) ch)
       (SideBarScriptsPanel (sort-by :name (:script/list state)) (:script/focus state) ch))
     (PropertyPanel (:props/list state) (:props/focus state) editing? ch)]
    [:div.Buttons

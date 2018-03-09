@@ -5,7 +5,7 @@
    [cljsjs.codemirror.mode.javascript]
    [nashorn.lib.cron :as cron]
    [nashorn.client.run-result :refer [ResultPanel]]
-   [nashorn.client.ui :refer [do-send! send! Button Container ControlBar IncludeIf PureMixin]]
+   [nashorn.client.ui :refer [do-send! send! Button Container ControlBar DisplayBlock IncludeIf PureMixin]]
    [rum.core :as rum :refer [defc defcs]]))
 
 (def ^:private default-code
@@ -76,6 +76,17 @@
       [:div.Status.Dirty "UNSAVED"]
       [:div.Status "SAVED"])]])
 
+(defc DocPanel < PureMixin
+  [doc ch]
+  (DisplayBlock {:title (str (:name doc) " - " (:desc doc))
+                 :commands [(Button {:type :close
+                                     :onClick (send! ch :docs/unfocus)})]}
+    [:table.Detailer
+     [:tbody
+      [:tr [:th "Signature"] [:td (:signature doc)]]
+      [:tr [:th "Returns"]   [:td (:returns doc)]]
+      [:tr [:th "Example"]   [:td.Code (:example doc)]]]]))
+
 (defc Controls < PureMixin
   [{:keys [id script name crontab] :as form} onSave ch]
   (let [event (if (nil? id) :script/save :script/update)]
@@ -130,7 +141,7 @@
 ;;       namespace.
 
 (defcs Editor < PureMixin EdMixin FormMixin DirtyMixin WillMountMixin DidMountMixin
-  [locals script run-result ch]
+  [locals script run-result doc ch]
   (let [form   (:this/form locals)
         cm     (:this/ed locals)
         dirty? (:this/dirty? locals)]
@@ -140,5 +151,6 @@
        (CronPanel (:crontab @form) (update-form locals :crontab))
        (EditorPanel {:dirty? @dirty?})
        (IncludeIf
+         doc        (DocPanel doc ch)
          run-result (ResultPanel run-result ch)))
      (Controls @form #(reset! dirty? false) ch)]))

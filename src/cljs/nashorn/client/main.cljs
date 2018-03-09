@@ -10,13 +10,14 @@
 ;; app state
 
 (defonce app-state
-  (atom {:script/docs        {}  ; help for script extension functions
-         :script/list        []  ; list of saved scripts
+  (atom {:script/list        []  ; list of saved scripts
          :script/test-result nil ; result form testing a script
          :script/focus       nil ; currently focussed script
          :script/logs        []  ; run logs for a given script
          :props/list         []  ; environment vars
          :props/focus        nil ; currently focussed property
+         :docs/list          {}  ; help for script extension functions
+         :docs/focus         nil ; currently viewable doc
          :server/error       nil ; reported server-side error
          :view               :view/home}))
 

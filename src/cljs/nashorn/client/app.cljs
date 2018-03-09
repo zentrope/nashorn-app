@@ -25,8 +25,8 @@
   (let [script     (find-focus state)
         run-result (:script/test-result state)]
     (case (:view state)
-      :view/new-script  (Editor {} run-result ch)
-      :view/edit-script (Editor script run-result ch)
+      :view/new-script  (Editor {} run-result (:docs/focus state) ch)
+      :view/edit-script (Editor script run-result (:docs/focus state) ch)
       :view/props-home  (Properties (:props/list state) (:props/focus state) ch)
       :view/props-edit  (EditProp (find-prop state) ch)
       :view/props-new   (NewProp {:key "" :value ""} ch)

@@ -237,11 +237,12 @@ table.Detailer tbody tr {
 }
 
 table.Detailer tbody tr th {
-  font-size: 11pt;
+  font-size: 10pt;
   text-align: left;
   padding: 5px;
   padding-left: 0px;
   width: 84px;
+  vertical-align: top;
 }
 
 table.Detailer tbody tr td {
@@ -250,11 +251,16 @@ table.Detailer tbody tr td {
   padding: 4px;
 }
 
+table.Detailer tbody tr td.Code {
+  font-family: monospace;
+  font-size: 10pt;
+  white-space: pre;
+  color: #369;
+}
 
 /* Editor Area */
 
 .EditorArea {
-
   position: fixed;
   top: 0;
   left: 200px;

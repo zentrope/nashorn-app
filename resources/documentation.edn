@@ -1,15 +1,72 @@
-{"format"   {:name "format"
-             :desc "Format string templates in an sprintf way."
-             :example "var fns = Java.type('com.bobo.nashorn.Functions');
+{"format"
+ {:name      "format"
+  :signature "format(pattern, args...);"
+  :returns   "<string>"
+  :desc      "Format string templates in an sprintf way."
+  :example   "var fns = Java.type('com.bobo.nashorn.Functions');
 
-var value = fns.format('hello %s', 21);
-
-(value === 'hello 21') ? 'match!' : 'no match!';
+var name = fns.lookup(\"system.owner.name\");
+var value = fns.format('hello %s', name);
 "}
 
- "httpGet"  {:name "httpGet"
-             :desc "Get the contents of a URL."}
- "httpPost" {:name "httpPost"
-             :desc "Post to a URL, returning contents if any."}
- "lookup"   {:name "lookup"
-             :desc "Lookup up a value in the script's local storage area."}}
+ "httpGet"
+ {:name      "httpGet"
+  :signature "httpGet(url, headers);"
+  :returns   "{ status: <int>, body : <string> }"
+  :desc      "Get the contents of a URL."
+  :example   "var fns = Java.type('com.bobo.nashorn.Functions');
+
+var api = fns.lookup(\"google.api.url\");
+var token = fns.lookup(\"google.api.token\");
+
+var headers = {\"Content-Type\": \"application/json\",
+               \"Authorization\": \"Bearer \" + token};
+
+var result = httpGet(api, headers);
+
+print(result.status);
+print(result.body);
+"}
+
+ "httpPost"
+ {:name      "httpPost"
+  :signature "httpPost(url <string>, headers <obj>, body <string>);"
+  :returns   "{ status: <int>, body : <string> }"
+  :desc      "Post to a URL, returning contents if any."
+  :example   "var fns = Java.type('com.bobo.nashorn.Functions');
+
+var api = fns.lookup(\"google.api.url\");
+var token = fns.lookup(\"google.api.token\");
+
+var headers = {\"Content-Type\": \"application/json\",
+               \"Authorization\": \"Bearer \" + token};
+
+var msg = {\"type\": \"msg\", \"channel\":\"foo\", \"msg\": \"hello!\"}
+var body = JSON.stringify(msg);
+
+var result = httpPost(api, headers, body);
+
+print(result.status);
+print(result.body);
+"}
+
+ "lookup"
+ {:name      "lookup"
+  :signature "lookup(name <string>); lookup(name <string>, defaultValue <string>);"
+  :returns   "<string> // throws exception if string not found and no default provided"
+  :desc      "Lookup up a system property (such as API keys, URLs, etc)."
+  :example   "var fns = Java.type('com.bobo.nashorn.Functions');
+
+var api   = fns.lookup(\"google.api.url\", \"not-found\");
+var token = fns.lookup(\"google.api.token\", \"not-found\");
+
+if (api === \"not-found\") {
+   ...
+}
+
+try {
+  api = fns.lookup(\"google.api.url\");
+} catch (error) {
+  ...
+}
+"}}
