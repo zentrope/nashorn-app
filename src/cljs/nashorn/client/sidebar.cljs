@@ -75,6 +75,5 @@
              :disabled? editing?
              :onClick (send! ch :props/new)})
     (Button {:type :download
-             :label ""
              :disabled? editing?
              :onClick (download)})]])

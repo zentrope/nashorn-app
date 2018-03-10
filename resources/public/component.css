@@ -66,6 +66,7 @@
 .DisplayBlock .Header .Title {
   flex: 4;
   padding-left: 10px;
+  font-size: 12pt;
 }
 
 .DisplayBlock .Header .Commands {
@@ -87,6 +88,7 @@
 
 .Form {
   margin: 10px;
+  padding-bottom: 20px;
 }
 
 .Form .Fields {
@@ -101,7 +103,11 @@
   border-left: none;
   border-right: none;
 
-  margin-bottom: 10px;
+  /* margin-bottom: 10px; */
+  margin-top: 10px;
+  /* border: 1px solid red; */
+
+  height: 35px;
   display: flex;
   align-items: center;
 
@@ -110,9 +116,11 @@
 
 .Form .Fields .Field .Title {
   position: absolute;
-  bottom: 1px;
-  right: 7px;
-  color: IndianRed;
+  bottom: 2px;
+  right: 3px;
+  color: MediumSeaGreen;
+  color: #888;
+  font-style: italic;
   font-size: 10pt;
   background-color: white;
   padding-top: 5px;
@@ -139,7 +147,32 @@
 }
 
 .Form .Fields .Field input:focus {
-  border-bottom: 1px solid #369;
+  border-bottom: 1px solid lightblue;
+}
+
+.Form .Fields .Field select {
+  flex: 1;
+
+  margin: 0;
+  border: none;
+
+  font-size: 11pt;
+  padding: 10px;
+  padding-bottom:5px;
+  padding-left: 0;
+
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  color: #369;
+  outline: none;
+  border-radius: 0;
+  border-bottom: 1px solid #d8d8d8;
+}
+
+.Form .Fields .Field select:focus {
+  border-bottom: 1px solid lightblue;
 }
 
 .Form .Fields .Field textarea {
@@ -188,6 +221,25 @@
 
 .Form .Fields .Field .TextArea:focus {
   border-bottom: 1px solid #369;
+}
+
+.Form .Fields .Field.Help {
+  font-size: 10pt;
+  /* border-bottom: 1px solid #d8d8d8; */
+  /* width: 100%; */
+  font-style: italic;
+  white-space: nowrap;
+  overflow-y: hidden;
+  margin-top: 0;
+  color: #999;
+  margin-top: 0 !important;
+  padding-top: 0;
+  height: 15px;
+  padding-bottom: 5px;
+}
+
+.Form .Fields .Field .Helper.Alert {
+  color: IndianRed;
 }
 
 /* ICONS */

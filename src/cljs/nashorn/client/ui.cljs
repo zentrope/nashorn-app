@@ -64,6 +64,20 @@
    [:div.Title (or title "")]
    [:input (assoc props :onChange #(onChange (.-value (.-target %))))]])
 
+(defc Select < PureMixin
+  [{:keys [title onChange] :as props} options]
+  [:div.Field
+   [:div.Title (or title "")]
+   [:select {:onChange #(onChange (.-value (.-target %)))}
+    (for [[k v] options]
+      [:option {:key k :value k} v])]])
+
+(defc FormHelp < PureMixin
+  [{:keys [alert? message]}]
+  (let [class (if alert? ["Helper" "Alert"] "Helper")]
+    [:div.Field.Help
+     [:div {:class class} (str message)]]))
+
 (defc MultiLineField < PureMixin
   {:did-mount (fn [state]
                 (let [{:keys [id value]} (first (:rum/args state))

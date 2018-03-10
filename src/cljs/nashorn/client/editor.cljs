@@ -5,7 +5,9 @@
    [cljsjs.codemirror.mode.javascript]
    [nashorn.lib.cron :as cron]
    [nashorn.client.run-result :refer [ResultPanel]]
-   [nashorn.client.ui :refer [do-send! send! Button Container ControlBar DisplayBlock IncludeIf PureMixin]]
+   [nashorn.client.ui :refer [do-send! send!
+                              Button Container ControlBar DisplayBlock Form
+                              FormHelp Field IncludeIf PureMixin Select]]
    [rum.core :as rum :refer [defc defcs]]))
 
 (def ^:private default-code
@@ -23,11 +25,7 @@
             "lineNumbers"     true}))
 
 (def ^:private default-form
-  {:script default-code :crontab "* * * * *" :name ""})
-
-(defn- target-val
-  [e]
-  (.-value (.-target e)))
+  {:script default-code :crontab "* * * * *" :name "" :language "JavaScript"})
 
 (defn- mk-editor
   [initial-value onChange]
@@ -42,35 +40,43 @@
        (not (blank? crontab))
        (not (blank? name))))
 
-(defc NamePanel < PureMixin
-  [name onChange]
-  [:div.NamePanel
-   [:input {:type "text"
-            :placeholder "Script name"
-            :max-length "30"
-            :value name
-            :on-change #(onChange (target-val %))}]])
-
-(defc CronPanel < PureMixin
-  [cron onChange]
-  (let [{:keys [error? text] :as desc} (cron/describe cron)]
-    [:div.CronPanel
-     [:div.Widget
-      [:input {:type "text"
-               :placeholder "* * * * *"
-               :value cron
-               :max-length "100"
-               :on-change #(onChange (target-val %))}]
-      [:span.Help "Cron: minute, hour, day-of-month, month, day-of-week"]]
-     [:div {:class (if error? ["Description" "Error"] "Description")}
-      text]]))
+(defc MetadataPanel < PureMixin
+  [{:keys [form onChange] :as spec}]
+  (let [crondesc (cron/describe (:crontab form))]
+    (DisplayBlock {:title "Metadata"}
+      (Form (Field
+             {:title "Script name"
+              :type "text"
+              :autoFocus "true"
+              :placeholder "Script name"
+              :max-length "30"
+              :value (:name form)
+              :onChange #(onChange :name %)})
+            (Field
+             {:title "Minute, hour, date, month, day"
+              :type "text"
+              :placeholder "* * * * *"
+              :value (:crontab form)
+              :max-length "100"
+              :onChange #(onChange :crontab %)})
+            (FormHelp
+             {:message (:text crondesc)
+              :alert? (:error? crondesc)})
+            (Select
+             {:title "Language"
+              :value (:language form)
+              :onChange #(onChange :language %)}
+             {"javascript" "JavaScript"
+              "python" "Python"})))))
 
 (defc EditorPanel < PureMixin
   [{:keys [dirty?] :as spec}]
   [:section.EditorPanel
+   [:div.Header
+    [:div.Title "Editor"]]
    [:div.EditorContainer
     [:textarea#CodeMirrorEditor
-     {:autoFocus "true"
+     {:autoFocus (if dirty? "true" "false")
       :value default-code}]
     (if dirty?
       [:div.Status.Dirty "UNSAVED"]
@@ -128,28 +134,22 @@
 (def ^:private DirtyMixin
   (rum/local false :this/dirty?))
 
-(defn- update-form
-  [locals key]
-  (fn [v]
-    (swap! (:this/form locals) assoc key v)
+(defn- update!
+  [locals]
+  (fn [field v]
+    (swap! (:this/form locals) assoc field v)
     (reset! (:this/dirty? locals) true)))
-
-;; TODO: Unify this stuff into a single form rather than all
-;;       these panels and vars
-
-;; TODO: Consider wrapping the CodeMirror editor outside this
-;;       namespace.
 
 (defcs Editor < PureMixin EdMixin FormMixin DirtyMixin WillMountMixin DidMountMixin
   [locals script run-result doc ch]
   (let [form   (:this/form locals)
         cm     (:this/ed locals)
         dirty? (:this/dirty? locals)]
+    (println "FORM:" (pr-str @form))
     [:section
      (Container "EditorArea" {}
-       (NamePanel (:name @form) (update-form locals :name))
-       (CronPanel (:crontab @form) (update-form locals :crontab))
        (EditorPanel {:dirty? @dirty?})
+       (MetadataPanel {:form @form :onChange (update! locals)})
        (IncludeIf
          doc        (DocPanel doc ch)
          run-result (ResultPanel run-result ch)))
