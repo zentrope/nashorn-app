@@ -78,6 +78,7 @@
       [:tr [:th "Updated"]  [:td (datef updated)]]
       [:tr [:th "Last run"] [:td (datef last_run)]]
       [:tr [:th "Schedule"] [:td crontab]]
+      [:tr [:th "Language"] [:td (:language script)]]
       [:tr [:th "Status"]   [:td (if (zero? status) "Active" "Inactive")]]]]))
 
 (defc RunLogsView < PureMixin

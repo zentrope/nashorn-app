@@ -12,7 +12,7 @@ var value = fns.format('hello %s', name);
  "httpGet"
  {:name      "httpGet"
   :signature "httpGet(url, headers);"
-  :returns   "{ status: <int>, body : <string> }"
+  :returns   "<string>"
   :desc      "Get the contents of a URL."
   :example   "var fns = Java.type('com.bobo.nashorn.Functions');
 
@@ -24,8 +24,7 @@ var headers = {\"Content-Type\": \"application/json\",
 
 var result = httpGet(api, headers);
 
-print(result.status);
-print(result.body);
+print(result);
 "}
 
  "httpPost"
@@ -48,6 +47,25 @@ var result = httpPost(api, headers, body);
 
 print(result.status);
 print(result.body);
+"}
+
+ "fromJSON"
+ {:name "fromJSON"
+  :signature "fromJSON(json <string>);"
+  :returns "org.json.JSONObject"
+  :desc "Parse a JSON string into a JSONObject (for use in langs without JSON)."
+  :example "# python
+from com.bobo.nashorn import Functions as FNS
+
+result = FNS.httpGet(\"http://api.duckduckgo.com/?q=python&format=json\")
+data = FNS.fromJSON(result)
+
+print \"Search:\", data.getString(\"Heading\")
+
+related = data.getJSONArray(\"RelatedTopics\")
+for r in related:
+    if r.has(\"Text\"):
+        print \" - \", r.getString(\"Text\")
 "}
 
  "lookup"

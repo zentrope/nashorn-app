@@ -9,7 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 import javax.net.ssl.HttpsURLConnection;
-import jdk.nashorn.api.scripting.ScriptObjectMirror;
+
+import org.json.JSONObject;
 
 import clojure.java.api.Clojure;
 import clojure.lang.IFn;
@@ -48,11 +49,15 @@ public final class Functions {
     return String.format(fmt, args);
   }
 
+  public static JSONObject fromJSON(String json) {
+    return new JSONObject(json);
+  }
+
   public static String httpGet(String urlString) throws Exception {
     return httpGet(urlString, null);
   }
 
-  public static String httpGet(String urlString, ScriptObjectMirror headers) throws Exception {
+  public static String httpGet(String urlString, Map<String, Object> headers) throws Exception {
     try {
       URL url = new URL(urlString);
       HttpURLConnection conn = (HttpURLConnection)url.openConnection();
@@ -62,7 +67,6 @@ public final class Functions {
       if (headers != null) {
         for (String header : headers.keySet()) {
           String value = (String)headers.get(header);
-          System.out.println("Setting header:" + header + " : " + value);
           conn.setRequestProperty(header, value);
         }
       }
@@ -74,7 +78,7 @@ public final class Functions {
     }
   }
 
-  public static Map<String, String> httpPost(String urlString, ScriptObjectMirror headers, String data) throws Exception {
+  public static Map<String, String> httpPost(String urlString, Map<String, Object> headers, String data) throws Exception {
     try {
       URL url = new URL(urlString);
       HttpsURLConnection conn = (HttpsURLConnection)url.openConnection();

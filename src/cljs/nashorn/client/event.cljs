@@ -103,7 +103,7 @@
 
 (defmethod mutate! :script/run
   [state ch msg]
-  (http/send! ch {:event :script/run :id (:id msg) :text (:script msg)})
+  (http/send! ch {:event :script/run :id (:id msg) :text (:script msg) :language (:language msg)})
   (assoc state :script/test-result nil))
 
 (defmethod mutate! :script/save

@@ -161,8 +161,9 @@
   (jdbc/execute! (:spec this) ["update script set last_run=now() where id=?" id]))
 
 (defn script-save
-  [{:keys [spec] :as this} {:keys [name crontab script]}]
-  (let [values {:name name :crontab crontab :script script :status "inactive"}
+  [{:keys [spec] :as this} {:keys [name crontab script language]}]
+  (let [values {:name name :crontab crontab :script script
+                :status "inactive" :language language}
         result (jdbc/insert! spec "script" values)]
     (script-find this (pkey result))))
 
@@ -172,9 +173,9 @@
     (jdbc/execute! (:spec this) [sql status id])))
 
 (defn script-update
-  [this {:keys [name script crontab id]}]
-  (let [sql "update script set name=?, script=?, crontab=?, updated=now() where id=?"]
-    (jdbc/execute! (:spec this) [sql name script crontab id])
+  [this {:keys [name script crontab id language]}]
+  (let [sql "update script set name=?, script=?, crontab=?, language=?, updated=now() where id=?"]
+    (jdbc/execute! (:spec this) [sql name script crontab language id])
     (script-find this id)))
 
 (defn import-all
@@ -189,7 +190,7 @@
         (when (:id script)
           (jdbc/execute! tx ["delete from script_log where script_id=?" (:id script)])
           (jdbc/execute! tx ["delete from script where id = ?" (:id script)]))
-        (jdbc/insert! tx :script (select-keys script [:id :name :script :crontab]))))))
+        (jdbc/insert! tx :script (select-keys script [:id :name :script :crontab :language]))))))
 
 (defn dump-all
   [this]

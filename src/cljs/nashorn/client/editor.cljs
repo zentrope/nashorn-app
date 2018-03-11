@@ -94,7 +94,7 @@
       [:tr [:th "Example"]   [:td.Code (:example doc)]]]]))
 
 (defc Controls < PureMixin
-  [{:keys [id script name crontab] :as form} onSave ch]
+  [{:keys [id script name crontab language] :as form} onSave ch]
   (let [event (if (nil? id) :script/save :script/update)]
     (ControlBar
      (Button {:type :close
@@ -106,7 +106,7 @@
                             (do-send! ch event {:script form}))
               :label (if (nil? id) "Create" "Update")})
      (Button {:type :run
-              :onClick (send! ch :script/test {:text script})
+              :onClick (send! ch :script/test {:text script :language language})
               :label "Run"}))))
 
 (def ^:private WillMountMixin

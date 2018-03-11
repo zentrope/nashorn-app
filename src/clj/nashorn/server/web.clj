@@ -113,7 +113,7 @@
 
 (defmethod handle! :script/run
   [db msg]
-  (let [run-result (script/eval-script (:text msg))]
+  (let [run-result (script/eval-script (:text msg) (:language msg))]
     (db/script-mark-run db {:id (:id msg)})
     (db/run-save db (assoc run-result :script-id (:id msg)))
     (responses (response 200 :server/test-result run-result)
@@ -134,7 +134,7 @@
 
 (defmethod handle! :script/test
   [db msg]
-  (let [run-result (script/eval-script (:text msg))]
+  (let [run-result (script/eval-script (:text msg) (:language msg))]
     (response 200 :server/test-result run-result)))
 
 (defmethod handle! :script/update

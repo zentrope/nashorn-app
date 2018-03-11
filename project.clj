@@ -11,6 +11,10 @@
    [org.clojure/core.async "0.4.474"]
    [integrant "0.7.0-alpha1"]
    [http-kit "2.3.0-alpha5"]
+
+   [org.python/jython "2.7.1b3"]
+   [org.json/json "20180130"]
+
    [org.clojure/java.jdbc "0.7.5"]
    [com.h2database/h2 "1.4.196"]]
 
