@@ -65,10 +65,11 @@
    [:input (assoc props :onChange #(onChange (.-value (.-target %))))]])
 
 (defc Select < PureMixin
-  [{:keys [title onChange] :as props} options]
+  [{:keys [title onChange value] :as props} options]
   [:div.Field
    [:div.Title (or title "")]
-   [:select {:onChange #(onChange (.-value (.-target %)))}
+   [:select {:value (:value props)
+             :onChange #(onChange (.-value (.-target %)))}
     (for [[k v] options]
       [:option {:key k :value k} v])]])
 
