@@ -8,13 +8,11 @@ import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
-import javax.net.ssl.HttpsURLConnection;
 
 import org.json.JSONObject;
 
 import clojure.java.api.Clojure;
 import clojure.lang.IFn;
-import clojure.lang.PersistentArrayMap;
 
 public final class Functions {
 
@@ -81,7 +79,8 @@ public final class Functions {
   public static Map<String, String> httpPost(String urlString, Map<String, Object> headers, String data) throws Exception {
     try {
       URL url = new URL(urlString);
-      HttpsURLConnection conn = (HttpsURLConnection)url.openConnection();
+      HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+
       conn.setRequestMethod("POST");
       conn.setRequestProperty("User-Agent", "bobo/nashorn");
 
