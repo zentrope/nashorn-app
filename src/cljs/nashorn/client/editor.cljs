@@ -145,7 +145,6 @@
   (let [form   (:this/form locals)
         cm     (:this/ed locals)
         dirty? (:this/dirty? locals)]
-    (println "FORM:" (pr-str @form))
     [:section
      (Container "EditorArea" {}
        (EditorPanel {:dirty? @dirty?})
