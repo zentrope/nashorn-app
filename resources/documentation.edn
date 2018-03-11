@@ -11,8 +11,8 @@ var value = fns.format('hello %s', name);
 
  "httpGet"
  {:name      "httpGet"
-  :signature "httpGet(url, headers);"
-  :returns   "<string>"
+  :signature "httpGet(url, headers <string→object>); httpGet(url);"
+  :returns   "{ status: <int>, message: <string>, headers: {<string→object>}, body : <string> }"
   :desc      "Get the contents of a URL."
   :example   "var fns = Java.type('com.bobo.nashorn.Functions');
 
@@ -24,13 +24,16 @@ var headers = {\"Content-Type\": \"application/json\",
 
 var result = httpGet(api, headers);
 
-print(result);
+print(result.status);
+print(result.message);
+print(result.headers);
+print(result.body);
 "}
 
  "httpPost"
  {:name      "httpPost"
-  :signature "httpPost(url <string>, headers <obj>, body <string>);"
-  :returns   "{ status: <int>, body : <string> }"
+  :signature "httpPost(url <string>, headers <string→object>, body <string>);"
+  :returns   "{ status: <int>, message: <string>, headers: {<string→object>}, body : <string> }"
   :desc      "Post to a URL, returning contents if any."
   :example   "var fns = Java.type('com.bobo.nashorn.Functions');
 
@@ -46,6 +49,8 @@ var body = JSON.stringify(msg);
 var result = httpPost(api, headers, body);
 
 print(result.status);
+print(result.message);
+print(result.headers);
 print(result.body);
 "}
 

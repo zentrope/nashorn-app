@@ -1,11 +1,13 @@
 package com.bobo.nashorn;
 
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -51,11 +53,11 @@ public final class Functions {
     return new JSONObject(json);
   }
 
-  public static String httpGet(String urlString) throws Exception {
+  public static Map<String,Object> httpGet(String urlString) throws Exception {
     return httpGet(urlString, null);
   }
 
-  public static String httpGet(String urlString, Map<String, Object> headers) throws Exception {
+  public static Map<String,Object> httpGet(String urlString, Map<String, Object> headers) throws Exception {
     try {
       URL url = new URL(urlString);
       HttpURLConnection conn = (HttpURLConnection)url.openConnection();
@@ -68,7 +70,13 @@ public final class Functions {
           conn.setRequestProperty(header, value);
         }
       }
-      return readString(conn.getInputStream());
+
+      conn.connect();
+
+      Map<String, Object> response = makeResponse(conn);
+
+      conn.disconnect();
+      return response;
     }
     catch (Throwable t) {
       System.out.printf("ERROR: %s\n", t);
@@ -76,7 +84,7 @@ public final class Functions {
     }
   }
 
-  public static Map<String, String> httpPost(String urlString, Map<String, Object> headers, String data) throws Exception {
+  public static Map<String, Object> httpPost(String urlString, Map<String, Object> headers, String data) throws Exception {
     try {
       URL url = new URL(urlString);
       HttpURLConnection conn = (HttpURLConnection)url.openConnection();
@@ -96,15 +104,32 @@ public final class Functions {
       out.flush();
       out.close();
 
-      Map<String, String> response = new HashMap<String, String>();
-      response.put("status", conn.getResponseCode()+"");
-      response.put("body", readString(conn.getInputStream()));
+      Map<String, Object> response = makeResponse(conn);
+
+      conn.disconnect();
       return response;
     }
     catch (Throwable t) {
       System.out.printf("ERROR: %s\n", t);
       throw t;
     }
+  }
+
+  private static Map<String, Object> makeResponse(HttpURLConnection conn) throws IOException {
+      Map<String, Object> response = new HashMap<String, Object>();
+      response.put("status", conn.getResponseCode());
+      response.put("message", conn.getResponseMessage());
+      response.put("headers", readHeaders(conn));
+      response.put("body", readString(conn.getInputStream()));
+      return response;
+  }
+
+  private static Map<String, String> readHeaders(URLConnection conn) {
+    Map<String, List<String>> headers = conn.getHeaderFields();
+    Map<String, String> result = new HashMap<String, String>();
+    for (Map.Entry<String, List<String>> entry : headers.entrySet())
+      result.put(entry.getKey(), String.join(", ", entry.getValue()));
+    return result;
   }
 
   private static String readString(InputStream is) {
