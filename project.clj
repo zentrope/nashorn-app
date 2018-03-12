@@ -1,10 +1,10 @@
-(defproject nashorn "1"
+(defproject scripto "1"
 
   :jar-name
-  "nashorn-classes.jar"
+  "scripto-classes.jar"
 
   :uberjar-name
-  "nashorn-1.jar"
+  "scripto-1.jar"
 
   :dependencies
   [[org.clojure/clojure "1.10.0-alpha4"]

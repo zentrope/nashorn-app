@@ -15,7 +15,7 @@
   File/separator)
 
 (def ^:private app-dir
-  (str (System/getProperty "user.home") sep ".kfi" sep "nashorn_app"))
+  (str (System/getProperty "user.home") sep ".kfi" sep "scripto_app"))
 
 (def config
   {:svc/web     {:port 2018 :db (ig/ref :svc/db)}
