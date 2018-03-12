@@ -1,65 +1,75 @@
-# nashorn-app
+# scripto-app
 
-The idea is that you provide some basic primitives and limit
-JavaScripts to those primitives:
+The Scripto App is a full-stack application (server and
+web-application) exploring the use of JVM embedded scripting languages
+as an integration extension mechanism.
 
-``` javascript
-var FNS = Java.type('com.fooko.sandboxed.Functions');
+## Build & Run
 
-FNS.httpGet(...);
-FNS.httpPost(...);
-FNS.sprintf(...);
-FNS.lookup(...);
-FNS.store(...);
-FNS.delete(...);
+First, you can type:
 
-```
+    $ make help
 
+to see available options, including re-setting the database, cleaning,
+building, dependency analysis and interactive development.
 
-This lets you access web-services (perhaps the host's own), store some data.
+To build and run the application:
 
-For configuration, you could mandate an "init" function that returns
-an object with specific values:
+    $ make build
+    $ java -jar target/script-1.jar
+    $ open http://localhost:2018
 
-```javascript
-function init() {
-  return {
-    "crontab": "* * 8 * * *",
-    "name": "integration thing",
-    "description": "whitelist thingy",
-    "version": "1.2.42"
-  }
-}
-```
+Note: If you don't have `make`, just read the file to see the commands
+it uses: a combination of `leiningen` and `bash`. For this app, `make`
+and `Makefile` are just convenience shell wrappers.
 
-And maybe a function that must take an identifier supplied by the
-host:
+## Scripting language support
 
-``` javascript
-var HOST_ID = null;
+The following scripting languages are supported:
 
-funtion setId(id) {
-  HOST_ID = id;
-}
-```
+- JavaScript (via OpenJDK 8 Nashorn support)
+- Python (via Jython 2.7.1b3)
 
-Maybe this isn't necessary, but I was thinking it acts as a namespace
-for saving local data. The only way around this (that I can think of)
-is to use thread-local ID that's accessed by the stuff in `FNS` to
-properly sandbox data. Not sure that'll work.
+## Rationale
 
-Given the exposed functions are static, you should probably get a
-context object back, and pass that to every functions.
+One way to use embedded scripting languages is to expose
+domain-specific functions to a scripting engine so that users can add
+more features to the host application. For instance, Emacs (Emacs
+Lisp) is built around this idea, as are many editors, such as Sublime
+Text (Python) and Atom (JavaScript) and other rich applications such
+as CAD software.
 
-``` javascript
-var FNS = Java.type('com.bobo.sandboxed.Functions');
+### Functions
 
-var ctx = FNS.getContext({"init": "stuff"});
+In _this_ particular case, though, the functionality exposed to the
+scripts are just web GET and POST functions, and other minor functions
+to help with formatting and parsing.
 
-var apiKey = FNS.lookup(ctx, "api_key");
-```
+The context is that these scripts encourage users of a host
+application with a web API (REST or GraphQL) to write integrations
+(from app to third-party apps) hosted by the app itself rather than
+via additional processes schedule via (say) cron.
 
-Something like that seems reasonable.
+With even just what's implemented here, you could:
 
-Maybe the name of where the script is stored is the id of the script
-such that when it's replaced it can use the old data.
+- Request data from the host-app and push to a third-party ticketing system.
+- Request third-party data and push to the host-app.
+- Invoke host-app functions (via POST) at regular intervals.
+- Configure the host-app according to config found at a third-party service.
+
+And so on, depending on what the host application provides by way of
+HTTP compatible end-points.
+
+### Properties
+
+Also supported is the notion of a directory of `properties`: names
+URLs, API authorization tokens, certificates, or other parameters one
+or more scripts might need to use.
+
+### Scheduling
+
+Finally, the app provides a scheduler so that any (or all) scripts can
+be scheduled to run at a given time. The results are logged (stdout,
+errors and returned values), but the intention is for scripts is move
+data from one place to another, not to provide a user interface or
+database for storing data locally.
