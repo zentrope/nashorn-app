@@ -1,6 +1,7 @@
 (ns nashorn.client.scripts
   (:require
    [clojure.string :refer [replace blank? lower-case]]
+   [nashorn.client.codeview :refer [CodeView]]
    [nashorn.client.run-result :refer [ResultPanel]]
    [nashorn.client.ui :refer
     [do-send! send! Container ControlBar DisplayBlock PureMixin WorkArea Table Button IncludeIf]]
@@ -80,17 +81,17 @@
                            :type :refresh
                            :onClick (send! ch :script/focus {:id id})})))))
 
-(defc DetailView < PureMixin
-  [{:keys [id status created updated last_run crontab name] :as script} ch]
-  (DisplayBlock {:title name :commands []}
-    [:table.Detailer
-     [:tbody
-      [:tr [:th "Created"]  [:td (datef created)]]
-      [:tr [:th "Updated"]  [:td (datef updated)]]
-      [:tr [:th "Last run"] [:td (datef last_run)]]
-      [:tr [:th "Schedule"] [:td (if (manually-run? script) "Run manually" crontab)]]
-      [:tr [:th "Language"] [:td (:language script)]]
-      [:tr [:th "Status"]   [:td (if (zero? status) "Active" "Inactive")]]]]))
+;; (defc DetailView < PureMixin
+;;   [{:keys [id status created updated last_run crontab name] :as script} ch]
+;;   (DisplayBlock {:title name :commands []}
+;;     [:table.Detailer
+;;      [:tbody
+;;       [:tr [:th "Created"]  [:td (datef created)]]
+;;       [:tr [:th "Updated"]  [:td (datef updated)]]
+;;       [:tr [:th "Last run"] [:td (datef last_run)]]
+;;       [:tr [:th "Schedule"] [:td (if (manually-run? script) "Run manually" crontab)]]
+;;       [:tr [:th "Language"] [:td (:language script)]]
+;;       [:tr [:th "Status"]   [:td (if (zero? status) "Active" "Inactive")]]]]))
 
 (defc RunLogsView < PureMixin
   [logs]
@@ -113,11 +114,14 @@
 
 (defc Scripts < PureMixin
   [scripts focus run-result logs ch]
-  (WorkArea
-   (Container "ScriptArea"
-     (SummaryView (sort-by :name scripts) focus ch)
-     (IncludeIf
-       (not (nil? focus))     (DetailView focus ch)
-       (and run-result focus) (ResultPanel run-result ch)
-       (not (nil? focus))     (RunLogsView (reverse (sort-by :created logs)))))
-   (Controls focus ch)))
+  (let [focussed? (not (nil? focus))
+        just-ran? (and run-result focussed?)]
+    (WorkArea
+     (Container "ScriptArea"
+         (SummaryView (sort-by :name scripts) focus ch)
+         (IncludeIf
+           focussed? (CodeView (:script focus) (:language focus))
+           ;; focussed? (DetailView focus ch)
+           just-ran? (ResultPanel run-result ch)
+           focussed? (RunLogsView (reverse (sort-by :created logs)))))
+     (Controls focus ch))))

@@ -3,6 +3,7 @@
    [clojure.string :as string :refer [blank?]]
    [cljsjs.codemirror]
    [cljsjs.codemirror.mode.javascript]
+   [cljsjs.codemirror.mode.python]
    [nashorn.lib.cron :as cron]
    [nashorn.client.run-result :refer [ResultPanel]]
    [nashorn.client.ui :refer [do-send! send!

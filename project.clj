@@ -84,6 +84,9 @@
      ;; A programming language editor.
      [cljsjs/codemirror "5.31.0-0"]
      ;;
+     ;; Syntax highlighter
+     [cljsjs/highlight "9.12.0-1"]
+     ;;
      ;; React wrapper
      [rum "0.11.2" :exclusions [com.cognitect/transit-clj
                                 com.cognitect/transit-cljs]]
