@@ -1,5 +1,6 @@
 (ns nashorn.client.scripts
   (:require
+   [clojure.string :refer [replace blank? lower-case]]
    [nashorn.client.run-result :refer [ResultPanel]]
    [nashorn.client.ui :refer
     [do-send! send! Container ControlBar DisplayBlock PureMixin WorkArea Table Button IncludeIf]]
@@ -21,23 +22,33 @@
     (when (js/confirm (str "Delete the '" name "' extension?"))
       (do-send! ch :script/delete {:id id}))))
 
-(defc Badge < PureMixin
-  [status]
+(defn- manually-run?
+  [{:keys [crontab] :as script}]
+  (blank? (replace crontab #"\s|[*]" "")))
+
+(defn- status-badge
+  [{:keys [status] :as script}]
   (let [class ["Status" (if (zero? status) "Active" "Inactive")]]
     [:div {:class class}
      (icon/Bullet)]))
+
+(defn- schedule-badge
+  [script]
+  (if (manually-run? script) "" (icon/Calendar)))
 
 (defc ScriptTable < PureMixin
   [{:keys [rows selected?] :as attrs} ch]
   (DisplayBlock {:title "Extensions" :commands []}
     [:div.Lister
-     (Table ["Extension" "Updated" "Last run"]
+     (Table ["Name" "Language" "Updated" "Last run" ""]
        (for [row rows]
          [:tr {:class ["Clickable" (if (selected? row) "Selected")]
                :onClick (send! ch :script/focus {:id (:id row)})}
-          [:td {:width "48%"} (Badge (:status row)) (:name row)]
+          [:td {:width "32%"} (status-badge row) (:name row)]
+          [:td {:width "16%"} (lower-case (:language row))]
           [:td {:width "25%"} (datef (:updated row))]
-          [:td {:width "25%"} (datef (:last_run row))]]))]))
+          [:td {:width "25%"} (datef (:last_run row))]
+          [:td {:width "2%"} (schedule-badge row)]]))]))
 
 (defc Controls
   [{:keys [id status] :as script} ch]
@@ -77,7 +88,7 @@
       [:tr [:th "Created"]  [:td (datef created)]]
       [:tr [:th "Updated"]  [:td (datef updated)]]
       [:tr [:th "Last run"] [:td (datef last_run)]]
-      [:tr [:th "Schedule"] [:td crontab]]
+      [:tr [:th "Schedule"] [:td (if (manually-run? script) "Run manually" crontab)]]
       [:tr [:th "Language"] [:td (:language script)]]
       [:tr [:th "Status"]   [:td (if (zero? status) "Active" "Inactive")]]]]))
 
