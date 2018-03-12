@@ -5,9 +5,10 @@
   :desc      "Format string templates in an sprintf way."
   :example   "var fns = Java.type('com.bobo.nashorn.Functions');
 
-var name = fns.lookup(\"system.owner.name\");
+var name = fns.lookup('system.owner', 'world');
 var value = fns.format('hello %s', name);
-"}
+
+print(value)"}
 
  "httpGet"
  {:name      "httpGet"
@@ -63,7 +64,7 @@ print(result.body);
 from com.bobo.nashorn import Functions as FNS
 
 result = FNS.httpGet(\"http://api.duckduckgo.com/?q=python&format=json\")
-data = FNS.fromJSON(result)
+data = FNS.fromJSON(result.get(\"body\"))
 
 print \"Search:\", data.getString(\"Heading\")
 
