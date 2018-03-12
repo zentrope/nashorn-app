@@ -94,20 +94,25 @@
       [:tr [:th "Example"]   [:td.Code (:example doc)]]]]))
 
 (defc Controls < PureMixin
-  [{:keys [id script name crontab language] :as form} onSave ch]
-  (let [event (if (nil? id) :script/save :script/update)]
+  [{:keys [form onSave dirty?]} ch]
+  (let [making? (nil? (:id form))
+        editing? (not making?)]
     (ControlBar
-     (Button {:type :close
-              :onClick (send! ch :script/done)
-              :label "Done"})
-     (Button {:type :save
-              :disabled? (not (saveable? form))
-              :onClick #(do (onSave)
-                            (do-send! ch event {:script form}))
-              :label (if (nil? id) "Create" "Update")})
-     (Button {:type :run
-              :onClick (send! ch :script/test {:text script :language language})
-              :label "Run"}))))
+      (IncludeIf
+        :always  (Button {:type :close
+                          :onClick (send! ch :script/done)
+                          :label "Done"})
+        editing? (Button {:type :save
+                          :label "Save"
+                          :disabled? (or (not (saveable? form)) (not dirty?))
+                          :onClick #(do (onSave) (do-send! ch :script/update {:script form}))})
+        making?  (Button {:type :save
+                          :label "Create"
+                          :disabled? (not (saveable? form))
+                          :onClick #(do (onSave) (do-send! ch :script/save {:script form}))})
+        :always  (Button {:type :run
+                          :onClick (send! ch :script/test {:text (:script form) :language (:language form)})
+                          :label "Run"})))))
 
 (def ^:private WillMountMixin
   {:will-mount (fn [state]
@@ -152,4 +157,6 @@
        (IncludeIf
          doc        (DocPanel doc ch)
          run-result (ResultPanel run-result ch)))
-     (Controls @form #(reset! dirty? false) ch)]))
+     (Controls {:form @form
+                :dirty? @dirty?
+                :onSave #(reset! dirty? false)} ch)]))
