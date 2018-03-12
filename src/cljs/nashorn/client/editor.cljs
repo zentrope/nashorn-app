@@ -70,17 +70,17 @@
               "python" "Python"})))))
 
 (defc EditorPanel < PureMixin
-  [{:keys [dirty?] :as spec}]
+  [{:keys [dirty? new?] :as spec}]
   [:section.EditorPanel
    [:div.Header
-    [:div.Title "Editor"]]
+    [:div.Title "Editor"]
+    (if dirty?
+      [:div.Status.Dirty "UNSAVED"]
+      [:div.Status (if new? "" "SAVED")])]
    [:div.EditorContainer
     [:textarea#CodeMirrorEditor
      {:autoFocus (if dirty? "true" "false")
-      :value default-code}]
-    (if dirty?
-      [:div.Status.Dirty "UNSAVED"]
-      [:div.Status "SAVED"])]])
+      :value default-code}]]])
 
 (defc DocPanel < PureMixin
   [doc ch]
@@ -152,7 +152,7 @@
         dirty? (:this/dirty? locals)]
     [:section
      (Container "EditorArea" {}
-       (EditorPanel {:dirty? @dirty?})
+       (EditorPanel {:dirty? @dirty? :new? (nil? (:id @form))})
        (MetadataPanel {:form @form :onChange (update! locals)})
        (IncludeIf
          doc        (DocPanel doc ch)

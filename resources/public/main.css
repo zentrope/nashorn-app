@@ -307,6 +307,19 @@ table.Detailer tbody tr td.Code {
   font-size: 12pt
 }
 
+.EditorArea .EditorPanel .Header .Status {
+  flex: 1;
+  color: MediumSeaGreen;
+  font-size: 10pt;
+  font-weight: bold;
+  text-align: right;
+  padding-right: 10px;
+}
+
+.EditorArea .EditorPanel .Header .Status.Dirty {
+  color: IndianRed;
+}
+
 .EditorArea .EditorPanel .EditorContainer {
   flex: 1;
 
@@ -317,18 +330,6 @@ table.Detailer tbody tr td.Code {
   position: relative;
 }
 
-.EditorArea .EditorPanel .EditorContainer .Status {
-  color: MediumSeaGreen;
-  position: absolute;
-  bottom: 0px;
-  right: 2px;
-  font-size: 9pt;
-  background-color: white !important;
-}
-
-.EditorArea .EditorPanel .EditorContainer .Status.Dirty {
-  color: IndianRed;
-}
 
 .EditorArea .EditorPanel .EditorContainer textarea {
   flex: 1;
