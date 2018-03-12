@@ -67,15 +67,17 @@ h1 {
 
   display: flex;
   align-items: center;
-  justify-content: center;
+  /* justify-content: center; */
   box-sizing: border-box;
 
   border-bottom: 1px solid #eaebeb;
 }
 
 .SideBar .Header .Title {
-  color: #888;
+  color: #1b60c2;
+  color: #666;
   font-size: 14pt;
+  padding-left: 23px;
 }
 
 /* SideBar Buttons */
@@ -111,7 +113,7 @@ h1 {
   left: 0;
   width: 200px;
   bottom: 40px;
-  padding-top: 20px;
+  padding-top: 10px;
   box-sizing: border-box;
   overflow-y: auto;
 }

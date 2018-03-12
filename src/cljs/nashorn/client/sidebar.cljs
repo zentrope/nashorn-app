@@ -59,7 +59,7 @@
   [state editing? ch]
   [:section.SideBar
    [:div.Header
-    [:div.Title "Script Console"]]
+    [:div.Title "Script Manager"]]
    [:div.Panels
     (if editing?
       (DocumentationPanel (:docs/list state) ch)
