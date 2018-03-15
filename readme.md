@@ -16,12 +16,12 @@ building, dependency analysis and interactive development.
 To build and run the application:
 
     $ make build
-    $ java -jar target/script-1.jar
+    $ java -jar target/scripto-1.jar
     $ open http://localhost:2018
 
-Note: If you don't have `make`, just read the file to see the commands
-it uses: a combination of `leiningen` and `bash`. For this app, `make`
-and `Makefile` are just convenience shell wrappers.
+Note: If you don't have `make`, just read the `Makefile` to see the
+commands it uses: a combination of `leiningen` and `bash`. For this
+app, `make` and `Makefile` are just convenience shell wrappers.
 
 ## Scripting language support
 
@@ -39,11 +39,16 @@ Lisp) is built around this idea, as are many editors, such as Sublime
 Text (Python) and Atom (JavaScript) and other rich applications such
 as CAD software.
 
+What _this_ particular application emphasizes is using small scripts
+to orchestrate and integrate remote third-party web services. Even if
+hosted inside a monolithic Enterprise application, the scripts don't
+interact with the host-app except via its public web service.
+
 ### Functions
 
-In _this_ particular case, though, the functionality exposed to the
-scripts are just web GET and POST functions, and other minor functions
-to help with formatting and parsing.
+The functionality exposed to the scripts are web `GET` and `POST`
+functions as well as convenience functions for formatting, parsing
+and system-wide key/value configuration property lookup.
 
 The context is that these scripts encourage users of a host
 application with a web API (REST or GraphQL) to write integrations
@@ -62,7 +67,7 @@ HTTP compatible end-points.
 
 ### Properties
 
-Also supported is the notion of a directory of `properties`: names
+Also supported is the notion of a directory of `properties`: named
 URLs, API authorization tokens, certificates, or other parameters one
 or more scripts might need to use.
 
