@@ -10,7 +10,7 @@
   [[org.clojure/clojure "1.10.0-alpha4"]
    [org.clojure/core.async "0.4.474"]
    [integrant "0.7.0-alpha1"]
-   [http-kit "2.3.0-beta1"]
+   [http-kit "2.3.0-beta2"]
 
    ;; For python-based scripts
    [org.python/jython "2.7.1b3"]
@@ -18,7 +18,7 @@
 
    ;; Database stuff
    [org.clojure/java.jdbc "0.7.5"]
-   [com.h2database/h2 "1.4.196"]]
+   [com.h2database/h2 "1.4.197"]]
 
   :main ^:skip-aot nashorn.server.stub
   :min-lein-eversion "2.8.1"
@@ -50,7 +50,6 @@
     {:id "client"
      :source-paths ["src/cljs" "src/cljc"]
      :compiler {:output-to "resources/public/main.js"
-                :aot-cache false ;; 1.10.145 is broken when this is true
                 :language-in :ecmascript5
                 :optimizations :whitespace
                 :main "nashorn.client.main"}}]}
@@ -79,7 +78,7 @@
      [com.bhauman/rebel-readline "0.1.1"]
      ;;
      ;; Clojure to JS compiler
-     [org.clojure/clojurescript "1.10.145"]
+     [org.clojure/clojurescript "1.10.217"]
      ;;
      ;; A programming language editor.
      [cljsjs/codemirror "5.31.0-0"]

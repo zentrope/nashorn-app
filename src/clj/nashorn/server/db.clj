@@ -190,7 +190,8 @@
         (when (:id script)
           (jdbc/execute! tx ["delete from script_log where script_id=?" (:id script)])
           (jdbc/execute! tx ["delete from script where id = ?" (:id script)]))
-        (jdbc/insert! tx :script (select-keys script [:id :name :script :crontab :language]))))))
+        (jdbc/insert! tx :script (assoc (select-keys script [:id :name :script :crontab :language])
+                                        :status "inactive"))))))
 
 (defn dump-all
   [this]

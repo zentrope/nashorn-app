@@ -94,6 +94,7 @@
 (defn -main
   [& args]
   (log/info "Starting application.")
+  (log/infof "→ Using java %s." (System/getProperty "java.version"))
   (log/infof "→ Open web-app at http://localhost:%s." (:port (:svc/web config)))
   (hook-uncaught-exceptions! #'catch-uncaughts)
   (let [system (ig/init config)
