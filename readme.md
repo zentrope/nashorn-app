@@ -1,5 +1,7 @@
 # scripto-app
 
+_JDK9 compatible_
+
 The Scripto App is a full-stack application (server and
 web-application) exploring the use of JVM embedded scripting languages
 as an integration extension mechanism.
