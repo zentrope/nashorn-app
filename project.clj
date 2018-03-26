@@ -21,7 +21,7 @@
    [com.h2database/h2 "1.4.197"]]
 
   :main ^:skip-aot nashorn.server.stub
-  :min-lein-eversion "2.8.1"
+  :min-lein-version "2.8.1"
 
   :source-paths ["src/clj" "src/cljc"]
   :java-source-paths ["src/java"]
