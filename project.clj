@@ -42,6 +42,7 @@
                 :main "nashorn.client.main"
                 :optimizations :none
                 :asset-path "out"
+                :aot-cache true
                 :source-map true
                 :source-map-timestamp true}}
     ;;
@@ -51,6 +52,7 @@
      :source-paths ["src/cljs" "src/cljc"]
      :compiler {:output-to "resources/public/main.js"
                 :language-in :ecmascript5
+                :aot-cache true
                 :optimizations :whitespace
                 :main "nashorn.client.main"}}]}
   ;;
@@ -75,10 +77,10 @@
     :dependencies
     [
      ;; Fancy REPL editor at the command line
-     [com.bhauman/rebel-readline "0.1.1"]
+     [com.bhauman/rebel-readline "0.1.2"]
      ;;
      ;; Clojure to JS compiler
-     [org.clojure/clojurescript "1.10.217"]
+     [org.clojure/clojurescript "1.10.238"]
      ;;
      ;; A programming language editor.
      [cljsjs/codemirror "5.31.0-0"]
