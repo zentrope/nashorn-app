@@ -52,7 +52,6 @@
      :source-paths ["src/cljs" "src/cljc"]
      :compiler {:output-to "resources/public/main.js"
                 :language-in :ecmascript5
-                :aot-cache true
                 :optimizations :whitespace
                 :main "nashorn.client.main"}}]}
   ;;
