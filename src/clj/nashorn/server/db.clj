@@ -121,8 +121,9 @@
 
 (defn script-delete
   [this id]
-  (let [sql "delete from script where id=?"]
-    (jdbc/execute! (:spec this) [sql id])))
+  (jdbc/with-db-transaction [tx (:spec this)]
+    (jdbc/execute! (:spec this) ["delete from script_log where script_id=?" id])
+    (jdbc/execute! (:spec this) ["delete from script where id=?" id])))
 
 (defn scripts
   [this]
